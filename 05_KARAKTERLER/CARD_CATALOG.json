@@ -1,0 +1,40 @@
+# 🃏 BATUPIA - Koleksiyon Kart Kataloğu (v1.0)
+
+[
+  {
+    "id": "KOR-001",
+    "name": "KOR: Ruhun Alevi",
+    "rarity": "Legendary",
+    "type": "Fire",
+    "stats": {"ATK": 95, "DEF": 40, "SPD": 85},
+    "ability": "Supernova: Ekrandaki tüm Ateş taşlarını anında kırar.",
+    "merch_status": ["T-Shirt", "Necklace", "Postcard"]
+  },
+  {
+    "id": "BAAM-001",
+    "name": "BAAM: Derin Akıntı",
+    "rarity": "Epic",
+    "type": "Water",
+    "stats": {"ATK": 60, "DEF": 90, "SPD": 50},
+    "ability": "Tsunami: Tahtayı 10 saniyeliğine dondurur.",
+    "merch_status": ["Bracelet", "Mug"]
+  },
+  {
+    "id": "MAND-001",
+    "name": "MAND: Kadim Kaya",
+    "rarity": "Rare",
+    "type": "Earth",
+    "stats": {"ATK": 80, "DEF": 80, "SPD": 30},
+    "ability": "Quake: Alt katmandaki 5 rastgele taşı yüzeye çıkarır.",
+    "merch_status": ["Ring", "Keychain"]
+  },
+  {
+    "id": "ZEPY-001",
+    "name": "ZEPY: Göklerin Sesi",
+    "rarity": "Rare",
+    "type": "Air",
+    "stats": {"ATK": 70, "DEF": 50, "SPD": 100},
+    "ability": "Cyclone: Kilitli olan 3 taşın yerini açık alanlarla değiştirir.",
+    "merch_status": ["Cap", "Badge"]
+  }
+]

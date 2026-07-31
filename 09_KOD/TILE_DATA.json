@@ -1,0 +1,44 @@
+{
+  "project": "BATUPIA - Stonebreaking Universe",
+  "version": "0.1.0",
+  "engine_settings": {
+    "total_tiles": 144,
+    "matching_type": "pair",
+    "tile_groups": [
+      {
+        "name": "KOR",
+        "element": "Fire",
+        "variants": ["Alev", "Köz", "Volkan"],
+        "count_per_variant": 12
+      },
+      {
+        "name": "BAAM",
+        "element": "Water",
+        "variants": ["Damla", "Buz", "Sis"],
+        "count_per_variant": 12
+      },
+      {
+        "name": "MAND",
+        "element": "Earth",
+        "variants": ["Rün", "Kristal", "Kaya"],
+        "count_per_variant": 12
+      },
+      {
+        "name": "ZEPY",
+        "element": "Air",
+        "variants": ["Spiral", "Şimşek", "Bulut"],
+        "count_per_variant": 12
+      },
+      {
+        "name": "SPECIALS",
+        "variants": ["Asa", "İnci", "Çekiç", "Yelpaze"],
+        "count_per_variant": 4
+      },
+      {
+        "name": "ELITE",
+        "variants": ["Logo", "Kolye", "Amblem"],
+        "count_per_variant": 8
+      }
+    ]
+  }
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<Title>Dosya Yükle - Dosya Upload </Title>
+<link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+<link type="text/css" rel="stylesheet" href="/tablo.css" >
+<link rel="stylesheet" type="text/css" href="/main.css">
+<script language="JavaScript" type="text/javascript" CHARSET="UTF-8" src="/jquery-1.9.1.min.js"></script>
+<script language="JavaScript" type="text/javascript" CHARSET="UTF-8" src="/xupload.js?"></script>
+<script language="JavaScript" type="text/javascript" CHARSET="UTF-8" src="/jquery.cookie.js"></script>
+<!--script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script-->
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META NAME="description" CONTENT="Dosyalarınızı ücretsiz yükleyebilir ve paylaşabilirsiniz. Dosya yükleme, Dosya Upload ücretsiz.">
+<META NAME="keywords"    CONTENT="upload, dosya yükle, dosya.co, dosya upload">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta property="fb:admins" content="Dosya.co"/ >
+<meta property="fb:app_id" content="316567811817812"/>
+
+<script>
+$(document).ready(function() {
+        $('body').width($('body').width()+1).width('auto')
+});
+</script>
+
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7804114244475519"
+     crossorigin="anonymous"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZEZ63PHNB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-MZEZ63PHNB');
+</script>
+
+<script src="https://apis.google.com/js/platform.js" async defer>
+  {lang: 'tr'}
+</script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '316567811817812',
+      xfbml      : true,
+      version    : 'v2.3'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/tr_TR/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<style>
+
+	#optidiv {
+		color: #000;
+	}
+
+	#recaptcha_widget {
+		text-align: center;
+	}
+
+	.result_slot tr:nth-of-type(even) {
+		background: #fff;
+	}
+
+	.result_slot tr td {
+		padding: 10px;
+		width: 20%;
+	}
+
+	.resultHeading {
+		font-size: 32px;
+		color: #000;
+		margin: 20px 0;
+	}
+
+</style>
+
+     
+
+
+	 
+</HEAD>
+<BODY class="notloggedin" >
+
+
+
+
+
+<div class="__topbar">
+	    	<div class="navbar-inner">
+	        	<div class="container-fluid">
+					<a href="https://dosya.co" class="logo"><img src="https://dosya.co/images/logo.png"></a>
+
+	<!-- <input type="search" class="search-bar-input" /> -->
+
+		<div class="pull-right nav nav-menu">
+	      	<ul class="pull-right">
+
+
+
+<li><a href="https://dosya.co/login.html">Kullanıcı Girişi</a>&nbsp; &nbsp;</li>
+<li><a href="https://dosya.co/?op=registration">Üye Ol</a>&nbsp; &nbsp;</li>
+
+
+
+
+
+
+	      	</ul><!--/ .pull-right -->
+	    </div><!--/ .nav .nav-menu -->
+			    </div><!--/ .container -->
+		    </div><!--/ .navbar-inner -->
+	    </div><!--/ .navbar -->
+
+
+
+
+
+
+<div style="padding-top: 80px">
+<table cellpadding=8 cellspacing=0 style="min-width:400px;background:#E9E9E9;border:1px solid #BBB;margin:20px auto;">
+<tr><td style="background:#D3D3D3;border-bottom:1px solid #BBB;font:bold 13px Verdana;padding:3px;">Error</td></tr>
+<tr><td align=center>
+<font style="color:#d33;">Not allowed</font>
+<font class="ok"></font>
+</td></tr>
+</table>
+<!--a href="javascript: window.history.back();">-Back-</a-->
+</div>
+
+<div style="padding-top: 20px;  padding-bottom: 20px;  text-align: center;background-color: #303641;position: relative;bottom: 0;width: 100%;display: block;" class="footer">
+<a href="/" style="color:#fff">Anasayfa</a> &nbsp;-
+<a href="/?op=news" style="color:#fff">Blog</a>  &nbsp;-
+<a href="/faq.html" style="color:#fff">SSS</a>   &nbsp;-
+<a href="/tos.html" style="color:#fff">Kullanım şartları</a>   &nbsp;-
+<a href="/pages/privacy_policy.html" style="color:#fff">Gizlilik Politikası</a>   &nbsp;-
+<a href="/pages/kvkk_aydinlatma.html" style="color:#fff">KVKK</a>   &nbsp;-
+<a href="/pages/cerez_politikasi.html" style="color:#fff">Çerez Politikası</a>   &nbsp;-
+
+<a href="/?op=checkfiles" style="color:#fff">Linki kontrol et</a>   &nbsp;-
+<a href="/contact.html" style="color:#fff">İletişim</a>   &nbsp;
+
+
+
+
+<div style="color:#fff;font-size:12px;margin-top: 10px;">
+&copy; 2012-2024 <a href="/" style="color:#fff">Dosya.co</a> <a href="/" title="Dosya Yükle" style="color:#fff;text-decoration:none;">Dosya Yükle</a> - <a href="/" title="Dosya Upload" style="color:#fff;text-decoration:none;">Dosya Upload</a>
+</div>
+</div>
+<script src="https://dosya.co/scripts.js"></script>
+</BODY>
+</HTML>

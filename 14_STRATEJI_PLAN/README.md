@@ -1,0 +1,1 @@
+# STRATEJI_PLAN
