@@ -1,5 +1,5 @@
 // =========================================================
-// STONEBREAKING — Triple Match / Tray Motoru v6.1
+// STONEBREAKING — Triple Match / Tray Motoru v6.2
 // Lava-core master taşlar · tepsi canvas içi · nefes dili · CSS px click
 // =========================================================
 
@@ -228,7 +228,7 @@ class StonebreakingGame {
     this.trayX = (w - trayInnerW) / 2;
     this.slotGap = 6;
     this.slotW = Math.floor((trayInnerW - this.trayPad * 2 - this.slotGap * (TRAY_MAX - 1)) / TRAY_MAX);
-    this.slotH = Math.floor(this.slotW / 0.78);
+    this.slotH = this.slotW; // v6.2: kare taş gövdesi (PNG kare → slot kare)
     this.trayH = this.slotH + this.trayPad * 2;
     this.boardTop = this.trayY + this.trayH + 8;
 
@@ -246,17 +246,18 @@ class StonebreakingGame {
       maxZ = Math.max(maxZ, t.z);
     }
     const tw = Math.floor((W - 16 - maxZ * 4) / (maxC + 0.15));
-    const th = Math.floor((H - 8 + maxZ * 6) / (maxR * 0.52 + 1.05));
-    let tileW = Math.max(42, Math.min(72, tw - 2));
-    let tileH = Math.max(52, Math.min(90, Math.floor(tileW / 0.78)));
+    const th = Math.floor((H - 8 + maxZ * 6) / (maxR * 0.5 + 0.55));
+    // v6.2: KARE TAŞ — PNG kare olduğundan yüzey de kare; sembol max büyür
+    let tileW = Math.max(46, Math.min(80, tw - 2));
+    let tileH = tileW;
     if (tileH > th) {
-      tileH = Math.max(52, th - 2);
-      tileW = Math.max(42, Math.floor(tileH * 0.78));
+      tileH = Math.max(46, th - 2);
+      tileW = tileH;
     }
     this.tileW = tileW;
     this.tileH = tileH;
-    this.gapX = Math.max(2, Math.floor(tileW * 0.05));
-    this.zLift = Math.max(8, Math.floor(tileH * 0.13));
+    this.gapX = Math.max(2, Math.floor(tileW * 0.035)); // sıkı: tam arka arkaya
+    this.zLift = Math.max(6, Math.floor(tileH * 0.10));
   }
 
   setScene(url) {
@@ -754,22 +755,17 @@ class StonebreakingGame {
       const scale = Math.max(W / iw, H / ih);
       const sw = iw * scale, sh = ih * scale;
       ctx.drawImage(this.sceneImg, (W - sw) / 2, (H - sh) / 2, sw, sh);
-      ctx.fillStyle = 'rgba(8, 28, 18, 0.72)';
+      // v6.2: hafif karartma (koyu taşlar öne çıksın, dağınıklık yok)
+      ctx.fillStyle = 'rgba(6, 20, 14, 0.58)';
       ctx.fillRect(0, 0, W, H);
     } else {
       const g = ctx.createRadialGradient(W / 2, H * 0.45, 30, W / 2, H * 0.5, H * 0.75);
-      g.addColorStop(0, '#1c4a32');
-      g.addColorStop(1, '#0a1f14');
+      g.addColorStop(0, '#2a5a3e');
+      g.addColorStop(1, '#0e2a1c');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     }
-
-    // subtle table pattern
-    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-    ctx.lineWidth = 1;
-    for (let y = 0; y < H; y += 28) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
+    // (çizgi deseni kaldırıldı — temiz film zemini)
 
     // ---- TRAY (on canvas) ----
     this.drawTray();
@@ -921,56 +917,73 @@ class StonebreakingGame {
   drawTileFace(type, x, y, w, h, alpha = 1, dim = false, lift = false) {
     const ctx = this.ctx;
     const meta = this.types[type] || this.types[0];
+    const radius = Math.max(4, Math.min(9, w * 0.16));
     ctx.save();
     ctx.globalAlpha = alpha;
 
     if (lift) {
-      ctx.shadowColor = 'rgba(0,0,0,0.45)';
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
       ctx.shadowBlur = 12;
-      ctx.shadowOffsetY = 4;
+      ctx.shadowOffsetY = 5;
     }
 
-    const grad = ctx.createLinearGradient(x, y, x, y + h);
-    grad.addColorStop(0, '#f7f4ee');
-    grad.addColorStop(1, '#e4ddd0');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, 10);
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.strokeStyle = dim ? 'rgba(40,90,60,0.35)' : 'rgba(40,120,70,0.8)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.fillStyle = '#fffcf6';
-    ctx.beginPath();
-    ctx.roundRect(x + 3, y + 3, w - 6, h - 6, 7);
-    ctx.fill();
-
+    // v6.2: TAŞ GÖVDESİ — şeffaf kenarlı PNG taşın kendisi (balon plaka YOK)
     const img = this.tileImages[meta.key];
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, radius);
+    ctx.clip();
     if (img) {
-      const pad = Math.max(3, w * 0.08);
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(x + pad, y + pad, w - pad * 2, h - pad * 2, 5);
-      ctx.clip();
-      ctx.drawImage(img, x + pad, y + pad, w - pad * 2, h - pad * 2);
-      ctx.restore();
+      // cover-fit: kare taş yüzeye tam oturur (PNG kare, yüzey kare)
+      const ir = img.width / img.height;
+      const tr = w / h;
+      let dw = w, dh = h, dx = x, dy = y;
+      if (tr > ir) { dh = w / ir; dy = y + (h - dh) / 2; }
+      else { dw = h * ir; dx = x + (w - dw) / 2; }
+      ctx.drawImage(img, dx, dy, dw, dh);
     } else {
-      ctx.font = `bold ${Math.floor(w * 0.42)}px serif`;
+      const g = ctx.createLinearGradient(x, y, x, y + h);
+      g.addColorStop(0, '#2a2a3a');
+      g.addColorStop(1, '#101018');
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, w, h);
+      ctx.font = `bold ${Math.floor(w * 0.4)}px serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(meta.emoji, x + w / 2, y + h / 2);
     }
-
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.restore();
+    // İnce üst çerçeve ışıltısı — sembolü kapatmaz, kenarı vurgular
+    ctx.save();
     ctx.beginPath();
-    ctx.roundRect(x + 5, y + 5, w - 10, h * 0.16, 4);
+    ctx.roundRect(x + 1, y + 1, w - 2, h - 2, radius);
+    ctx.clip();
+    const hl = ctx.createLinearGradient(x, y, x, y + h * 0.16);
+    hl.addColorStop(0, 'rgba(255,255,255,0.12)');
+    hl.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl;
+    ctx.fillRect(x, y, w, h * 0.16);
+    ctx.restore();
+
+    // Rim light — koyu zeminde taş öne çıksın
+    ctx.strokeStyle = dim ? 'rgba(220,210,190,0.10)' : 'rgba(255,236,200,0.30)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x + 0.75, y + 0.75, w - 1.5, h - 1.5, radius);
+    ctx.stroke();
+
+    // Alt kalınlık (3D taban)
+    const baseH = Math.max(3, h * 0.07);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.beginPath();
+    ctx.roundRect(x + 1, y + h - baseH, w - 2, baseH, 3);
     ctx.fill();
 
-    ctx.restore();
+    if (dim) {
+      ctx.fillStyle = 'rgba(6,12,10,0.32)';
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, radius);
+      ctx.fill();
+    }
   }
 
   startLoop() {
