@@ -1,459 +1,607 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stonebreaking Universe - by BATUPIA Studios</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            background: linear-gradient(135deg, #0a0a15 0%, #151525 50%, #0f1a2e 100%);
-            color: #fff;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-            touch-action: manipulation;
-        }
-        .hero {
-            text-align: center;
-            padding: 40px 20px 20px;
-            position: relative;
-        }
-        .logo {
-            font-size: 2.4rem;
-            font-weight: 900;
-            letter-spacing: 8px;
-            background: linear-gradient(90deg, #ff6b35, #ffd194, #ff6b35);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
-        }
-        @keyframes shine { to { background-position: 200% center; } }
-        .subtitle { font-size: 1rem; color: #888; letter-spacing: 4px; }
-        .tagline { font-size: 0.9rem; color: #ff8c42; margin-top: 8px; letter-spacing: 2px; }
-        .byline { font-size: 0.7rem; color: #555; margin-top: 6px; letter-spacing: 3px; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#07070f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>STONEBREAKING — Universe</title>
+  <link rel="stylesheet" href="css/animasyon.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #07070f;
+      color: #f4f4f8;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
 
-        .game-container { max-width: 600px; margin: 0 auto; padding: 10px 15px; }
-        .hud {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;
-        }
-        .hud-item {
-            text-align: center; padding: 10px 5px;
-            background: rgba(255,255,255,0.03); border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .hud-label { font-size: 0.6rem; color: #666; text-transform: uppercase; }
-        .hud-value { font-size: 1.2rem; font-weight: 800; color: #ff6b35; margin-top: 2px; }
+    /* ========== SPLASH ========== */
+    #screen-splash {
+      background:
+        linear-gradient(180deg, rgba(7,7,15,0.55) 0%, rgba(7,7,15,0.85) 100%),
+        url('06_GRAFIK/sahne_ana_menu.png') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+    #screen-splash .splash-stage {
+      position: relative;
+      width: 280px; height: 220px;
+      display: grid; place-items: center;
+    }
+    #screen-splash .byline-mini {
+      position: absolute;
+      bottom: 18px;
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.28);
+      text-transform: uppercase;
+    }
 
-        #gameCanvas {
-            width: 100%; border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            background: linear-gradient(180deg, #1a1a2a 0%, #252538 100%);
-            touch-action: none; display: block;
-        }
+    /* ========== CHARACTER PICK ========== */
+    #screen-character {
+      background:
+        linear-gradient(180deg, rgba(7,7,15,0.4) 0%, rgba(7,7,15,0.92) 100%),
+        url('06_GRAFIK/secim_ekrani_sirt_sirta.png') center top/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px 28px;
+      overflow-y: auto;
+    }
+    .screen-header {
+      text-align: center;
+      margin-bottom: 14px;
+      z-index: 2;
+    }
+    .screen-header h1 {
+      font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+      letter-spacing: 4px;
+      font-weight: 800;
+    }
+    .screen-header p {
+      color: #9a9ab0;
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+    .hero-duo {
+      width: min(420px, 92%);
+      margin: 0 auto 16px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      animation: fadeUp 0.7s ease-out both;
+    }
+    .hero-duo img {
+      width: 100%;
+      display: block;
+      max-height: 38vh;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+    .duo-picks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .duo-picks .pick-card img { aspect-ratio: 3/4; }
+    .pick-kor { --accent: #ff6b35; }
+    .pick-baam { --accent: #4ecdc4; }
+    .footer-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding-bottom: 10px;
+    }
 
-        .controls {
-            display: flex; gap: 8px; justify-content: center;
-            padding: 15px 0; flex-wrap: wrap;
-        }
-        .btn {
-            padding: 12px 24px; border-radius: 50px; border: none;
-            font-size: 0.85rem; font-weight: 700; cursor: pointer;
-            transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #ff6b35, #ff8c42);
-            color: #fff; box-shadow: 0 8px 25px rgba(255,107,53,0.3);
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.06); color: #aaa;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+    /* ========== SPIRIT PICK ========== */
+    #screen-spirit {
+      background: radial-gradient(ellipse at 50% 20%, #1a1030 0%, #07070f 70%);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px 28px;
+      overflow-y: auto;
+    }
+    .spirit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .spirit-grid .pick-card img { aspect-ratio: 3/4; }
+    .pick-mand { --accent: #c4a35a; }
+    .pick-zepy { --accent: #a8d8ea; }
+    .spirit-quote {
+      text-align: center;
+      min-height: 48px;
+      color: #c8c8d8;
+      font-style: italic;
+      font-size: 0.9rem;
+      margin: 14px auto 0;
+      max-width: 360px;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .spirit-quote.show { opacity: 1; }
 
-        .section-title {
-            text-align: center; font-size: 1.2rem;
-            margin: 30px 0 15px; letter-spacing: 3px; color: #ccc;
-        }
-        .characters, .collection-grid, .necklace-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 12px; max-width: 600px; margin: 0 auto 30px; padding: 0 15px;
-        }
-        .char-card, .necklace-card {
-            background: rgba(255,255,255,0.03); border-radius: 16px;
-            padding: 15px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s;
-        }
-        .char-card:hover, .necklace-card:hover { transform: translateY(-5px); }
-        .char-card img, .necklace-card img, .collection-grid img {
-            width: 100%; border-radius: 12px; margin-bottom: 10px;
-            aspect-ratio: 3/4; object-fit: cover;
-        }
-        .collection-grid img { aspect-ratio: 2/3; }
-        .necklace-card img { aspect-ratio: 1/1; object-fit: contain; background: #000; }
+    /* ========== GAME ========== */
+    #screen-game {
+      background: linear-gradient(160deg, #0a0a15, #12122a 50%, #0c1520);
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px 16px;
+      overflow-y: auto;
+    }
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .game-top .brand-logo { font-size: 0.85rem; letter-spacing: 3px; }
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .hud-item {
+      text-align: center;
+      padding: 8px 4px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .hud-label { font-size: 0.55rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+    .hud-value { font-size: 1.05rem; font-weight: 800; color: #ff6b35; margin-top: 2px; }
+    .canvas-wrap {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    }
+    #gameCanvas {
+      width: 100%;
+      display: block;
+      touch-action: none;
+      background: #141428;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 14px 0 6px;
+    }
+    .spirit-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.75rem;
+    }
+    .spirit-chip img {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
 
-        .footer {
-            text-align: center; padding: 30px 20px;
-            color: #444; font-size: 0.75rem;
-        }
-        .toast {
-            position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: linear-gradient(90deg, #ff6b35, #ff8c42);
-            color: #fff; padding: 12px 24px; border-radius: 50px;
-            font-weight: 700; z-index: 2000; opacity: 0;
-            transition: all 0.5s; pointer-events: none;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    </style>
+    /* Collection strip (in-game) */
+    .collection-strip {
+      max-width: 600px;
+      margin: 12px auto 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 0 2px 20px;
+    }
+    .collection-strip img {
+      width: 100%;
+      border-radius: 10px;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(90deg, #ff6b35, #ff8c42);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.45s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .sig {
+      text-align: center;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.22);
+      padding: 8px;
+    }
+  </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="logo">STONEBREAKING</div>
-        <div class="subtitle">Universe</div>
-        <div class="tagline">Dokun • Mühür Uyanır</div>
-        <div class="byline">by BATUPIA Studios</div>
-    </div>
 
-    <div class="game-container">
-        <div class="hud">
-            <div class="hud-item"><div class="hud-label">Seviye</div><div class="hud-value" id="level">1</div></div>
-            <div class="hud-item"><div class="hud-label">Puan</div><div class="hud-value" id="score">0</div></div>
-            <div class="hud-item"><div class="hud-label">Hamle</div><div class="hud-value" id="moves">0</div></div>
-            <div class="hud-item"><div class="hud-label">Mühür</div><div class="hud-value" id="seals">0</div></div>
+  <!-- ========== 1. AÇILIŞ ========== -->
+  <section id="screen-splash" class="screen active" aria-label="Açılış">
+    <div class="particles" id="splash-particles"></div>
+    <div class="splash-stage" id="splash-stage">
+      <div class="cin-stone" id="cin-stone" aria-hidden="true"></div>
+      <div class="cin-orb ates" id="orb-ates"></div>
+      <div class="cin-orb su" id="orb-su"></div>
+      <div class="cin-orb toprak" id="orb-toprak"></div>
+      <div class="cin-orb hava" id="orb-hava"></div>
+      <div class="logo-seal" id="logo-seal" style="display:none">
+        <span class="rune">◆</span>
+      </div>
+    </div>
+    <div class="brand-logo" id="brand-logo" style="opacity:0">STONEBREAKING</div>
+    <button class="btn-adventure" id="btn-start" style="opacity:0;pointer-events:none" type="button">
+      Maceraya Başla
+    </button>
+    <div class="byline-mini">by BATUPIA Studios</div>
+  </section>
+
+  <!-- ========== 2. KARAKTER SEÇİMİ ========== -->
+  <section id="screen-character" class="screen" aria-label="Karakter Seçimi">
+    <div class="screen-header">
+      <div class="brand-logo sm">STONEBREAKING</div>
+      <h1>Maskotunu Seç</h1>
+      <p>Kadın / Erkek — sırt sırta, aynı kader</p>
+    </div>
+    <div class="hero-duo">
+      <img src="06_GRAFIK/secim_ekrani_sirt_sirta.png" alt="Kor ve Baam sırt sırta" />
+    </div>
+    <div class="duo-picks">
+      <div class="pick-card pick-kor" data-mascot="erkek" data-ref="kor" role="button" tabindex="0">
+        <span class="badge">🔥</span>
+        <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Erkek maskot - Kor" />
+        <div class="meta">
+          <div class="name" style="color:#ff6b35">ERKEK</div>
+          <div class="role">Kor referanslı · Ateş</div>
         </div>
-        <canvas id="gameCanvas" width="600" height="720"></canvas>
-        <div class="controls">
-            <button class="btn btn-primary" onclick="game.newGame()">Yeni Oyun</button>
-            <button class="btn btn-secondary" onclick="game.shuffle()">Karıştır</button>
-            <button class="btn btn-secondary" onclick="game.hint()">İpucu</button>
+      </div>
+      <div class="pick-card pick-baam" data-mascot="kadin" data-ref="baam" role="button" tabindex="0">
+        <span class="badge">💧</span>
+        <img src="06_GRAFIK/baam_su_ruhu.png" alt="Kadın maskot - Baam" />
+        <div class="meta">
+          <div class="name" style="color:#4ecdc4">KADIN</div>
+          <div class="role">Baam referanslı · Su</div>
         </div>
+      </div>
     </div>
-
-    <div class="section-title">🔥 Element Ruhları</div>
-    <div class="characters">
-        <div class="char-card"><img src="06_GRAFIK/kor_ates_ruhu.png" alt="Kor"><div style="color:#ff6b35;font-weight:700">KOR</div><div style="font-size:0.75rem;color:#888">Ateş Ruhu</div></div>
-        <div class="char-card"><img src="06_GRAFIK/baam_su_ruhu.png" alt="Baam"><div style="color:#4ecdc4;font-weight:700">BAAM</div><div style="font-size:0.75rem;color:#888">Su Ruhu</div></div>
-        <div class="char-card"><img src="06_GRAFIK/mand_toprak_ruhu.png" alt="Mand"><div style="color:#c4a35a;font-weight:700">MAND</div><div style="font-size:0.75rem;color:#888">Toprak Ruhu</div></div>
-        <div class="char-card"><img src="06_GRAFIK/zepy_hava_ruhu.png" alt="Zepy"><div style="color:#a8d8ea;font-weight:700">ZEPY</div><div style="font-size:0.75rem;color:#888">Hava Ruhu</div></div>
+    <div class="footer-actions">
+      <button class="btn-ui" type="button" id="btn-char-back">Geri</button>
+      <button class="btn-ui primary" type="button" id="btn-char-next" disabled>Ruhunu Seç</button>
     </div>
+    <div class="sig">by BATUPIA Studios</div>
+  </section>
 
-    <div class="section-title">💎 Mühürlü Kolyeler</div>
-    <div class="necklace-grid">
-        <div class="necklace-card"><img src="06_GRAFIK/kolye_kor_muhurlu.png" alt="Kor Kolye"><div style="color:#ff6b35;font-weight:700;font-size:0.85rem">Kor'un Alev Kolyesi</div></div>
-        <div class="necklace-card"><img src="06_GRAFIK/kolye_baam_muhurlu.png" alt="Baam Kolye"><div style="color:#4ecdc4;font-weight:700;font-size:0.85rem">Baam'ın Su Kolyesi</div></div>
-        <div class="necklace-card"><img src="06_GRAFIK/kolye_mand_muhurlu.png" alt="Mand Kolye"><div style="color:#c4a35a;font-weight:700;font-size:0.85rem">Mand'ın Toprak Kolyesi</div></div>
-        <div class="necklace-card"><img src="06_GRAFIK/kolye_zepy_muhurlu.png" alt="Zepy Kolye"><div style="color:#a8d8ea;font-weight:700;font-size:0.85rem">Zepy'nin Hava Kolyesi</div></div>
+  <!-- ========== 3. RUH SEÇİMİ ========== -->
+  <section id="screen-spirit" class="screen" aria-label="Ruh Seçimi">
+    <div class="screen-header">
+      <div class="brand-logo sm">STONEBREAKING</div>
+      <h1>Element Ruhunu Seç</h1>
+      <p>4 ruh · 12 bölüm · Sonsuz mühür</p>
     </div>
-
-    <div class="section-title">🃏 Koleksiyon Kartları</div>
-    <div class="collection-grid">
-        <img src="06_GRAFIK/koleksiyon_karti_kor.png" alt="Kor Kart">
-        <img src="06_GRAFIK/koleksiyon_karti_baam.png" alt="Baam Kart">
-        <img src="06_GRAFIK/koleksiyon_karti_mand.png" alt="Mand Kart">
-        <img src="06_GRAFIK/koleksiyon_karti_zepy.png" alt="Zepy Kart">
+    <div class="spirit-grid" id="spirit-grid">
+      <div class="pick-card pick-kor" data-spirit="kor" role="button" tabindex="0">
+        <span class="badge">🔥</span>
+        <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Kor" />
+        <div class="meta">
+          <div class="name" style="color:#ff6b35">KOR</div>
+          <div class="role">Ateş Ruhu · Bölüm 1-3</div>
+        </div>
+      </div>
+      <div class="pick-card pick-baam" data-spirit="baam" role="button" tabindex="0">
+        <span class="badge">💧</span>
+        <img src="06_GRAFIK/baam_su_ruhu.png" alt="Baam" />
+        <div class="meta">
+          <div class="name" style="color:#4ecdc4">BAAM</div>
+          <div class="role">Su Ruhu · Bölüm 4-6</div>
+        </div>
+      </div>
+      <div class="pick-card pick-mand" data-spirit="mand" role="button" tabindex="0">
+        <span class="badge">🗿</span>
+        <img src="06_GRAFIK/mand_toprak_ruhu.png" alt="Mand" />
+        <div class="meta">
+          <div class="name" style="color:#c4a35a">MAND</div>
+          <div class="role">Toprak Ruhu · Bölüm 7-9</div>
+        </div>
+      </div>
+      <div class="pick-card pick-zepy" data-spirit="zepy" role="button" tabindex="0">
+        <span class="badge">💨</span>
+        <img src="06_GRAFIK/zepy_hava_ruhu.png" alt="Zepy" />
+        <div class="meta">
+          <div class="name" style="color:#a8d8ea">ZEPY</div>
+          <div class="role">Hava Ruhu · Bölüm 10-12</div>
+        </div>
+      </div>
     </div>
-
-    <div class="footer">
-        <p>© 2026 BATUPIA Studios • Batuhan</p>
-        <p>Stonebreaking Universe • Tüm hakları saklıdır</p>
+    <p class="spirit-quote" id="spirit-quote"></p>
+    <div class="footer-actions">
+      <button class="btn-ui" type="button" id="btn-spirit-back">Geri</button>
+      <button class="btn-ui primary" type="button" id="btn-spirit-next" disabled>Maceraya Gir</button>
     </div>
-    <div class="toast" id="toast"></div>
+    <div class="sig">by BATUPIA Studios</div>
+  </section>
 
-<script>
-// ============================
-// STONEBREAKING - KATMANLI MAHJONG v3
-// ============================
-class StonebreakingGame {
-    constructor() {
-        this.canvas = document.getElementById('gameCanvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.tileW = 44;
-        this.tileH = 56;
-        this.gap = 3;
-        this.layers = [];
-        this.selected = null;
-        this.score = 0;
-        this.moves = 0;
-        this.level = 1;
-        this.seals = 0;
-        this.particles = [];
-        
-        this.symbols = ['🔥','💧','🗿','💨','⚡','🌿','❄️','🌙'];
-        this.colors = ['#ff6b35','#4ecdc4','#c4a35a','#a8d8ea','#ffe66d','#95e1d3','#a8e6cf','#dda0dd'];
-        
-        this.setupInput();
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-        this.newGame();
-        this.loop();
+  <!-- ========== 4. OYUN ========== -->
+  <section id="screen-game" class="screen" aria-label="Oyun">
+    <div class="game-top">
+      <div class="brand-logo sm">STONEBREAKING</div>
+      <div class="spirit-chip" id="spirit-chip">
+        <img id="chip-img" src="06_GRAFIK/kor_ates_ruhu.png" alt="" />
+        <span id="chip-text">Kor · Ateş</span>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="hud-item"><div class="hud-label">Bölüm</div><div class="hud-value" id="hud-level">1</div></div>
+      <div class="hud-item"><div class="hud-label">Puan</div><div class="hud-value" id="hud-score">0</div></div>
+      <div class="hud-item"><div class="hud-label">Hamle</div><div class="hud-value" id="hud-moves">0</div></div>
+      <div class="hud-item"><div class="hud-label">Mühür</div><div class="hud-value" id="hud-seals">0</div></div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="600" height="720"></canvas>
+    </div>
+    <div class="controls">
+      <button class="btn-ui primary" type="button" id="btn-new">Yeni</button>
+      <button class="btn-ui" type="button" id="btn-shuffle">Karıştır</button>
+      <button class="btn-ui" type="button" id="btn-hint">İpucu</button>
+      <button class="btn-ui" type="button" id="btn-menu">Menü</button>
+    </div>
+    <div class="collection-strip" aria-label="Koleksiyon">
+      <img src="06_GRAFIK/koleksiyon_karti_kor.png" alt="Kor kart" />
+      <img src="06_GRAFIK/koleksiyon_karti_baam.png" alt="Baam kart" />
+      <img src="06_GRAFIK/koleksiyon_karti_mand.png" alt="Mand kart" />
+      <img src="06_GRAFIK/koleksiyon_karti_zepy.png" alt="Zepy kart" />
+    </div>
+    <div class="sig">© 2026 BATUPIA Studios · Stonebreaking Universe</div>
+  </section>
+
+  <!-- Bölüm geçiş overlay -->
+  <div id="chapter-overlay" aria-live="polite">
+    <div class="chapter-symbol" id="ch-symbol">🔥</div>
+    <h2 id="ch-title">Bölüm 1</h2>
+    <p id="ch-quote">…</p>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/game.js"></script>
+  <script>
+    // =========================================================
+    // STONEBREAKING App Controller v4.0
+    // =========================================================
+    const state = {
+      mascot: null,   // 'erkek' | 'kadin'
+      spirit: null,   // 'kor' | 'baam' | 'mand' | 'zepy'
+      chapter: 1,
+    };
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => [...document.querySelectorAll(s)];
+
+    function showToast(msg) {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
     }
-    
-    setupInput() {
-        const handle = (e) => {
-            e.preventDefault();
-            const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            const cx = e.touches ? e.touches[0].clientX : e.clientX;
-            const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            this.handleClick((cx - rect.left) * scaleX, (cy - rect.top) * scaleY);
+
+    function goScreen(id) {
+      $$('.screen').forEach((el) => {
+        if (el.classList.contains('active')) {
+          el.classList.add('exit');
+          el.classList.remove('active');
+          setTimeout(() => el.classList.remove('exit'), 700);
+        }
+      });
+      const next = document.getElementById(id);
+      if (!next) return;
+      // slight delay for crossfade feel
+      setTimeout(() => next.classList.add('active'), 80);
+    }
+
+    // ---------- Splash cinematic ----------
+    function spawnParticles(container, n = 18) {
+      if (!container) return;
+      const colors = ['#ff6b35', '#4ecdc4', '#c4a35a', '#a8d8ea', '#ffd194'];
+      for (let i = 0; i < n; i++) {
+        const s = document.createElement('span');
+        s.style.left = Math.random() * 100 + '%';
+        s.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px');
+        s.style.setProperty('--pcolor', colors[i % colors.length]);
+        s.style.animationDuration = (6 + Math.random() * 8) + 's';
+        s.style.animationDelay = (Math.random() * 5) + 's';
+        s.style.width = s.style.height = (2 + Math.random() * 4) + 'px';
+        container.appendChild(s);
+      }
+    }
+
+    async function playSplashCinematic() {
+      const stone = $('#cin-stone');
+      const seal = $('#logo-seal');
+      const logo = $('#brand-logo');
+      const btn = $('#btn-start');
+
+      spawnParticles($('#splash-particles'));
+
+      // 1) stone pulses already via CSS
+      await wait(1600);
+      // 2) crack
+      stone.classList.add('crack');
+      await wait(900);
+      stone.style.display = 'none';
+      // 3) four element orbs
+      ['ates', 'su', 'toprak', 'hava'].forEach((k, i) => {
+        setTimeout(() => $('#orb-' + k).classList.add('show'), i * 120);
+      });
+      await wait(1300);
+      // 4) seal + logo
+      ['ates', 'su', 'toprak', 'hava'].forEach((k) => {
+        const o = $('#orb-' + k);
+        o.style.transition = 'opacity 0.5s';
+        o.style.opacity = '0';
+      });
+      seal.style.display = 'grid';
+      logo.style.opacity = '1';
+      logo.style.animation = 'logoReveal 1.3s ease-out both, shimmer 4s linear 1.3s infinite';
+      await wait(1100);
+      // 5) button
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+      btn.style.animation = 'btnPulse 2.2s ease-in-out infinite, fadeUp 0.8s ease-out both';
+    }
+
+    function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+    // ---------- Chapter transition ----------
+    async function playChapterTransition(chapterNum) {
+      const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === chapterNum)
+        || { n: chapterNum, spirit: 'kor', title: 'Bölüm ' + chapterNum, region: '' };
+      const sp = (window.STONE_SPIRITS || {})[ch.spirit] || {};
+      const el = (window.STONE_ELEMENTS || {})[sp.element] || { emoji: '◆', color: '#ff6b35' };
+
+      const ov = $('#chapter-overlay');
+      $('#ch-symbol').textContent = el.emoji || '◆';
+      $('#ch-symbol').style.setProperty('--glow', el.color || '#ff6b35');
+      $('#ch-title').textContent = `Bölüm ${ch.n} · ${ch.title}`;
+      $('#ch-quote').textContent = sp.quote || '';
+      ov.classList.add('show');
+      await wait(2800);
+      ov.classList.remove('show');
+    }
+
+    // ---------- Game ----------
+    let game = null;
+
+    async function startGame() {
+      const canvas = $('#gameCanvas');
+      if (!game) {
+        game = new window.StonebreakingGame(canvas);
+        game.onToast = showToast;
+        game.onWin = async (lvl) => {
+          const next = Math.min(12, lvl + 1);
+          state.chapter = next;
+          game.level = next;
+          game.seals = Math.floor(game.seals) + 1;
+          await playChapterTransition(next);
+          game.newGame(next);
         };
-        this.canvas.addEventListener('mousedown', handle);
-        this.canvas.addEventListener('touchstart', handle, {passive: false});
+        await game.preload();
+        game.bindInput();
+        window.addEventListener('resize', () => game.resize());
+      }
+      const sp = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
+      const el = window.STONE_ELEMENTS[sp.element];
+      $('#chip-img').src = sp.portrait;
+      $('#chip-text').textContent = `${sp.name} · ${el ? el.name : ''}`;
+      // chapter from spirit default
+      const startCh = (sp.chapters && sp.chapters[0]) || 1;
+      state.chapter = startCh;
+      game.score = 0;
+      game.moves = 0;
+      game.seals = 0;
+      game.resize();
+      game.startLoop();
+      goScreen('screen-game');
+      await playChapterTransition(startCh);
+      game.newGame(startCh);
     }
-    
-    resize() {
-        const c = this.canvas.parentElement;
-        const w = Math.min(c.clientWidth, 600);
-        this.canvas.style.width = w + 'px';
-        this.canvas.style.height = (w * 1.2) + 'px';
-    }
-    
-    // KLASİK MAHJONG KATMAN DÜZENİ
-    newGame() {
-        this.layers = [];
-        this.selected = null;
-        this.particles = [];
-        this.updateHUD();
-        
-        // 5 katmanlı klasik düzen
-        const layout = [
-            { z: 0, rows: 8, cols: 12, ox: 1, oy: 1 },
-            { z: 1, rows: 6, cols: 10, ox: 2, oy: 2 },
-            { z: 2, rows: 4, cols: 8, ox: 3, oy: 3 },
-            { z: 3, rows: 2, cols: 6, ox: 4, oy: 4 },
-            { z: 4, rows: 1, cols: 4, ox: 5, oy: 5 },
-        ];
-        
-        let id = 0;
-        for (const L of layout) {
-            for (let r = 0; r < L.rows; r++) {
-                for (let c = 0; c < L.cols; c++) {
-                    if ((r === 0 || r === L.rows-1) && (c === 0 || c === L.cols-1)) continue;
-                    this.layers.push({
-                        id: id++, x: c + L.ox, y: r + L.oy, z: L.z,
-                        type: null, active: true, matched: false,
-                        blocked: false, glow: 0
-                    });
-                }
-            }
-        }
-        
-        // Eşleşecek çiftler oluştur
-        const active = this.layers.filter(t => t.active);
-        const pairs = [];
-        for (let i = 0; i < Math.floor(active.length / 2); i++) {
-            pairs.push(i % 8, i % 8);
-        }
-        for (let i = pairs.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
-        }
-        active.forEach((t, i) => { t.type = pairs[i]; });
-        
-        this.updateBlocked();
-    }
-    
-    // Üstünde taş olanları ve sıkışık olanları bloke et
-    updateBlocked() {
-        for (const t of this.layers) {
-            if (!t.active || t.matched) { t.blocked = true; continue; }
-            
-            // Üstünde taş var mı?
-            const top = this.layers.some(o =>
-                o.active && !o.matched && o.z === t.z + 1 &&
-                Math.abs(o.x - t.x) <= 0.5 && Math.abs(o.y - t.y) <= 0.5
-            );
-            if (top) { t.blocked = true; continue; }
-            
-            // Sol ve sağ kontrol
-            const left = this.layers.some(o =>
-                o.active && !o.matched && o.z === t.z &&
-                o.x === t.x - 1 && o.y === t.y
-            );
-            const right = this.layers.some(o =>
-                o.active && !o.matched && o.z === t.z &&
-                o.x === t.x + 1 && o.y === t.y
-            );
-            t.blocked = left && right;
-        }
-    }
-    
-    handleClick(mx, my) {
-        const offsetX = (this.canvas.width - (14 * (this.tileW + this.gap))) / 2;
-        const offsetY = 10;
-        
-        // En üst katmandan başlayarak tıklanan yeri bul (ters z sıralaması)
-        const sorted = [...this.layers].sort((a, b) => b.z - a.z);
-        
-        for (const t of sorted) {
-            if (!t.active || t.matched || t.blocked) continue;
-            const scale = 1 - (t.z * 0.04);
-            const tx = offsetX + t.x * (this.tileW + this.gap) * scale + (t.z * 3);
-            const ty = offsetY + t.y * (this.tileH + this.gap) * scale - (t.z * 4);
-            const tw = this.tileW * scale;
-            const th = this.tileH * scale;
-            
-            if (mx >= tx && mx <= tx + tw && my >= ty && my <= ty + th) {
-                if (this.selected === t) {
-                    this.selected = null; t.glow = 0;
-                } else if (!this.selected) {
-                    this.selected = t; t.glow = 1;
-                    this.showToast(this.symbols[t.type] + ' seçildi');
-                } else {
-                    this.moves++;
-                    if (this.selected.type === t.type) {
-                        this.selected.matched = true; t.matched = true;
-                        this.selected.active = false; t.active = false;
-                        this.score += 100 + (this.level * 15);
-                        this.seals += 0.5;
-                        this.spawnParticles(tx + tw/2, ty + th/2, this.colors[t.type]);
-                        this.selected = null;
-                        this.showToast('✨ Mühür kırıldı!');
-                        this.updateBlocked();
-                        this.checkWin();
-                    } else {
-                        this.selected.glow = 0; this.selected = null;
-                        this.showToast('❌ Eşleşmedi');
-                    }
-                    this.updateHUD();
-                }
-                break;
-            }
-        }
-    }
-    
-    spawnParticles(x, y, color) {
-        for (let i = 0; i < 10; i++) {
-            this.particles.push({
-                x, y, vx: (Math.random() - 0.5) * 5, vy: (Math.random() - 0.5) * 5,
-                life: 1, color, size: Math.random() * 3 + 2
-            });
-        }
-    }
-    
-    checkWin() {
-        const rem = this.layers.filter(t => t.active && !t.matched).length;
-        if (rem === 0) {
-            this.level++;
-            this.showToast('🏆 Seviye ' + this.level);
-            setTimeout(() => this.newGame(), 600);
-        }
-    }
-    
-    shuffle() {
-        const active = this.layers.filter(t => t.active && !t.matched);
-        const types = active.map(t => t.type);
-        for (let i = types.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [types[i], types[j]] = [types[j], types[i]];
-        }
-        active.forEach((t, i) => t.type = types[i]);
-        this.selected = null;
-        this.showToast('🔄 Karıştırıldı');
-    }
-    
-    hint() {
-        const free = this.layers.filter(t => t.active && !t.matched && !t.blocked);
-        for (let i = 0; i < free.length; i++) {
-            for (let j = i + 1; j < free.length; j++) {
-                if (free[i].type === free[j].type) {
-                    free[i].glow = 2; free[j].glow = 2;
-                    setTimeout(() => { free[i].glow = 0; free[j].glow = 0; }, 1200);
-                    this.showToast('💡 İpucu'); return;
-                }
-            }
-        }
-    }
-    
-    updateHUD() {
-        document.getElementById('score').textContent = this.score;
-        document.getElementById('moves').textContent = this.moves;
-        document.getElementById('level').textContent = this.level;
-        document.getElementById('seals').textContent = Math.floor(this.seals);
-    }
-    
-    showToast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2500);
-    }
-    
-    draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        const offsetX = (this.canvas.width - (14 * (this.tileW + this.gap))) / 2;
-        const offsetY = 10;
-        
-        // Z'ye göre sırala (alttan üste)
-        const sorted = [...this.layers].sort((a, b) => a.z - b.z);
-        
-        for (const t of sorted) {
-            if (!t.active || t.matched) continue;
-            const scale = 1 - (t.z * 0.04);
-            const x = offsetX + t.x * (this.tileW + this.gap) * scale + (t.z * 3);
-            const y = offsetY + t.y * (this.tileH + this.gap) * scale - (t.z * 4);
-            const w = this.tileW * scale;
-            const h = this.tileH * scale;
-            
-            // Gölge (3D efekt)
-            this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            this.ctx.fillRect(x + 4, y + 4, w, h);
-            
-            // Glow
-            if (t.glow > 0) { this.ctx.shadowColor = this.colors[t.type]; this.ctx.shadowBlur = 20 * t.glow; }
-            else { this.ctx.shadowBlur = 0; }
-            
-            // Taş gövdesi
-            const grad = this.ctx.createLinearGradient(x, y, x, y + h);
-            grad.addColorStop(0, t.blocked ? '#1a1a28' : '#2d2d45');
-            grad.addColorStop(1, t.blocked ? '#111118' : '#1a1a2e');
-            this.ctx.fillStyle = grad;
-            this.ctx.beginPath();
-            this.ctx.roundRect(x, y, w, h, 8);
-            this.ctx.fill();
-            
-            // Kenarlık
-            this.ctx.strokeStyle = t.glow > 0 ? this.colors[t.type] : (t.blocked ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.1)');
-            this.ctx.lineWidth = t.glow > 0 ? 2 : 1;
-            this.ctx.beginPath();
-            this.ctx.roundRect(x, y, w, h, 8);
-            this.ctx.stroke();
-            
-            // Sembol
-            this.ctx.shadowBlur = 0;
-            this.ctx.font = `bold ${22 * scale}px serif`;
-            this.ctx.textAlign = 'center'; this.ctx.textBaseline = 'middle';
-            this.ctx.fillStyle = t.blocked ? '#444' : '#fff';
-            this.ctx.fillText(this.symbols[t.type], x + w/2, y + h/2);
-            
-            // Bloklu işareti (küçük kilit)
-            if (t.blocked) {
-                this.ctx.fillStyle = 'rgba(255,255,255,0.1)';
-                this.ctx.font = `${10 * scale}px serif`;
-                this.ctx.fillText('🔒', x + w - 10, y + 10);
-            }
-        }
-        
-        // Parçacıklar
-        this.ctx.shadowBlur = 0;
-        for (let i = this.particles.length - 1; i >= 0; i--) {
-            const p = this.particles[i];
-            p.x += p.vx; p.y += p.vy; p.life -= 0.03;
-            if (p.life <= 0) { this.particles.splice(i, 1); continue; }
-            this.ctx.globalAlpha = p.life;
-            this.ctx.fillStyle = p.color;
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-            this.ctx.fill();
-        }
-        this.ctx.globalAlpha = 1;
-    }
-    
-    loop() { this.draw(); requestAnimationFrame(() => this.loop()); }
-}
 
-const game = new StonebreakingGame();
-</script>
+    // ---------- Selections ----------
+    function setupPick(containerSel, attr, onPick) {
+      $$(containerSel + ' .pick-card').forEach((card) => {
+        const activate = () => {
+          $$(containerSel + ' .pick-card').forEach((c) => c.classList.remove('selected'));
+          card.classList.add('selected');
+          onPick(card.getAttribute(attr), card);
+        };
+        card.addEventListener('click', activate);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
+        });
+      });
+    }
+
+    function initUI() {
+      $('#btn-start').addEventListener('click', () => goScreen('screen-character'));
+
+      setupPick('#screen-character', 'data-mascot', (v) => {
+        state.mascot = v;
+        $('#btn-char-next').disabled = false;
+      });
+      $('#btn-char-back').addEventListener('click', () => goScreen('screen-splash'));
+      $('#btn-char-next').addEventListener('click', () => {
+        if (!state.mascot) return;
+        goScreen('screen-spirit');
+      });
+
+      setupPick('#screen-spirit', 'data-spirit', (v) => {
+        state.spirit = v;
+        $('#btn-spirit-next').disabled = false;
+        const sp = window.STONE_SPIRITS[v];
+        const q = $('#spirit-quote');
+        if (sp) {
+          q.textContent = `"${sp.quote}"`;
+          q.classList.add('show');
+        }
+      });
+      $('#btn-spirit-back').addEventListener('click', () => goScreen('screen-character'));
+      $('#btn-spirit-next').addEventListener('click', () => {
+        if (!state.spirit) return;
+        startGame();
+      });
+
+      $('#btn-new').addEventListener('click', () => game && game.newGame(state.chapter));
+      $('#btn-shuffle').addEventListener('click', () => game && game.shuffle());
+      $('#btn-hint').addEventListener('click', () => game && game.hint());
+      $('#btn-menu').addEventListener('click', () => {
+        if (game) game.stopLoop();
+        goScreen('screen-splash');
+      });
+    }
+
+    // Boot
+    document.addEventListener('DOMContentLoaded', () => {
+      initUI();
+      playSplashCinematic();
+      // warm preload game assets in background
+      const warm = new Image();
+      warm.src = '06_GRAFIK/tas_sembol_su_2.png';
+    });
+  </script>
 </body>
 </html>
