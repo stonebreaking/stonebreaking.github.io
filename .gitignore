@@ -5,5 +5,7 @@
 .cache/
 node_modules/
 .DS_Store
+
+# Video raw + frame dump (analiz md + contact sheet commitlenir)
 uploads/*.mp4
 17_REFERANSLAR/video_analiz/frames/
