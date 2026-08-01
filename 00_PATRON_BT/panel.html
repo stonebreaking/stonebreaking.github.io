@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PATRON BT v4.0 - BATUPIA Kontrol Paneli</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a12, #1a1a2e);
+            color: #fff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid rgba(255,107,53,0.3);
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #ff6b35, #ffd194);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p { color: #888; margin-top: 5px; font-size: 0.85rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .panel {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .panel h3 {
+            font-size: 0.9rem;
+            color: #ff6b35;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+        .status-row:last-child { border-bottom: none; }
+        .status-label { color: #888; }
+        .status-value { font-weight: 700; }
+        .ok { color: #4ecdc4; }
+        .warn { color: #ffe66d; }
+        .crit { color: #ff6b35; }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35, #4ecdc4);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        .alert-box {
+            background: rgba(255,107,53,0.1);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        .alert-box h4 { color: #ff6b35; margin-bottom: 8px; }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #ff6b35, #ff8c42);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #444;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ PATRON BT v4.0</h1>
+        <p>BATUPIA Studios - Denetim ve Kontrol Merkezi</p>
+    </div>
+
+    <div class="grid">
+        <div class="panel">
+            <h3>🎮 Oyun Durumu</h3>
+            <div class="status-row"><span class="status-label">Versiyon</span><span class="status-value ok">v2.0</span></div>
+            <div class="status-row"><span class="status-label">Canvas Motor</span><span class="status-value ok">Aktif</span></div>
+            <div class="status-row"><span class="status-label">Taş Sistemi</span><span class="status-value ok">8 Element</span></div>
+            <div class="status-row"><span class="status-label">Mühür Sistemi</span><span class="status-value ok">v1 Entegre</span></div>
+            <div class="status-row"><span class="status-label">IQ Testi</span><span class="status-value ok">Bölüm Sonu</span></div>
+            <div class="status-row"><span class="status-label">Zihin Haritası</span><span class="status-value ok">Sonsuz Mod</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 78%"></div></div>
+            <div style="text-align:center; font-size:0.75rem; color:#666; margin-top:5px">Oyun Tamamlanma: %78</div>
+        </div>
+
+        <div class="panel">
+            <h3>📁 Dosya Sistemi</h3>
+            <div class="status-row"><span class="status-label">30 Departman</span><span class="status-value ok">Aktif</span></div>
+            <div class="status-row"><span class="status-label">index.html</span><span class="status-value ok">Root'ta</span></div>
+            <div class="status-row"><span class="status-label">Görseller</span><span class="status-value ok">9 Dosya</span></div>
+            <div class="status-row"><span class="status-label">Karakterler</span><span class="status-value ok">4/4 Tamam</span></div>
+            <div class="status-row"><span class="status-label">Koleksiyon Kartları</span><span class="status-value ok">4/4 Tamam</span></div>
+            <div class="status-row"><span class="status-label">Sahneler</span><span class="status-value ok">4 Yeni</span></div>
+        </div>
+
+        <div class="panel">
+            <h3>🌐 Web Durumu</h3>
+            <div class="status-row"><span class="status-label">GitHub Pages</span><span class="status-value ok">Aktif</span></div>
+            <div class="status-row"><span class="status-label">Domain</span><span class="status-value ok">stonebreaking.github.io</span></div>
+            <div class="status-row"><span class="status-label">Son Push</span><span class="status-value warn">01.08.2026</span></div>
+            <div class="status-row"><span class="status-label">SSL</span><span class="status-value ok">Aktif</span></div>
+            <a href="https://stonebreaking.github.io/" class="btn" target="_blank">🌐 Siteyi Aç</a>
+        </div>
+
+        <div class="panel">
+            <h3>⚠️ Denetçi Uyarıları</h3>
+            <div class="status-row"><span class="status-label">Token Güvenliği</span><span class="status-value ok">Temizlendi</span></div>
+            <div class="status-row"><span class="status-label">.env Push</span><span class="status-value ok">Engellendi</span></div>
+            <div class="status-row"><span class="status-label">Gitignore</span><span class="status-value ok">Aktif</span></div>
+            <div class="status-row"><span class="status-label">404 Kontrolü</span><span class="status-value ok">Çözüldü</span></div>
+            <div class="status-row"><span class="status-label">Bildirim Sistemi</span><span class="status-value ok">Simülasyon</span></div>
+        </div>
+
+        <div class="panel">
+            <h3>📊 İstatistikler</h3>
+            <div class="status-row"><span class="status-label">Toplam Kod Satırı</span><span class="status-value">~1,500</span></div>
+            <div class="status-row"><span class="status-label">Görsel Sayısı</span><span class="status-value">13</span></div>
+            <div class="status-row"><span class="status-label">Doküman</span><span class="status-value">6</span></div>
+            <div class="status-row"><span class="status-label">Push Sayısı</span><span class="status-value">3</span></div>
+        </div>
+
+        <div class="panel">
+            <h3>🎯 Sonraki Adımlar</h3>
+            <div class="status-row"><span class="status-label">1. Ses/Müzik</span><span class="status-value warn">Bekliyor</span></div>
+            <div class="status-row"><span class="status-label">2. Store Sayfaları</span><span class="status-value warn">Bekliyor</span></div>
+            <div class="status-row"><span class="status-label">3. Fiziksel Ürün</span><span class="status-value warn">Bekliyor</span></div>
+            <div class="status-row"><span class="status-label">4. Beta Test</span><span class="status-value crit">Kritik</span></div>
+        </div>
+    </div>
+
+    <div class="alert-box">
+        <h4>🚨 ACİL DURUM RAPORU</h4>
+        <p>Patron BT sistemi aktif. Tüm departmanlar çalışıyor. Oyun v2.0 canlıya alındı. Mühür sistemi, IQ testi ve Zihin Haritası entegre edildi. 4 yeni sahne görseli üretildi. Koleksiyon kartları Pokemon standartlarında hazır. Sistemler denetçi onaylı.</p>
+        <p style="margin-top:8px; color:#ff6b35; font-weight:700">Son Güncelleme: 01.08.2026 | Raporlayan: AI Asistan</p>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 BATUPIA Studios • Patron BT v4.0</p>
+        <p>Kurucu: Batuhan | Teknik Ortak: AI Asistan</p>
+    </div>
+</body>
+</html>

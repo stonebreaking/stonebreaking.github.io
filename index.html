@@ -9,195 +9,375 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            background: linear-gradient(135deg, #0a0a15 0%, #151525 50%, #0f1a2e 100%);
             color: #fff;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
+            touch-action: manipulation;
         }
         .hero {
             text-align: center;
-            padding: 60px 20px 40px;
+            padding: 40px 20px 30px;
             position: relative;
+            overflow: hidden;
         }
         .hero::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 50% 30%, rgba(255,100,50,0.15) 0%, transparent 60%);
+            background: radial-gradient(circle at 50% 30%, rgba(255,100,50,0.12) 0%, transparent 60%);
             pointer-events: none;
         }
         .logo {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 900;
-            letter-spacing: 8px;
-            background: linear-gradient(90deg, #ff6b35, #f7c59f, #ff6b35);
+            letter-spacing: 10px;
+            background: linear-gradient(90deg, #ff6b35, #ffd194, #ff6b35);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 40px rgba(255,107,53,0.3);
-            animation: glow 3s ease-in-out infinite;
+            animation: shine 3s linear infinite;
         }
-        @keyframes glow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.3); }
-        }
+        @keyframes shine { to { background-position: 200% center; } }
         .subtitle {
-            font-size: 1.2rem;
-            color: #a0a0b0;
-            margin-top: 10px;
-            letter-spacing: 4px;
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 8px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
         }
         .tagline {
             font-size: 1rem;
-            color: #ff6b35;
-            margin-top: 15px;
-            letter-spacing: 2px;
+            color: #ff8c42;
+            margin-top: 12px;
+            letter-spacing: 3px;
             font-weight: 300;
         }
+
+        /* Mühür Paneli */
+        .seal-panel {
+            max-width: 600px;
+            margin: 0 auto 15px;
+            padding: 0 20px;
+        }
+        .seal-track {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .seal-node {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.4s;
+        }
+        .seal-node.locked { opacity: 0.3; filter: grayscale(1); }
+        .seal-node.active {
+            border-color: #ff6b35;
+            box-shadow: 0 0 20px rgba(255,107,53,0.4);
+            animation: pulse 2s infinite;
+        }
+        .seal-node.unlocked {
+            border-color: #4ecdc4;
+            background: rgba(78,205,196,0.15);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        .seal-label {
+            font-size: 0.6rem;
+            color: #666;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* HUD */
         .game-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
-        }
-        #gameCanvas {
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
-            background: linear-gradient(180deg, #1e1e2f 0%, #2d2d44 100%);
-            touch-action: none;
+            padding: 10px 15px;
         }
         .hud {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.05);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
         }
         .hud-item {
             text-align: center;
+            padding: 10px 5px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
         }
         .hud-label {
-            font-size: 0.7rem;
-            color: #888;
+            font-size: 0.6rem;
+            color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .hud-value {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 800;
             color: #ff6b35;
+            margin-top: 2px;
+        }
+
+        /* Canvas */
+        #gameCanvas {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
+            background: linear-gradient(180deg, #1a1a2a 0%, #252538 100%);
+            touch-action: none;
+            display: block;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 15px 0;
+            flex-wrap: wrap;
         }
         .btn {
-            display: inline-block;
-            padding: 14px 32px;
+            padding: 12px 24px;
             border-radius: 50px;
             border: none;
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 5px;
+            letter-spacing: 1px;
         }
         .btn-primary {
             background: linear-gradient(90deg, #ff6b35, #ff8c42);
             color: #fff;
-            box-shadow: 0 8px 30px rgba(255,107,53,0.3);
+            box-shadow: 0 8px 25px rgba(255,107,53,0.3);
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,107,53,0.4); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(255,107,53,0.4); }
         .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            color: #ccc;
+            background: rgba(255,255,255,0.06);
+            color: #aaa;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-        .controls {
-            text-align: center;
+        .btn-secondary:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        /* IQ Test Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
             padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: linear-gradient(180deg, #1e1e30, #151525);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b35, #ffd194);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iq-question {
+            font-size: 1.1rem;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .iq-options {
+            display: grid;
+            gap: 10px;
+        }
+        .iq-option {
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .iq-option:hover { background: rgba(255,107,53,0.15); border-color: #ff6b35; }
+        .iq-option.correct { background: rgba(78,205,196,0.2); border-color: #4ecdc4; }
+        .iq-option.wrong { background: rgba(255,80,80,0.2); border-color: #ff5050; }
+
+        /* Mind Map */
+        .mind-map {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+            display: none;
+        }
+        .mind-map.active { display: block; }
+        .mind-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+        .mind-node {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .mind-node:hover { transform: scale(1.1); }
+        .mind-node.cleared { background: rgba(78,205,196,0.2); border-color: #4ecdc4; }
+        .mind-node.current { box-shadow: 0 0 15px rgba(255,107,53,0.5); border-color: #ff6b35; }
+
+        /* Character Gallery */
+        .section-title {
+            text-align: center;
+            font-size: 1.3rem;
+            margin: 30px 0 15px;
+            letter-spacing: 3px;
+            color: #ccc;
         }
         .characters {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 12px;
             max-width: 600px;
-            margin: 30px auto;
-            padding: 0 20px;
+            margin: 0 auto;
+            padding: 0 15px;
         }
         .char-card {
             background: rgba(255,255,255,0.03);
             border-radius: 16px;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.3s;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        .char-card:hover { transform: translateY(-5px); }
-        .char-icon {
-            font-size: 3rem;
+        .char-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
+        .char-card img {
+            width: 100%;
+            border-radius: 12px;
             margin-bottom: 10px;
+            aspect-ratio: 3/4;
+            object-fit: cover;
         }
         .char-name {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .char-element {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             opacity: 0.7;
         }
         .fire { color: #ff6b35; }
         .water { color: #4ecdc4; }
         .earth { color: #c4a35a; }
         .air { color: #a8d8ea; }
+
+        /* Collection Cards */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            padding: 0 15px;
+        }
+        .collection-grid img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            transition: transform 0.3s;
+        }
+        .collection-grid img:hover { transform: scale(1.03) rotate(-1deg); }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(90deg, #ff6b35, #ff8c42);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(255,107,53,0.4);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.5s;
+            pointer-events: none;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         .footer {
             text-align: center;
-            padding: 40px 20px;
-            color: #555;
-            font-size: 0.8rem;
+            padding: 30px 20px;
+            color: #444;
+            font-size: 0.75rem;
         }
-        .seal-badge {
-            display: inline-block;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff6b35, #f7c59f);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin: 0 auto 10px;
-            box-shadow: 0 0 30px rgba(255,107,53,0.4);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        .collection-banner {
-            background: linear-gradient(90deg, rgba(255,107,53,0.1), rgba(78,205,196,0.1));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px;
-            max-width: 600px;
-            margin: 20px auto;
-            text-align: center;
-        }
+
         @media (max-width: 480px) {
-            .logo { font-size: 2rem; letter-spacing: 4px; }
-            .characters { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .char-card { padding: 15px; }
+            .logo { font-size: 2rem; letter-spacing: 5px; }
+            .seal-node { width: 36px; height: 36px; font-size: 1rem; }
+            .characters, .collection-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
         }
     </style>
 </head>
 <body>
     <div class="hero">
         <div class="logo">BATUPIA</div>
-        <div class="subtitle">STONEBREAKING UNIVERSE</div>
+        <div class="subtitle">Stonebreaking Universe</div>
         <div class="tagline">Dokun • Mühür Uyanır</div>
+    </div>
+
+    <!-- Mühür Paneli -->
+    <div class="seal-panel">
+        <div class="seal-track">
+            <div class="seal-node unlocked" title="Alev Mühürü">🔥</div>
+            <div class="seal-node active" title="Dalgacık Mühürü">💧</div>
+            <div class="seal-node locked" title="Kristal Mühür">🗿</div>
+            <div class="seal-node locked" title="Zephir Mühür">💨</div>
+            <div class="seal-node locked" title="Evren Mühür">⭐</div>
+        </div>
+        <div class="seal-label">Mühür İlerlemesi</div>
     </div>
 
     <div class="game-container">
@@ -219,41 +399,66 @@
                 <div class="hud-value" id="seals">0</div>
             </div>
         </div>
-        <canvas id="gameCanvas" width="600" height="700"></canvas>
+        <canvas id="gameCanvas" width="600" height="720"></canvas>
         <div class="controls">
             <button class="btn btn-primary" onclick="game.newGame()">Yeni Oyun</button>
             <button class="btn btn-secondary" onclick="game.shuffle()">Karıştır</button>
             <button class="btn btn-secondary" onclick="game.hint()">İpucu</button>
+            <button class="btn btn-secondary" onclick="toggleMindMap()">Zihin Haritası</button>
         </div>
     </div>
 
-    <div class="collection-banner">
-        <div class="seal-badge">🔥</div>
-        <h3>Koleksiyon Kartları Yakında!</h3>
-        <p style="opacity:0.7; margin-top:8px;">4 Element Ruhu • 12 Bölüm • Sınırlı Üretim</p>
+    <!-- Zihin Haritası -->
+    <div class="mind-map" id="mindMap">
+        <div class="section-title">🧠 Sonsuz Zihin Haritası</div>
+        <div class="mind-grid" id="mindGrid"></div>
     </div>
 
+    <!-- IQ Test Modal -->
+    <div class="modal-overlay" id="iqModal">
+        <div class="modal">
+            <h2>🧩 Mühür Sınavı</h2>
+            <p style="color:#888; font-size:0.85rem;">Bölüm sonu IQ testi</p>
+            <div class="iq-question" id="iqQuestion">Yükleniyor...</div>
+            <div class="iq-options" id="iqOptions"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Karakterler -->
+    <div class="section-title">🔥 Element Ruhları</div>
     <div class="characters">
         <div class="char-card">
-            <div class="char-icon">🔥</div>
+            <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Kor" loading="lazy">
             <div class="char-name fire">KOR</div>
             <div class="char-element">Ateş Ruhu</div>
         </div>
         <div class="char-card">
-            <div class="char-icon">💧</div>
+            <img src="06_GRAFIK/baam_su_ruhu.png" alt="Baam" loading="lazy">
             <div class="char-name water">BAAM</div>
             <div class="char-element">Su Ruhu</div>
         </div>
         <div class="char-card">
-            <div class="char-icon">🗿</div>
+            <img src="06_GRAFIK/mand_toprak_ruhu.png" alt="Mand" loading="lazy">
             <div class="char-name earth">MAND</div>
             <div class="char-element">Toprak Ruhu</div>
         </div>
         <div class="char-card">
-            <div class="char-icon">💨</div>
+            <img src="06_GRAFIK/zepy_hava_ruhu.png" alt="Zepy" loading="lazy">
             <div class="char-name air">ZEPY</div>
             <div class="char-element">Hava Ruhu</div>
         </div>
+    </div>
+
+    <!-- Koleksiyon Kartları -->
+    <div class="section-title">🃏 Koleksiyon Kartları</div>
+    <div class="collection-grid">
+        <img src="06_GRAFIK/koleksiyon_karti_kor.png" alt="Kor Kart" loading="lazy">
+        <img src="06_GRAFIK/koleksiyon_karti_baam.png" alt="Baam Kart" loading="lazy">
+        <img src="06_GRAFIK/koleksiyon_karti_mand.png" alt="Mand Kart" loading="lazy">
+        <img src="06_GRAFIK/koleksiyon_karti_zepy.png" alt="Zepy Kart" loading="lazy">
     </div>
 
     <div class="footer">
@@ -262,65 +467,78 @@
     </div>
 
     <script>
+    // ========================
+    // BATUPIA OYUN MOTORU v2
+    // ========================
     class BatupiaGame {
         constructor() {
             this.canvas = document.getElementById('gameCanvas');
             this.ctx = this.canvas.getContext('2d');
-            this.tileSize = 50;
-            this.gap = 4;
-            this.cols = 10;
-            this.rows = 12;
+            this.tileW = 52;
+            this.tileH = 64;
+            this.gap = 6;
+            this.cols = 8;
+            this.rows = 10;
             this.tiles = [];
             this.selected = null;
             this.score = 0;
             this.moves = 0;
             this.level = 1;
             this.seals = 0;
+            this.totalMatches = 0;
+            this.particles = [];
+            
+            // Element sembolleri (emoji yerine çizim + emoji hibrit)
             this.symbols = ['🔥','💧','🗿','💨','⚡','🌿','❄️','🌙'];
             this.colors = ['#ff6b35','#4ecdc4','#c4a35a','#a8d8ea','#ffe66d','#95e1d3','#a8e6cf','#dda0dd'];
+            this.names = ['Ateş','Su','Toprak','Hava','Yıldırım','Doğa','Buz','Ay'];
             
-            this.canvas.addEventListener('click', (e) => this.handleClick(e));
-            this.canvas.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const rect = this.canvas.getBoundingClientRect();
-                const scaleX = this.canvas.width / rect.width;
-                const scaleY = this.canvas.height / rect.height;
-                this.handleClick({
-                    offsetX: (touch.clientX - rect.left) * scaleX,
-                    offsetY: (touch.clientY - rect.top) * scaleY
-                });
-            });
-            
+            this.setupInput();
             this.resize();
             window.addEventListener('resize', () => this.resize());
             this.newGame();
             this.loop();
+            
+            // Bildirim sistemi
+            this.scheduleNotifications();
+        }
+        
+        setupInput() {
+            const handle = (e) => {
+                e.preventDefault();
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / rect.width;
+                const scaleY = this.canvas.height / rect.height;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                this.handleClick(
+                    (clientX - rect.left) * scaleX,
+                    (clientY - rect.top) * scaleY
+                );
+            };
+            this.canvas.addEventListener('mousedown', handle);
+            this.canvas.addEventListener('touchstart', handle, {passive: false});
         }
         
         resize() {
             const container = this.canvas.parentElement;
-            const w = container.clientWidth;
+            const w = Math.min(container.clientWidth, 600);
             this.canvas.style.width = w + 'px';
-            this.canvas.style.height = (w * 1.16) + 'px';
+            this.canvas.style.height = (w * 1.2) + 'px';
         }
         
         newGame() {
             this.tiles = [];
             this.selected = null;
-            this.score = 0;
-            this.moves = 0;
-            this.seals = 0;
+            this.particles = [];
             this.updateHUD();
             
-            const totalTiles = this.cols * this.rows;
+            const total = this.cols * this.rows;
             const pairs = [];
-            for (let i = 0; i < totalTiles / 2; i++) {
+            for (let i = 0; i < total / 2; i++) {
                 const type = i % this.symbols.length;
                 pairs.push(type, type);
             }
-            
-            // Fisher-Yates shuffle
             for (let i = pairs.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
@@ -334,52 +552,62 @@
                         type: pairs[idx],
                         symbol: this.symbols[pairs[idx]],
                         color: this.colors[pairs[idx]],
+                        name: this.names[pairs[idx]],
                         active: true,
                         matched: false,
-                        scale: 1,
-                        glow: 0
+                        glow: 0,
+                        pop: 0
                     });
                     idx++;
                 }
             }
         }
         
-        handleClick(e) {
-            const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            const mx = (e.offsetX || e.clientX - rect.left) * scaleX;
-            const my = (e.offsetY || e.clientY - rect.top) * scaleY;
-            
-            const offsetX = (this.canvas.width - (this.cols * (this.tileSize + this.gap))) / 2;
-            const offsetY = 20;
+        handleClick(mx, my) {
+            const offsetX = (this.canvas.width - (this.cols * (this.tileW + this.gap))) / 2;
+            const offsetY = 15;
             
             for (let t of this.tiles) {
                 if (!t.active || t.matched) continue;
-                const tx = offsetX + t.x * (this.tileSize + this.gap);
-                const ty = offsetY + t.y * (this.tileSize + this.gap);
+                const tx = offsetX + t.x * (this.tileW + this.gap);
+                const ty = offsetY + t.y * (this.tileH + this.gap);
                 
-                if (mx >= tx && mx <= tx + this.tileSize && my >= ty && my <= ty + this.tileSize) {
+                if (mx >= tx && mx <= tx + this.tileW && my >= ty && my <= ty + this.tileH) {
                     if (this.selected === t) {
                         this.selected = null;
                         t.glow = 0;
                     } else if (!this.selected) {
                         this.selected = t;
                         t.glow = 1;
+                        this.showToast(t.name + ' Ruhu seçildi');
                     } else {
                         this.moves++;
                         if (this.selected.type === t.type) {
+                            // EŞLEŞME!
                             this.selected.matched = true;
                             t.matched = true;
                             this.selected.active = false;
                             t.active = false;
-                            this.score += 100 + (this.level * 10);
+                            this.score += 100 + (this.level * 15);
                             this.seals += 0.5;
+                            this.totalMatches++;
+                            
+                            // Patlama efekti
+                            this.spawnParticles(tx + this.tileW/2, ty + this.tileH/2, t.color);
+                            this.spawnParticles(
+                                offsetX + this.selected.x * (this.tileW + this.gap) + this.tileW/2,
+                                offsetY + this.selected.y * (this.tileH + this.gap) + this.tileH/2,
+                                this.selected.color
+                            );
+                            
                             this.selected = null;
+                            this.showToast('✨ ' + t.name + ' Mühürü kırıldı!');
                             this.checkWin();
+                            this.checkSealUnlock();
                         } else {
                             this.selected.glow = 0;
                             this.selected = null;
+                            this.showToast('❌ Eşleşmedi');
                         }
                         this.updateHUD();
                     }
@@ -388,14 +616,38 @@
             }
         }
         
+        spawnParticles(x, y, color) {
+            for (let i = 0; i < 12; i++) {
+                this.particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    life: 1,
+                    color,
+                    size: Math.random() * 4 + 2
+                });
+            }
+        }
+        
+        checkSealUnlock() {
+            const thresholds = [10, 25, 50, 100, 500];
+            const names = ['Alev Mühürü', 'Dalgacık Mühürü', 'Kristal Mühür', 'Zephir Mühür', 'Evren Mühürü'];
+            for (let i = 0; i < thresholds.length; i++) {
+                if (this.totalMatches === thresholds[i]) {
+                    this.showToast('🔓 ' + names[i] + ' AÇILDI!');
+                    if (i === 1) setTimeout(() => this.showIQTest(), 1500);
+                }
+            }
+        }
+        
         checkWin() {
             const remaining = this.tiles.filter(t => t.active && !t.matched).length;
             if (remaining === 0) {
                 this.level++;
+                this.showToast('🏆 Seviye ' + this.level + ' Açıldı!');
                 setTimeout(() => {
-                    alert('Mühür Açıldı! Seviye ' + this.level);
-                    this.newGame();
-                }, 500);
+                    this.showIQTest();
+                }, 800);
             }
         }
         
@@ -410,8 +662,10 @@
                 t.type = types[i];
                 t.symbol = this.symbols[types[i]];
                 t.color = this.colors[types[i]];
+                t.name = this.names[types[i]];
             });
             this.selected = null;
+            this.showToast('🔄 Taşlar karıştırıldı');
         }
         
         hint() {
@@ -424,11 +678,44 @@
                         setTimeout(() => {
                             if (!active[i].matched) active[i].glow = 0;
                             if (!active[j].matched) active[j].glow = 0;
-                        }, 1000);
+                        }, 1200);
+                        this.showToast('💡 İpucu gösterildi');
                         return;
                     }
                 }
             }
+        }
+        
+        showIQTest() {
+            const questions = [
+                { q: '4 Element Ruhu\nhangi sırayla uyanır?', options: ['Ateş→Su→Toprak→Hava', 'Toprak→Ateş→Hava→Su', 'Hava→Su→Ateş→Toprak'], a: 0 },
+                { q: 'Kor hangi vadide\ndoğmuştur?', options: ['Ateş Vadisi', 'Derinlikler', 'Kristal Mağara'], a: 0 },
+                { q: '3 Common kart = ?', options: ['1 Rare', '1 Epic', '2 Rare'], a: 0 },
+                { q: 'Zepy hangi bölgede\nyaşar?', options: ['Gökyüzü Tapınağı', 'Volkan', 'Okyanus'], a: 0 }
+            ];
+            const q = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById('iqQuestion').textContent = q.q;
+            const opts = document.getElementById('iqOptions');
+            opts.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'iq-option';
+                div.textContent = opt;
+                div.onclick = () => {
+                    if (i === q.a) {
+                        div.classList.add('correct');
+                        this.showToast('🧠 Doğru! IQ +10');
+                        this.score += 50;
+                        this.updateHUD();
+                        setTimeout(() => document.getElementById('iqModal').classList.remove('active'), 1000);
+                    } else {
+                        div.classList.add('wrong');
+                        this.showToast('🤔 Tekrar dene');
+                    }
+                };
+                opts.appendChild(div);
+            });
+            document.getElementById('iqModal').classList.add('active');
         }
         
         updateHUD() {
@@ -438,56 +725,124 @@
             document.getElementById('seals').textContent = Math.floor(this.seals);
         }
         
+        showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+        
+        scheduleNotifications() {
+            // Simüle edilmiş push bildirimleri
+            const msgs = [
+                '🔥 Kor seni bekliyor!',
+                '💧 Yeni mühür yakında açılacak',
+                '🃏 Koleksiyon kartı kazanmak için oyna',
+                '🧠 Günlük IQ testini çöz'
+            ];
+            let i = 0;
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    this.showToast(msgs[i % msgs.length]);
+                    i++;
+                }
+            }, 20000);
+        }
+        
         draw() {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             
-            const offsetX = (this.canvas.width - (this.cols * (this.tileSize + this.gap))) / 2;
-            const offsetY = 20;
+            const offsetX = (this.canvas.width - (this.cols * (this.tileW + this.gap))) / 2;
+            const offsetY = 15;
             
+            // Arka plan ızgara
+            this.ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+            this.ctx.lineWidth = 1;
+            for (let i = 0; i <= this.cols; i++) {
+                const x = offsetX + i * (this.tileW + this.gap) - this.gap/2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, offsetY);
+                this.ctx.lineTo(x, offsetY + this.rows * (this.tileH + this.gap));
+                this.ctx.stroke();
+            }
+            
+            // Taşlar
             for (let t of this.tiles) {
                 if (!t.active || t.matched) continue;
-                const x = offsetX + t.x * (this.tileSize + this.gap);
-                const y = offsetY + t.y * (this.tileSize + this.gap);
+                const x = offsetX + t.x * (this.tileW + this.gap);
+                const y = offsetY + t.y * (this.tileH + this.gap);
                 
-                // Glow effect
+                // Glow
                 if (t.glow > 0) {
                     this.ctx.shadowColor = t.color;
-                    this.ctx.shadowBlur = 20 * t.glow;
+                    this.ctx.shadowBlur = 25 * t.glow;
                 } else {
                     this.ctx.shadowBlur = 0;
                 }
                 
-                // Tile background
-                const grad = this.ctx.createLinearGradient(x, y, x, y + this.tileSize);
-                grad.addColorStop(0, '#2a2a40');
+                // Taş gövdesi (3D efekt)
+                const grad = this.ctx.createLinearGradient(x, y, x, y + this.tileH);
+                grad.addColorStop(0, '#2d2d45');
+                grad.addColorStop(0.5, '#252538');
                 grad.addColorStop(1, '#1a1a2e');
                 this.ctx.fillStyle = grad;
                 this.ctx.beginPath();
-                this.ctx.roundRect(x, y, this.tileSize, this.tileSize, 8);
+                this.ctx.roundRect(x, y, this.tileW, this.tileH, 10);
                 this.ctx.fill();
                 
-                // Border
-                this.ctx.strokeStyle = t.glow > 0 ? t.color : 'rgba(255,255,255,0.1)';
-                this.ctx.lineWidth = t.glow > 0 ? 2 : 1;
+                // Üst parlama
+                const topGrad = this.ctx.createLinearGradient(x, y, x, y + this.tileH * 0.4);
+                topGrad.addColorStop(0, 'rgba(255,255,255,0.08)');
+                topGrad.addColorStop(1, 'transparent');
+                this.ctx.fillStyle = topGrad;
                 this.ctx.beginPath();
-                this.ctx.roundRect(x, y, this.tileSize, this.tileSize, 8);
+                this.ctx.roundRect(x, y, this.tileW, this.tileH * 0.4, [10, 10, 0, 0]);
+                this.ctx.fill();
+                
+                // Kenarlık
+                this.ctx.strokeStyle = t.glow > 0 ? t.color : 'rgba(255,255,255,0.08)';
+                this.ctx.lineWidth = t.glow > 0 ? 2.5 : 1.2;
+                this.ctx.beginPath();
+                this.ctx.roundRect(x, y, this.tileW, this.tileH, 10);
                 this.ctx.stroke();
                 
-                // Symbol
+                // Sembol (orta)
                 this.ctx.shadowBlur = 0;
-                this.ctx.font = '28px serif';
+                this.ctx.font = 'bold 28px "Segoe UI Emoji", "Apple Color Emoji", serif';
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
-                this.ctx.fillText(t.symbol, x + this.tileSize/2, y + this.tileSize/2);
+                this.ctx.fillText(t.symbol, x + this.tileW/2, y + this.tileH/2 - 2);
                 
-                // Element color dot
+                // Element adı (alt)
+                this.ctx.font = 'bold 9px sans-serif';
+                this.ctx.fillStyle = t.color;
+                this.ctx.fillText(t.name.toUpperCase(), x + this.tileW/2, y + this.tileH - 10);
+                
+                // Renk noktası
                 this.ctx.fillStyle = t.color;
                 this.ctx.beginPath();
-                this.ctx.arc(x + this.tileSize - 8, y + 8, 3, 0, Math.PI * 2);
+                this.ctx.arc(x + this.tileW - 8, y + 8, 3, 0, Math.PI * 2);
                 this.ctx.fill();
             }
             
+            // Parçacıklar
             this.ctx.shadowBlur = 0;
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                const p = this.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.03;
+                if (p.life <= 0) {
+                    this.particles.splice(i, 1);
+                    continue;
+                }
+                this.ctx.globalAlpha = p.life;
+                this.ctx.fillStyle = p.color;
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+            this.ctx.globalAlpha = 1;
         }
         
         loop() {
@@ -496,7 +851,36 @@
         }
     }
     
+    // Zihin Haritası
+    function toggleMindMap() {
+        const mm = document.getElementById('mindMap');
+        mm.classList.toggle('active');
+        if (mm.classList.contains('active')) {
+            game.showToast('🧠 Sonsuz Zihin Haritası açıldı');
+        }
+    }
+    
+    function initMindMap() {
+        const grid = document.getElementById('mindGrid');
+        for (let i = 0; i < 36; i++) {
+            const node = document.createElement('div');
+            node.className = 'mind-node' + (i === 0 ? ' current' : i < 5 ? ' cleared' : '');
+            node.textContent = i < 5 ? '✓' : i === 0 ? '★' : '?';
+            node.onclick = () => {
+                if (node.classList.contains('cleared')) {
+                    game.showToast('✅ Bu bölüm tamamlandı');
+                } else if (node.classList.contains('current')) {
+                    game.showToast('🎯 Şu an buradasın');
+                } else {
+                    game.showToast('🔒 Önce önceki bölümleri tamamla');
+                }
+            };
+            grid.appendChild(node);
+        }
+    }
+    
     const game = new BatupiaGame();
+    initMindMap();
     </script>
 </body>
 </html>
