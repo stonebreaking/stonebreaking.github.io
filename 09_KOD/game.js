@@ -1,6 +1,7 @@
 // =========================================================
-// STONEBREAKING — Triple Match / Tray Motoru v5.0
-// Kader videosundan: 3 aynı taş + üst tepsi + IQ + kombo
+// STONEBREAKING — Triple Match / Tray Motoru v5.2
+// Birleşik film sahnesi: tepsi CANVAS içinde, taş tepsiye uçar,
+// 3 aynı = nefes/mühür. Click coords = logical CSS px.
 // =========================================================
 
 const ELEMENTS = {
@@ -33,35 +34,34 @@ const CHAPTERS = [
 ];
 
 const TRAY_MAX = 5;
-const COMBO_WINDOW_MS = 3800;
+const COMBO_WINDOW_MS = 4000;
 
 // Hikaye nefesleri — Good/Great/Perfect YOK
-// Kombo yükseldikçe evrenin nefesi derinleşir
 const SEAL_BREATHS = {
-  spark: [ // 1-2
+  spark: [
     { text: 'Kıvılcım',  sub: 'Taş uyandı' },
     { text: 'Dokunuş',  sub: 'Mühür titredi' },
     { text: 'İlk Nefes', sub: 'Evren fark etti' },
   ],
-  breath: [ // 3-5
-    { text: 'Nefes Al',   sub: 'Ritim tutuldu' },
-    { text: 'Nabız',      sub: 'Taşlar konuşuyor' },
+  breath: [
+    { text: 'Nefes Al',    sub: 'Ritim tutuldu' },
+    { text: 'Nabız',       sub: 'Taşlar konuşuyor' },
     { text: 'Derin Nefes', sub: 'Mühür ısınıyor' },
   ],
-  awaken: [ // 6-9
+  awaken: [
     { text: 'Uyanış',     sub: 'Ruh seni gördü' },
     { text: 'Çatlak',     sub: 'Mühür aralandı' },
     { text: 'Alev Dansı', sub: 'Elementler hizalandı' },
   ],
-  seal: [ // 10-14
-    { text: 'Mühür Kır',    sub: 'Zincir koptu' },
-    { text: 'Taş Fısıltı',  sub: 'Kadim söz duyuldu' },
-    { text: 'Ruh Yankısı',  sub: 'Kor · Baam · Mand · Zepy' },
+  seal: [
+    { text: 'Mühür Kır',   sub: 'Zincir koptu' },
+    { text: 'Taş Fısıltı', sub: 'Kadim söz duyuldu' },
+    { text: 'Ruh Yankısı', sub: 'Kor · Baam · Mand · Zepy' },
   ],
-  legend: [ // 15+
-    { text: 'Evren Nefesi',  sub: 'Dört ruh bir arada' },
-    { text: 'Efsane Mühür',  sub: 'Kader senin elinde' },
-    { text: 'Sonsuz Kıvılcım', sub: 'STONEBREAKING' },
+  legend: [
+    { text: 'Evren Nefesi',     sub: 'Dört ruh bir arada' },
+    { text: 'Efsane Mühür',     sub: 'Kader senin elinde' },
+    { text: 'Sonsuz Kıvılcım',  sub: 'STONEBREAKING' },
   ],
 };
 
@@ -80,20 +80,30 @@ class StonebreakingGame {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.tileW = 58;
-    this.tileH = 72;
+    this.viewW = 360;
+    this.viewH = 640;
+    this.dpr = 1;
+
+    this.tileW = 56;
+    this.tileH = 70;
     this.gapX = 3;
-    this.gapY = 3;
-    this.zLift = 11;
-    this.sceneImg = null;
-    this.sceneKey = '';
+    this.zLift = 10;
+
+    // Tray geometry (inside canvas, top)
+    this.trayY = 12;
+    this.trayH = 78;
+    this.trayPad = 10;
+    this.slotW = 48;
+    this.slotH = 60;
 
     this.tiles = [];
-    this.tray = []; // { type, id }
+    this.tray = []; // landed slots { type, id }
     this.history = [];
-    this.flying = [];
+    this.flying = []; // in-flight to tray
     this.particles = [];
     this.tileImages = {};
+    this.sceneImg = null;
+    this.sceneKey = '';
     this.ready = false;
 
     this.level = 1;
@@ -105,12 +115,13 @@ class StonebreakingGame {
     this.seals = 0;
     this.hintsLeft = 1;
     this.undosLeft = 1;
-    this.shufflesLeft = 1;
+    this.shufflesLeft = 0;
     this.startedAt = 0;
     this.comboUntil = 0;
-    this.feedback = null; // { text, color, life }
+    this.feedback = null;
     this.hintIds = new Set();
     this.locked = false;
+    this.inputLocked = false; // while resolving
 
     this.types = [
       { key: 'ates_1',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/tas_sembol_ates_1.png' },
@@ -128,11 +139,12 @@ class StonebreakingGame {
     this.onHUD = null;
     this.onTray = null;
     this.onFail = null;
+    this.onBreath = null;
     this._bound = false;
     this._raf = 0;
+    this._winScheduled = false;
   }
 
-  // ---- lifecycle ----
   async preload() {
     await Promise.all(this.types.map((t) => new Promise((resolve) => {
       const img = new Image();
@@ -146,14 +158,19 @@ class StonebreakingGame {
   bindInput() {
     if (this._bound) return;
     this._bound = true;
+    const toLocal = (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const pt = e.touches ? e.touches[0] : e;
+      // CRITICAL: logical CSS pixels (not device pixels)
+      const mx = ((pt.clientX - rect.left) / rect.width) * this.viewW;
+      const my = ((pt.clientY - rect.top) / rect.height) * this.viewH;
+      return { mx, my };
+    };
     const handle = (e) => {
       e.preventDefault();
-      if (this.locked) return;
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.canvas.width / rect.width;
-      const scaleY = this.canvas.height / rect.height;
-      const pt = e.touches ? e.touches[0] : e;
-      this.handleClick((pt.clientX - rect.left) * scaleX, (pt.clientY - rect.top) * scaleY);
+      if (this.locked || this.inputLocked) return;
+      const { mx, my } = toLocal(e);
+      this.handleClick(mx, my);
     };
     this.canvas.addEventListener('mousedown', handle);
     this.canvas.addEventListener('touchstart', handle, { passive: false });
@@ -162,26 +179,37 @@ class StonebreakingGame {
   resize() {
     const parent = this.canvas.parentElement;
     if (!parent) return;
-    // Fill available game stage (mobile-first full width)
     const w = Math.max(280, Math.floor(parent.clientWidth || 360));
     let h = Math.floor(parent.clientHeight || 0);
-    if (h < 200) h = Math.floor(w * 1.35);
-    // Internal resolution tracks display for crisp tiles
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    this.canvas.style.width = w + 'px';
-    this.canvas.style.height = h + 'px';
-    this.canvas.width = Math.floor(w * dpr);
-    this.canvas.height = Math.floor(h * dpr);
-    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (h < 240) h = Math.floor(window.innerHeight * 0.62) || Math.floor(w * 1.4);
+
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.viewW = w;
     this.viewH = h;
+    this.canvas.style.width = w + 'px';
+    this.canvas.style.height = h + 'px';
+    this.canvas.width = Math.floor(w * this.dpr);
+    this.canvas.height = Math.floor(h * this.dpr);
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+
+    // Tray metrics
+    this.trayY = 10;
+    this.trayPad = 10;
+    const trayInnerW = Math.min(w - 24, 360);
+    this.trayW = trayInnerW;
+    this.trayX = (w - trayInnerW) / 2;
+    this.slotGap = 6;
+    this.slotW = Math.floor((trayInnerW - this.trayPad * 2 - this.slotGap * (TRAY_MAX - 1)) / TRAY_MAX);
+    this.slotH = Math.floor(this.slotW / 0.78);
+    this.trayH = this.slotH + this.trayPad * 2;
+    this.boardTop = this.trayY + this.trayH + 8;
+
     this.fitTilesToView();
   }
 
   fitTilesToView() {
-    const W = this.viewW || 360;
-    const H = this.viewH || 480;
-    // Estimate board footprint from current tiles
+    const W = this.viewW;
+    const H = this.viewH - this.boardTop - 8;
     let maxC = 6, maxR = 7, maxZ = 3;
     for (const t of this.tiles) {
       if (!t.active) continue;
@@ -189,25 +217,30 @@ class StonebreakingGame {
       maxR = Math.max(maxR, t.row + 1);
       maxZ = Math.max(maxZ, t.z);
     }
-    const padX = 12;
-    const padY = 16;
-    const tw = Math.floor((W - padX * 2 - maxZ * 5) / (maxC + 0.2));
-    const th = Math.floor((H - padY * 2 + maxZ * 8) / (maxR * 0.55 + 1.1));
-    // Keep mahjong-ish ratio ~ 0.78
-    let tileW = Math.max(40, Math.min(78, tw - 2));
-    let tileH = Math.max(50, Math.min(96, Math.floor(tileW / 0.78)));
+    const tw = Math.floor((W - 16 - maxZ * 4) / (maxC + 0.15));
+    const th = Math.floor((H - 8 + maxZ * 6) / (maxR * 0.52 + 1.05));
+    let tileW = Math.max(42, Math.min(72, tw - 2));
+    let tileH = Math.max(52, Math.min(90, Math.floor(tileW / 0.78)));
     if (tileH > th) {
-      tileH = Math.max(50, th - 2);
-      tileW = Math.max(40, Math.floor(tileH * 0.78));
+      tileH = Math.max(52, th - 2);
+      tileW = Math.max(42, Math.floor(tileH * 0.78));
     }
     this.tileW = tileW;
     this.tileH = tileH;
-    this.gapX = Math.max(2, Math.floor(tileW * 0.06));
-    this.gapY = Math.max(2, Math.floor(tileH * 0.05));
-    this.zLift = Math.max(8, Math.floor(tileH * 0.14));
+    this.gapX = Math.max(2, Math.floor(tileW * 0.05));
+    this.zLift = Math.max(8, Math.floor(tileH * 0.13));
   }
 
-  // ---- level build ----
+  setScene(url) {
+    if (!url || url === this.sceneKey) return;
+    this.sceneKey = url;
+    const img = new Image();
+    img.onload = () => { this.sceneImg = img; };
+    img.onerror = () => { this.sceneImg = null; };
+    img.src = url;
+  }
+
+  // ---- level ----
   newGame(level = this.level) {
     this.level = level;
     this.tiles = [];
@@ -218,6 +251,8 @@ class StonebreakingGame {
     this.hintIds.clear();
     this.feedback = null;
     this.locked = false;
+    this.inputLocked = false;
+    this._winScheduled = false;
 
     this.iq = 40 + (level - 1) * 2;
     this.combo = 0;
@@ -232,17 +267,9 @@ class StonebreakingGame {
     this.comboUntil = 0;
 
     const layout = this.buildLayout(level);
-    // count cells
-    let cells = layout.length;
-    // ensure multiple of 3
-    while (cells % 3 !== 0) {
-      // drop last
-      layout.pop();
-      cells--;
-    }
+    while (layout.length % 3 !== 0) layout.pop();
 
-    // build type bag: groups of 3
-    const groups = cells / 3;
+    const groups = layout.length / 3;
     const bag = [];
     for (let i = 0; i < groups; i++) {
       const t = i % this.types.length;
@@ -263,6 +290,7 @@ class StonebreakingGame {
         type: bag[i],
         active: true,
         glow: 0,
+        free: true,
       });
     });
 
@@ -272,11 +300,10 @@ class StonebreakingGame {
   }
 
   buildLayout(level) {
-    // Organic stacked pyramid-ish layouts scaled by level
     const out = [];
-    const baseCols = 6 + (level % 3); // 6-8
-    const baseRows = 7 + (level % 2); // 7-8
-    const layers = 3 + Math.min(2, Math.floor(level / 3)); // 3-5
+    const baseCols = 6 + (level % 3);
+    const baseRows = 7 + (level % 2);
+    const layers = 3 + Math.min(2, Math.floor(level / 3));
 
     for (let z = 0; z < layers; z++) {
       const cols = baseCols - z;
@@ -285,17 +312,13 @@ class StonebreakingGame {
       const oy = z * 0.5;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          // carve organic edges
           if (z === 0 && ((r === 0 && c === 0) || (r === 0 && c === cols - 1))) continue;
           if (z === 0 && r === rows - 1 && (c === 0 || c === cols - 1)) continue;
-          // holes in middle layers for interest
           if (z === 1 && r === Math.floor(rows / 2) && c === Math.floor(cols / 2)) continue;
           out.push({ col: c + ox, row: r + oy, z });
         }
       }
     }
-
-    // Mobile-friendly density (~30-54 tiles) — video gibi okunaklı yığın
     if (out.length > 54) out.length = 54 - (54 % 3);
     if (out.length < 30) {
       for (let i = out.length; i < 30; i++) {
@@ -305,7 +328,6 @@ class StonebreakingGame {
     return out;
   }
 
-  // ---- free rule: only top-uncovered ----
   updateFree() {
     for (const t of this.tiles) {
       if (!t.active) { t.free = false; continue; }
@@ -320,8 +342,9 @@ class StonebreakingGame {
 
   // ---- geometry ----
   boardOrigin() {
-    const W = this.viewW || this.canvas.clientWidth || 360;
-    const H = this.viewH || this.canvas.clientHeight || 480;
+    const W = this.viewW;
+    const boardAreaTop = this.boardTop;
+    const boardAreaH = this.viewH - boardAreaTop - 6;
     let minC = 99, maxC = 0, minR = 99, maxR = 0, maxZ = 0;
     for (const t of this.tiles) {
       if (!t.active) continue;
@@ -336,21 +359,43 @@ class StonebreakingGame {
     const boardH = rows * (this.tileH * 0.52) + this.tileH + maxZ * 2;
     return {
       x: (W - boardW) / 2 - minC * (this.tileW + this.gapX),
-      y: Math.max(10, (H - boardH) / 2 - minR * (this.tileH * 0.52)),
-      boardW, boardH, W, H,
+      y: boardAreaTop + Math.max(4, (boardAreaH - boardH) / 2) - minR * (this.tileH * 0.52),
+      boardW, boardH,
     };
   }
 
   tileRect(t) {
     const o = this.boardOrigin();
-    const x = o.x + t.col * (this.tileW + this.gapX) + t.z * 5;
-    const y = o.y + t.row * (this.tileH * 0.52) - t.z * this.zLift;
-    return { x, y, w: this.tileW, h: this.tileH };
+    return {
+      x: o.x + t.col * (this.tileW + this.gapX) + t.z * 5,
+      y: o.y + t.row * (this.tileH * 0.52) - t.z * this.zLift,
+      w: this.tileW,
+      h: this.tileH,
+    };
   }
 
-  // ---- input ----
+  /** Target rect for tray slot index (0..TRAY_MAX-1) */
+  slotRect(index) {
+    const x = this.trayX + this.trayPad + index * (this.slotW + this.slotGap);
+    const y = this.trayY + this.trayPad;
+    return { x, y, w: this.slotW, h: this.slotH };
+  }
+
+  /** Where the next inserted tile of this type will land */
+  predictSlotIndex(type) {
+    // same grouping rule as insertTray
+    let idx = -1;
+    for (let i = 0; i < this.tray.length; i++) {
+      if (this.tray[i].type === type) idx = i;
+    }
+    if (idx >= 0) return Math.min(idx + 1, TRAY_MAX - 1);
+    return Math.min(this.tray.length, TRAY_MAX - 1);
+  }
+
+  // ---- input / pick ----
   handleClick(mx, my) {
-    if (this.tray.length >= TRAY_MAX) {
+    const pending = this.tray.length + this.flying.length;
+    if (pending >= TRAY_MAX) {
       this.toast('Tepsi dolu! Geri al veya karıştır.');
       if (typeof this.onFail === 'function') this.onFail('tray_full');
       return;
@@ -363,7 +408,7 @@ class StonebreakingGame {
         if (!t.free) {
           this.toast('🔒 Altta kalan taş');
           t.glow = 0.6;
-          setTimeout(() => { if (t.active) t.glow = 0; }, 250);
+          setTimeout(() => { if (t.active) t.glow = 0; }, 220);
           return;
         }
         this.pickTile(t);
@@ -374,9 +419,8 @@ class StonebreakingGame {
 
   pickTile(t) {
     if (!t.active || !t.free) return;
-    if (this.tray.length >= TRAY_MAX) return;
+    if (this.tray.length + this.flying.length >= TRAY_MAX) return;
 
-    // snapshot for undo
     this.history.push({
       tileId: t.id,
       tray: this.tray.map((x) => ({ ...x })),
@@ -390,28 +434,40 @@ class StonebreakingGame {
     t.active = false;
     this.moves++;
     this.hintIds.delete(t.id);
+    this.updateFree();
 
-    // fly animation toward top-center (tray is outside canvas; animate upward)
     const r = this.tileRect(t);
-    const W = this.viewW || 360;
+    // Predict landing slot AFTER current tray + in-flight of same type
+    const ghostTray = this.tray.map((s) => s.type);
+    this.flying.forEach((f) => {
+      // simulate insert
+      let idx = -1;
+      for (let i = 0; i < ghostTray.length; i++) if (ghostTray[i] === f.type) idx = i;
+      if (idx >= 0) ghostTray.splice(idx + 1, 0, f.type);
+      else ghostTray.push(f.type);
+    });
+    let landIdx = -1;
+    for (let i = 0; i < ghostTray.length; i++) if (ghostTray[i] === t.type) landIdx = i;
+    if (landIdx >= 0) landIdx = landIdx + 1;
+    else landIdx = ghostTray.length;
+    landIdx = Math.min(landIdx, TRAY_MAX - 1);
+
+    const target = this.slotRect(landIdx);
+
     this.flying.push({
       type: t.type,
-      x: r.x, y: r.y,
-      tx: W / 2 - this.tileW / 2,
-      ty: -50,
-      life: 0,
-      dur: 0.28,
+      id: t.id,
+      x0: r.x, y0: r.y, w0: r.w, h0: r.h,
+      x1: target.x, y1: target.y, w1: target.w, h1: target.h,
+      t: 0,
+      dur: 0.32,
+      landed: false,
     });
 
-    // insert into tray: prefer grouping same types together
-    this.insertTray(t.type, t.id);
-    this.updateFree();
-    this.resolveMatches();
     this.emitAll();
   }
 
   insertTray(type, id) {
-    // find last index of same type
     let idx = -1;
     for (let i = 0; i < this.tray.length; i++) {
       if (this.tray[i].type === type) idx = i;
@@ -420,39 +476,40 @@ class StonebreakingGame {
     else this.tray.push({ type, id });
   }
 
+  onFlyLanded(f) {
+    this.insertTray(f.type, f.id);
+    this.resolveMatches();
+    this.emitAll();
+  }
+
   resolveMatches() {
-    // repeatedly clear triples
-    let cleared = false;
-    const counts = {};
-    this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
-
-    for (const [typeStr, count] of Object.entries(counts)) {
-      if (count >= 3) {
-        const type = Number(typeStr);
-        // remove first 3 of this type
-        let left = 3;
-        const removedAt = [];
-        this.tray = this.tray.filter((s, i) => {
-          if (s.type === type && left > 0) {
-            left--;
-            removedAt.push(i);
-            return false;
-          }
-          return true;
-        });
-        cleared = true;
-        this.onTriple(type);
+    let any = false;
+    // keep clearing while triples exist
+    for (let guard = 0; guard < 8; guard++) {
+      const counts = {};
+      this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
+      let clearedType = null;
+      for (const [typeStr, count] of Object.entries(counts)) {
+        if (count >= 3) { clearedType = Number(typeStr); break; }
       }
+      if (clearedType === null) break;
+
+      // remove first 3 of type
+      let left = 3;
+      const removeIdx = [];
+      this.tray.forEach((s, i) => {
+        if (s.type === clearedType && left > 0) { removeIdx.push(i); left--; }
+      });
+      // shatter at their slot positions before remove
+      removeIdx.forEach((i) => {
+        const sr = this.slotRect(i);
+        this.spawnShatter(sr.x + sr.w / 2, sr.y + sr.h / 2, this.types[clearedType].color);
+      });
+      this.tray = this.tray.filter((_, i) => !removeIdx.includes(i));
+      this.onTriple(clearedType);
+      any = true;
     }
 
-    if (cleared) {
-      // chain if more triples formed
-      const again = {};
-      this.tray.forEach((s) => { again[s.type] = (again[s.type] || 0) + 1; });
-      if (Object.values(again).some((c) => c >= 3)) this.resolveMatches();
-    }
-
-    // fail check
     if (this.tray.length >= TRAY_MAX) {
       const c = {};
       this.tray.forEach((s) => { c[s.type] = (c[s.type] || 0) + 1; });
@@ -461,8 +518,8 @@ class StonebreakingGame {
         if (typeof this.onFail === 'function') this.onFail('tray_full');
       }
     }
-
-    this.checkWin();
+    if (any) this.checkWin();
+    else this.checkWin();
   }
 
   onTriple(type) {
@@ -479,28 +536,13 @@ class StonebreakingGame {
     this.iq = Math.round((this.iq + gain) * 10) / 10;
 
     const meta = this.types[type] || this.types[0];
-    // shatter particles from tray area (top of canvas)
-    const W = this.viewW || 360;
-    for (let i = 0; i < 22; i++) {
-      this.particles.push({
-        x: W / 2 + (Math.random() - 0.5) * 120,
-        y: 10 + Math.random() * 20,
-        vx: (Math.random() - 0.5) * 8,
-        vy: Math.random() * 6 + 2,
-        life: 1,
-        color: meta.color,
-        size: Math.random() * 4 + 2,
-      });
-    }
-
-    // Hikaye nefesi (Good/Great/Perfect yok)
     const breath = breathForCombo(this.combo);
     this.feedback = {
       text: breath.text,
       sub: breath.sub,
       color: breath.color || meta.color,
       combo: this.combo,
-      life: 1.25,
+      life: 1.35,
     };
     this.toast(`${breath.text} · Nefes x${this.combo}`);
     if (typeof this.onBreath === 'function') {
@@ -508,38 +550,42 @@ class StonebreakingGame {
     }
   }
 
-  setScene(url) {
-    if (!url || url === this.sceneKey) return;
-    this.sceneKey = url;
-    const img = new Image();
-    img.onload = () => { this.sceneImg = img; };
-    img.onerror = () => { this.sceneImg = null; };
-    img.src = url;
+  spawnShatter(x, y, color) {
+    for (let i = 0; i < 18; i++) {
+      this.particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 9,
+        vy: (Math.random() - 0.5) * 9 - 1,
+        life: 1,
+        color,
+        size: Math.random() * 4 + 2,
+      });
+    }
   }
 
   checkWin() {
     const rem = this.tiles.filter((t) => t.active).length;
-    if (rem === 0 && this.tray.length === 0) {
+    if (rem === 0 && this.tray.length === 0 && this.flying.length === 0) {
       if (this._winScheduled) return;
       this._winScheduled = true;
-      // allow last fly/shatter FX to play
       setTimeout(() => {
         this._winScheduled = false;
-        if (this.tiles.some((t) => t.active) || this.tray.length) return;
+        if (this.tiles.some((t) => t.active) || this.tray.length || this.flying.length) return;
         this.locked = true;
         const elapsed = Math.max(1, (performance.now() - this.startedAt) / 1000);
-        const stats = {
-          level: this.level,
-          iq: this.iq,
-          combo: this.maxCombo,
-          matches: this.matches,
-          seals: this.seals,
-          moves: this.moves,
-          timeSec: elapsed,
-          rank: this.rankFor(this.iq, this.maxCombo),
-        };
-        if (typeof this.onWin === 'function') this.onWin(stats);
-      }, 450);
+        if (typeof this.onWin === 'function') {
+          this.onWin({
+            level: this.level,
+            iq: this.iq,
+            combo: this.maxCombo,
+            matches: this.matches,
+            seals: this.seals,
+            moves: this.moves,
+            timeSec: elapsed,
+            rank: this.rankFor(this.iq, this.maxCombo),
+          });
+        }
+      }, 500);
     }
   }
 
@@ -554,6 +600,7 @@ class StonebreakingGame {
   undo() {
     if (this.undosLeft <= 0) { this.toast('Geri al yok'); return false; }
     if (!this.history.length) { this.toast('Geri alınacak hamle yok'); return false; }
+    if (this.flying.length) { this.toast('Taş uçuyor…'); return false; }
     const snap = this.history.pop();
     const tile = this.tiles.find((t) => t.id === snap.tileId);
     if (tile) tile.active = true;
@@ -574,42 +621,31 @@ class StonebreakingGame {
     if (this.hintsLeft <= 0) { this.toast('İpucu yok'); return false; }
     this.updateFree();
     const free = this.tiles.filter((t) => t.active && t.free);
-
-    // Prefer type that already has 1-2 in tray
     const trayCount = {};
     this.tray.forEach((s) => { trayCount[s.type] = (trayCount[s.type] || 0) + 1; });
+    this.flying.forEach((f) => { trayCount[f.type] = (trayCount[f.type] || 0) + 1; });
 
-    let best = null;
-    let bestScore = -1;
-    const freeByType = {};
-    free.forEach((t) => {
-      freeByType[t.type] = freeByType[t.type] || [];
-      freeByType[t.type].push(t);
-    });
-
-    for (const [typeStr, list] of Object.entries(freeByType)) {
+    let best = null, bestScore = -1;
+    const byType = {};
+    free.forEach((t) => { (byType[t.type] = byType[t.type] || []).push(t); });
+    for (const [typeStr, list] of Object.entries(byType)) {
       const type = Number(typeStr);
-      const inTray = trayCount[type] || 0;
-      const score = inTray * 10 + Math.min(3, list.length);
+      const score = (trayCount[type] || 0) * 10 + Math.min(3, list.length);
       if (score > bestScore) { bestScore = score; best = list[0]; }
     }
-
     if (!best) { this.toast('İpucu bulunamadı'); return false; }
-
     this.hintIds.add(best.id);
     best.glow = 2;
     this.hintsLeft--;
     this.emitAll();
     this.toast('💡 İpucu');
-    setTimeout(() => {
-      best.glow = 0;
-      this.hintIds.delete(best.id);
-    }, 1600);
+    setTimeout(() => { best.glow = 0; this.hintIds.delete(best.id); }, 1600);
     return true;
   }
 
   shuffle() {
     if (this.shufflesLeft <= 0) { this.toast('Karıştır kilitli / yok'); return false; }
+    if (this.flying.length) return false;
     const active = this.tiles.filter((t) => t.active);
     const types = active.map((t) => t.type);
     for (let i = types.length - 1; i > 0; i--) {
@@ -624,7 +660,6 @@ class StonebreakingGame {
     return true;
   }
 
-  // ---- emit ----
   emitAll() {
     if (typeof this.onHUD === 'function') {
       this.onHUD({
@@ -642,6 +677,7 @@ class StonebreakingGame {
         trayMax: TRAY_MAX,
       });
     }
+    // tray is drawn on canvas; still notify for optional HTML mirror
     if (typeof this.onTray === 'function') {
       this.onTray(this.tray.map((s) => ({
         type: s.type,
@@ -660,51 +696,65 @@ class StonebreakingGame {
   // ---- draw ----
   draw() {
     const ctx = this.ctx;
-    const W = this.viewW || this.canvas.clientWidth || 360;
-    const H = this.viewH || this.canvas.clientHeight || 480;
+    const W = this.viewW;
+    const H = this.viewH;
     ctx.clearRect(0, 0, W + 2, H + 2);
 
-    // Scene / felt background (film sahnesi)
+    // Unified felt / scene
     if (this.sceneImg) {
       const iw = this.sceneImg.width, ih = this.sceneImg.height;
       const scale = Math.max(W / iw, H / ih);
       const sw = iw * scale, sh = ih * scale;
       ctx.drawImage(this.sceneImg, (W - sw) / 2, (H - sh) / 2, sw, sh);
-      ctx.fillStyle = 'rgba(6, 16, 12, 0.62)';
+      ctx.fillStyle = 'rgba(8, 28, 18, 0.72)';
       ctx.fillRect(0, 0, W, H);
     } else {
-      const g = ctx.createRadialGradient(W / 2, H * 0.4, 40, W / 2, H * 0.5, H * 0.7);
-      g.addColorStop(0, '#1a3a2a');
-      g.addColorStop(1, '#0c1a14');
+      const g = ctx.createRadialGradient(W / 2, H * 0.45, 30, W / 2, H * 0.5, H * 0.75);
+      g.addColorStop(0, '#1c4a32');
+      g.addColorStop(1, '#0a1f14');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     }
 
-    // soft vignette
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(0, 0, W, H * 0.08);
-    ctx.fillRect(0, H * 0.92, W, H * 0.08);
+    // subtle table pattern
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < H; y += 28) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
 
-    // tiles bottom → top
+    // ---- TRAY (on canvas) ----
+    this.drawTray();
+
+    // ---- BOARD tiles ----
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => a.z - b.z || a.row - b.row || a.col - b.col);
     for (const t of sorted) this.drawTile(t);
 
-    // flying
+    // ---- FLYING toward tray ----
+    const dt = 1 / 60;
     for (let i = this.flying.length - 1; i >= 0; i--) {
       const f = this.flying[i];
-      f.life += 1 / 60;
-      const p = Math.min(1, f.life / f.dur);
+      f.t += dt / f.dur;
+      const p = Math.min(1, f.t);
+      // ease out cubic + slight arc
       const e = 1 - Math.pow(1 - p, 3);
-      const x = f.x + (f.tx - f.x) * e;
-      const y = f.y + (f.ty - f.y) * e;
-      this.drawTileFace(f.type, x, y, this.tileW * (1 - 0.15 * e), this.tileH * (1 - 0.15 * e), 1);
-      if (p >= 1) this.flying.splice(i, 1);
+      const arc = Math.sin(Math.PI * p) * -40;
+      const x = f.x0 + (f.x1 - f.x0) * e;
+      const y = f.y0 + (f.y1 - f.y0) * e + arc;
+      const w = f.w0 + (f.w1 - f.w0) * e;
+      const h = f.h0 + (f.h1 - f.h0) * e;
+      this.drawTileFace(f.type, x, y, w, h, 1, false, true);
+      if (p >= 1 && !f.landed) {
+        f.landed = true;
+        this.flying.splice(i, 1);
+        this.onFlyLanded(f);
+      }
     }
 
     // particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
-      p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life -= 0.025;
+      p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life -= 0.028;
       if (p.life <= 0) { this.particles.splice(i, 1); continue; }
       ctx.globalAlpha = Math.max(0, p.life);
       ctx.fillStyle = p.color;
@@ -714,42 +764,90 @@ class StonebreakingGame {
     }
     ctx.globalAlpha = 1;
 
-    // floating story breath
+    // story breath overlay
     if (this.feedback) {
-      this.feedback.life -= 0.016;
+      this.feedback.life -= 0.014;
       if (this.feedback.life <= 0) this.feedback = null;
       else {
         ctx.save();
-        const a = Math.min(1, this.feedback.life * 1.5);
-        ctx.globalAlpha = a;
+        ctx.globalAlpha = Math.min(1, this.feedback.life * 1.5);
         ctx.textAlign = 'center';
-        ctx.font = `bold ${Math.max(28, Math.floor(W * 0.09))}px system-ui, sans-serif`;
+        ctx.font = `bold ${Math.max(30, Math.floor(W * 0.095))}px system-ui, sans-serif`;
         ctx.fillStyle = this.feedback.color;
         ctx.shadowColor = this.feedback.color;
-        ctx.shadowBlur = 24;
-        ctx.fillText(this.feedback.text, W / 2, H * 0.14);
+        ctx.shadowBlur = 22;
+        const fy = this.boardTop + 36;
+        ctx.fillText(this.feedback.text, W / 2, fy);
         ctx.shadowBlur = 0;
-        ctx.font = `600 ${Math.max(13, Math.floor(W * 0.038))}px system-ui, sans-serif`;
-        ctx.fillStyle = 'rgba(255,240,210,0.92)';
-        if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, H * 0.14 + 28);
-        ctx.font = `bold ${Math.max(15, Math.floor(W * 0.042))}px system-ui, sans-serif`;
+        ctx.font = `600 ${Math.max(13, Math.floor(W * 0.036))}px system-ui, sans-serif`;
+        ctx.fillStyle = 'rgba(255,240,210,0.95)';
+        if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, fy + 26);
+        ctx.font = `bold ${Math.max(15, Math.floor(W * 0.04))}px system-ui, sans-serif`;
         ctx.fillStyle = '#ffd194';
-        ctx.fillText(`Nefes x${this.feedback.combo}`, W / 2, H * 0.14 + 52);
+        ctx.fillText(`Nefes x${this.feedback.combo}`, W / 2, fy + 50);
         ctx.restore();
       }
     }
 
-    // combo timer decay visual is in HUD
     if (this.combo > 0 && performance.now() > this.comboUntil) {
       this.combo = 0;
       this.emitAll();
     }
   }
 
+  drawTray() {
+    const ctx = this.ctx;
+    const x = this.trayX;
+    const y = this.trayY;
+    const w = this.trayW;
+    const h = this.trayH;
+
+    // wood tray plate
+    const g = ctx.createLinearGradient(x, y, x, y + h);
+    g.addColorStop(0, '#4a3220');
+    g.addColorStop(1, '#2a1a10');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 14);
+    ctx.fill();
+
+    // glow border by state
+    const pending = this.tray.length + this.flying.length;
+    let border = '#6b4a2a';
+    if (pending >= TRAY_MAX) border = '#ff6b35';
+    else if (this.tray.length > 0) border = '#4ecdc4';
+    ctx.strokeStyle = border;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // empty slots
+    for (let i = 0; i < TRAY_MAX; i++) {
+      const s = this.slotRect(i);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(s.x, s.y, s.w, s.h, 8);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // landed tiles in tray
+    this.tray.forEach((slot, i) => {
+      const s = this.slotRect(i);
+      this.drawTileFace(slot.type, s.x, s.y, s.w, s.h, 1, false, true);
+    });
+
+    // label
+    ctx.fillStyle = 'rgba(255,209,148,0.45)';
+    ctx.font = '600 10px system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('MÜHÜR TEPSİSİ · 3 aynı = nefes', x + w / 2, y + h - 3);
+  }
+
   drawTile(t) {
     const r = this.tileRect(t);
     const blocked = !t.free;
-    // shadow
     const ctx = this.ctx;
     ctx.fillStyle = 'rgba(0,0,0,0.35)';
     ctx.beginPath();
@@ -761,24 +859,29 @@ class StonebreakingGame {
       ctx.shadowBlur = 18 * (t.glow || 1.5);
     } else ctx.shadowBlur = 0;
 
-    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked);
+    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false);
     ctx.shadowBlur = 0;
 
     if (blocked) {
-      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
       ctx.beginPath();
       ctx.roundRect(r.x, r.y, r.w, r.h, 10);
       ctx.fill();
     }
   }
 
-  drawTileFace(type, x, y, w, h, alpha = 1, dim = false) {
+  drawTileFace(type, x, y, w, h, alpha = 1, dim = false, lift = false) {
     const ctx = this.ctx;
     const meta = this.types[type] || this.types[0];
     ctx.save();
     ctx.globalAlpha = alpha;
 
-    // body
+    if (lift) {
+      ctx.shadowColor = 'rgba(0,0,0,0.45)';
+      ctx.shadowBlur = 12;
+      ctx.shadowOffsetY = 4;
+    }
+
     const grad = ctx.createLinearGradient(x, y, x, y + h);
     grad.addColorStop(0, '#f7f4ee');
     grad.addColorStop(1, '#e4ddd0');
@@ -787,23 +890,23 @@ class StonebreakingGame {
     ctx.roundRect(x, y, w, h, 10);
     ctx.fill();
 
-    // green edge like reference
-    ctx.strokeStyle = dim ? 'rgba(40,90,60,0.35)' : 'rgba(40,120,70,0.75)';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = dim ? 'rgba(40,90,60,0.35)' : 'rgba(40,120,70,0.8)';
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // inner face
     ctx.fillStyle = '#fffcf6';
     ctx.beginPath();
-    ctx.roundRect(x + 4, y + 4, w - 8, h - 8, 7);
+    ctx.roundRect(x + 3, y + 3, w - 6, h - 6, 7);
     ctx.fill();
 
     const img = this.tileImages[meta.key];
     if (img) {
-      const pad = 6;
+      const pad = Math.max(3, w * 0.08);
       ctx.save();
       ctx.beginPath();
-      ctx.roundRect(x + pad, y + pad, w - pad * 2, h - pad * 2, 6);
+      ctx.roundRect(x + pad, y + pad, w - pad * 2, h - pad * 2, 5);
       ctx.clip();
       ctx.drawImage(img, x + pad, y + pad, w - pad * 2, h - pad * 2);
       ctx.restore();
@@ -814,10 +917,9 @@ class StonebreakingGame {
       ctx.fillText(meta.emoji, x + w / 2, y + h / 2);
     }
 
-    // top highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
     ctx.beginPath();
-    ctx.roundRect(x + 6, y + 6, w - 12, h * 0.18, 4);
+    ctx.roundRect(x + 5, y + 5, w - 10, h * 0.16, 4);
     ctx.fill();
 
     ctx.restore();

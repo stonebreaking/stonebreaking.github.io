@@ -138,24 +138,26 @@
     }
     .spirit-quote.show { opacity: 1; }
 
-    /* ========== GAME v5.1 — full-bleed mobile film stage ========== */
+    /* ========== GAME v5.2 — single film stage (tray ON canvas) ========== */
     #screen-game {
-      background: #07140f;
+      background: #0a1f14;
       display: flex;
       flex-direction: column;
       padding: 0;
       overflow: hidden;
       height: 100%;
       height: 100dvh;
+      max-height: 100dvh;
     }
     .game-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: max(8px, env(safe-area-inset-top)) 10px 6px;
+      padding: max(6px, env(safe-area-inset-top)) 10px 4px;
       flex-shrink: 0;
       z-index: 5;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), transparent);
     }
     .iq-badge {
       font-weight: 900;
@@ -175,67 +177,30 @@
     }
     .spirit-chip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
 
-    .match-tray {
-      width: min(420px, 94%);
-      margin: 0 auto 6px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 7px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #3a2818, #24180f);
-      border: 2px solid #6b4a2a;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 0 20px rgba(0,0,0,0.35);
-      flex-shrink: 0;
-    }
-    .match-tray.glow {
-      border-color: #4ecdc4;
-      box-shadow: 0 0 0 2px rgba(78,205,196,0.35), 0 8px 28px rgba(78,205,196,0.25);
-    }
-    .match-tray.full {
-      border-color: #ff6b35;
-      animation: btnPulse 1s ease-in-out infinite;
-    }
-    .tray-slot {
-      aspect-ratio: 3/4;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.35);
-      border: 1px dashed rgba(255,255,255,0.08);
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-    }
-    .tray-slot.filled {
-      border-style: solid;
-      border-color: rgba(255,255,255,0.15);
-      background: #f4efe6;
-    }
-    .tray-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .tray-slot .emoji { font-size: 1.2rem; }
+    /* HTML tray removed — drawn inside canvas for fly-to-slot */
+    .match-tray { display: none !important; }
 
     .hud-mini {
       display: flex;
       justify-content: center;
-      gap: clamp(12px, 5vw, 22px);
-      margin-bottom: 4px;
-      font-size: 0.78rem;
+      gap: clamp(14px, 6vw, 28px);
+      padding: 2px 8px 6px;
+      font-size: 0.8rem;
       color: #9ab0a0;
       flex-shrink: 0;
     }
     .hud-mini b { color: #ffd194; font-weight: 800; }
 
-    /* Fills remaining viewport — THIS was too small before */
+    /* ONE stage fills rest of phone */
     .canvas-wrap {
       flex: 1 1 auto;
       width: 100%;
-      max-width: none;
       margin: 0;
       border-radius: 0;
       overflow: hidden;
       min-height: 0;
       position: relative;
-      box-shadow: none;
-      border: none;
+      background: #0f241a;
     }
     #gameCanvas {
       width: 100%;
@@ -246,12 +211,13 @@
     }
     .controls {
       display: flex;
-      gap: 14px;
+      gap: 16px;
       justify-content: center;
       flex-wrap: nowrap;
-      padding: 10px 12px max(12px, env(safe-area-inset-bottom));
+      padding: 8px 12px max(10px, env(safe-area-inset-bottom));
       flex-shrink: 0;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.35));
+      background: rgba(0,0,0,0.35);
+      border-top: 1px solid rgba(255,209,148,0.08);
     }
     .power-btn {
       width: 68px; height: 68px;
@@ -528,23 +494,18 @@
       </div>
     </div>
 
-    <div class="match-tray" id="match-tray" aria-label="Eşleşme tepsisi">
-      <div class="tray-slot" data-i="0"></div>
-      <div class="tray-slot" data-i="1"></div>
-      <div class="tray-slot" data-i="2"></div>
-      <div class="tray-slot" data-i="3"></div>
-      <div class="tray-slot" data-i="4"></div>
-    </div>
-
     <div class="hud-mini">
       <div>Bölüm <b id="hud-level">1</b></div>
       <div>Mühür <b id="hud-seals">0</b></div>
       <div>Nefes <b id="hud-combo">0</b></div>
     </div>
 
+    <!-- Tepsi + tahta AYNI canvas (taşlar tepsiye uçar) -->
     <div class="canvas-wrap" id="canvas-wrap">
-      <canvas id="gameCanvas" width="390" height="560"></canvas>
+      <canvas id="gameCanvas" width="390" height="640"></canvas>
     </div>
+    <!-- gizli mirror (API uyumu) -->
+    <div class="match-tray" id="match-tray" aria-hidden="true"></div>
 
     <div class="controls">
       <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır" aria-label="Karıştır">
@@ -621,7 +582,7 @@
   <script src="js/game.js"></script>
   <script>
     // =========================================================
-    // STONEBREAKING App Controller v5.1 — Nefes + Profil + Film Stage
+    // STONEBREAKING App Controller v5.2 — Unified canvas tray + fly + breath
     // =========================================================
     const PROFILE_KEY = 'stonebreaking_profile_v1';
 
@@ -754,25 +715,8 @@
       ov.classList.remove('show');
     }
 
-    function renderTray(slots) {
-      const tray = $('#match-tray');
-      const cells = $$('#match-tray .tray-slot');
-      cells.forEach((cell, i) => {
-        const s = slots[i];
-        cell.innerHTML = '';
-        cell.classList.toggle('filled', !!s);
-        if (!s) return;
-        if (s.img) {
-          const img = document.createElement('img');
-          img.src = s.img;
-          img.alt = s.key || '';
-          cell.appendChild(img);
-        } else {
-          cell.innerHTML = `<span class="emoji">${s.emoji || '◆'}</span>`;
-        }
-      });
-      tray.classList.toggle('full', slots.length >= (window.STONE_TRAY_MAX || 5));
-      tray.classList.toggle('glow', slots.length > 0 && slots.length < (window.STONE_TRAY_MAX || 5));
+    function renderTray(_slots) {
+      // Tray is drawn inside canvas (v5.2) — HTML mirror unused
     }
 
     function renderHUD(h) {
@@ -883,8 +827,7 @@
           // optional future: profile breath log
         };
         game.onFail = () => {
-          const tray = $('#match-tray');
-          tray.classList.add('full');
+          showToast('Tepsi doldu — geri al veya karıştır');
         };
         game.onWin = (stats) => {
           showVictory(stats);
