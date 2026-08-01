@@ -50,6 +50,8 @@ const ENDLESS_LINES = [
 ];
 
 const TRAY_MAX = 5;
+const MATCH_COUNT = 2; // v6.4.2: 2 aynı yan yana = patlar (eski 3 → 2)
+const MAX_TRAY_FILL = 4; // v6.4.2: maksimum 4 taş doldurulabilir (4 hakkın var)
 const COMBO_WINDOW_MS = 4000;
 
 // Hikaye nefesleri — Good/Great/Perfect YOK
@@ -431,8 +433,8 @@ class StonebreakingGame {
   // ---- input / pick ----
   handleClick(mx, my) {
     const pending = this.tray.length + this.flying.length;
-    if (pending >= TRAY_MAX) {
-      this.toast('Tepsi dolu! Geri al veya karıştır.');
+    if (pending >= MAX_TRAY_FILL) {
+      this.toast('Tepsi dolu! (4 hakkın var)');
       if (typeof this.onFail === 'function') this.onFail('tray_full');
       return;
     }
@@ -455,7 +457,18 @@ class StonebreakingGame {
 
   pickTile(t) {
     if (!t.active || !t.free) return;
-    if (this.tray.length + this.flying.length >= TRAY_MAX) return;
+    const pending = this.tray.length + this.flying.length;
+    if (pending >= MAX_TRAY_FILL) return;
+
+    // v6.4.2: Sağ ve sol kenar doluysa yeni taş eklenemez
+    if (this.tray.length > 0) {
+      const leftFull = this.tray[0] !== undefined;
+      const rightFull = this.tray.length >= MAX_TRAY_FILL || this.tray[this.tray.length - 1] !== undefined;
+      if (leftFull && rightFull && this.tray.length >= 2) {
+        this.toast('Sağ ve sol dolu — tepsiye ekleyemezsin');
+        return;
+      }
+    }
 
     this.history.push({
       tileId: t.id,
@@ -521,13 +534,13 @@ class StonebreakingGame {
 
   resolveMatches() {
     let any = false;
-    // keep clearing while triples exist
+    // keep clearing while matches exist (v6.4.2: 2 aynı = patlar)
     for (let guard = 0; guard < 8; guard++) {
       const counts = {};
       this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
       let clearedType = null;
       for (const [typeStr, count] of Object.entries(counts)) {
-        if (count >= 3) { clearedType = Number(typeStr); break; }
+        if (count >= MATCH_COUNT) { clearedType = Number(typeStr); break; }
       }
       if (clearedType === null) break;
 
@@ -864,8 +877,8 @@ class StonebreakingGame {
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // empty slots
-    for (let i = 0; i < TRAY_MAX; i++) {
+    // empty slots (4 hak gösterilir)
+    for (let i = 0; i < MAX_TRAY_FILL; i++) {
       const s = this.slotRect(i);
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
       ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -886,7 +899,7 @@ class StonebreakingGame {
     ctx.fillStyle = 'rgba(255,209,148,0.45)';
     ctx.font = '600 10px system-ui,sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('MÜHÜR TEPSİSİ · 3 aynı = nefes', x + w / 2, y + h - 3);
+    ctx.fillText('MÜHÜR TEPSİSİ · 2 aynı = patlar (4 hak)', x + w / 2, y + h - 3);
   }
 
   drawTile(t) {
