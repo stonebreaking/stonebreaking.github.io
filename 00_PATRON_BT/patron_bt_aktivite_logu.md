@@ -21,7 +21,7 @@
 | 01.08 | css | `css/animasyon.css` sinematik paket | ✅ |
 | 01.08 | js | `js/game.js` katmanlı mahjong + taş görselleri | ✅ |
 | 01.08 | 28_DENETIM | Envanter 29/29 güncellendi | ✅ |
-| 01.08 | GitHub | Push — token bekleniyor | 🟡 |
+| 01.08 | GitHub | Push v4.0 `06e7f75` — token kullanıldı ve silindi | ✅ |
 
 ### Oyun Akışı (Canlı)
 1. Açılış: STONEBREAKING mühür + sinematik + **Maceraya Başla**
@@ -45,15 +45,15 @@
 
 - **Toplam Görsel:** 29 dosya (06_GRAFIK/)
 - **Kod:** index.html + css/animasyon.css + js/game.js + tahta_katmanlari.js
-- **Toplam Push:** 3 (+ v4 bekliyor)
+- **Toplam Push:** 4 (v4.0 `06e7f75`)
 
 ---
 
 ## 🔐 GÜVENLİK KAYDI
 
-- `.env` / token bu oturumda workspace'te bulunamadı
-- Push için Patron token sağlamalı → `01_GIZLI/.env`
-- Push sonrası token silinir
+- v4 push `06e7f75` tamamlandı
+- Token kullanıldı, remote temizlendi, `01_GIZLI/.env` silindi
+- Token hiçbir commit'e girmedi
 
 ---
 
