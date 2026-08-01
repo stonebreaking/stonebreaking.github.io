@@ -63,7 +63,7 @@
 ### Karakter Bütünlüğü
 - **Kor:** Erkek, ateş saçlı, volkanik zırh, cesur
 - **Baam:** Kadın, dalga saçlı, mercan taç, bilge
-- **Mand:** Golem-dev, kristal taş, güçlü, sabırlı
+- **Mand:** Kadın toprak savaşçısı, kristal granit zırh, güçlü, sabırlı
 - **Zepy:** Eterik, tüy saçlı, bulut elbise, özgür
 
 ### Sembol & Element Kuralı

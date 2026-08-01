@@ -62,13 +62,13 @@ Baam, sonsuz okyanusun derinliklerinde uyanmış bir ruhudur. Akışkanlığı v
 | **Element** | Toprak / Taş |
 | **Sembol** | 🗿 |
 | **Renk** | #c4a35a (Altın-Kahve) |
-| **Karakter** | Güçlü, sabırlı, dayanıklı |
+| **Karakter** | Kadın · güçlü, sabırlı, asil |
 | **Güç** | Tahta tamamen karıştığında bir kez otomatik eşleşme |
 | **Zayıflık** | Hava elementine karşı ağır kalır |
 | **Bölüm** | Bölüm 7-9: Kristal Mağaralar |
 
 **Hikaye:**  
-Mand, dünyanın merkezinden gelen taş bir devdir. Tüm taşların atası olarak bilinir. En zor seviyelerde oyuncuya dayanıklılık verir.
+Mand, dünyanın merkezinden gelen toprak ruhudur. Kristal Mağaralar'ın muhafızı; Kor ve Baam gibi gerçek bir karakterdir. Uzun örgülü altın-kahve saçları, granit kristal zırhı ve kristal baltasıyla dağların iradesini taşır. En zor seviyelerde oyuncuya dayanıklılık verir.
 
 **Koleksiyon Kartı:**  
 - Granit dokulu zemin

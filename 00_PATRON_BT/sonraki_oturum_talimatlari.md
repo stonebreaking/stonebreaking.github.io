@@ -1,38 +1,34 @@
 # 📋 SONRAKİ OTURUM TALİMATLARI
 
-**Oku önce:** `00_PATRON_BT/RESMI_ACILIS_SONRASI_MUHRU.md` + `patron_bt_aktivite_logu.md` (v6.1.1)  
-**Tarih:** 01.08.2026 · **v6.1.1**
+**Oku önce:** `03_SOHBET_GECMISI/PATRON_BT_NASIL_CALISIR.md` + `03_SOHBET_GECMISI/YENI_AI_BASLANGIC_MESAJI.md` + `RESMI_ACILIS_SONRASI_MUHRU.md`  
+**Tarih:** 01.08.2026 · **v6.3**
 
 ---
 
-## ✅ v6.1.1'DE BİTEN (birleşik oturum)
-- 12 bölüm sinematik diyalog (3 satır/bölüm, portre + bölge + satır satır) — `12_bolum_sinematik_diyalog.md`
-- Sonsuz Mod: B12 sonrası (dalgalar, zor tahta 66, IQ tabanı 80) + splash "♾️ Sonsuz Moda Gir" + kaldığın yerden devam
-- Ses & titreşim (`js/ses.js`): nefes (kombo perdesi), mühür kır, fanfar, 🔊/🔇, vibrate
-- Soft-lock önleme: tepsi dolu + eşleşme yoksa taşlar tahtaya geri döner
-- Rune varyantları `_3` (kılıç/inci/kristal/rüzgar) → 12 taş tipi (lava-core gövde, yazısız)
-- Kart turu 2: 4 koleksiyon kartı 900×1200, STONEBREAKING üst, karakter odaklı, BATUPIA imza
-- `sahne_ana_menu` yeni (BATUPIA yazısız) → splash bg
-- `cizgi_film_storyboard.md` (çizgi film planı)
-- Headless motor testi 44/44 ✅ (`test/motor_smoke_test.js`)
+## 🚨 YEDEKLEME PROTOKOLÜ (ÖNCE BU)
+- **TÜM yedekler SADECE GitHub'da.** Workspace `.git` oturumlar arası kaybolur.
+- Her işlemden sonra: **token iste → push → token/env sil → devam et.**
+- `.env` asla commit edilmez. Token sohbette göründüyse push sonrası revoke öner.
+- Git kaybolursa: `git init -b main` + remote + `fetch` + `reset --mixed origin/main` (dosyalar korunur).
+
+## ✅ v6.3'TE BİTEN
+- Splash sinematik: sahne ken-burns, mühür madalyon (logo işlenmiş), orbit runeler, taş tablet buton
+- Kare taşlar + şeffaf PNG (balon bitti), semboller büyük, sıkı grid
+- Push `27b3d8f` GitHub'da — Pages deploy CDN gecikmesi takipte
 
 ## 🎯 SIRA (öncelik)
 | # | İş |
 |---|-----|
-| 1 | **Push v6.1.1** (token iste → kullan → sil) |
-| 2 | Canlı site hard-refresh QA (telefon): splash yeni bg + Sonsuz butonu, uçuş, 3'lü nefes, 12 taş tipi, sonsuz açılışı |
-| 3 | Görsel onay: yeni kartlar + rune `_3` + sahne_ana_menu |
+| 1 | **Canlı v6.3 deploy doğrula** (Pages CDN — gerekirse token ile Pages build'i tetikle/kontrol) |
+| 2 | Telefon QA: yeni splash (madalyon + buton) + kare taşlar + sonsuz giriş |
+| 3 | Görsel onay: logo_kare + taşlar + splash kompozisyonu |
 | 4 | Kalan 4 sahne görselinde BATUPIA yazısı kontrolü → varsa tur 3 revize |
 | 5 | Google OAuth gerçek bağ (Patron Client ID verince) — secret asla repo'ya |
-| 6 | Seslerin gerçek cihazda kulağa uyumu + seviye artışında tempo |
-| 7 | Storyboard → video/Lottie üretimine geçiş (opsiyonel) |
+| 6 | Storyboard → video/Lottie paketi (opsiyonel) |
 
 ## Marka
 STONEBREAKING ön planda · BATUPIA sadece imza · Kor/Baam/Mand/Zepy bütünlüğü
 
-## Push güvenliği
-Token `.env` → kullan → sil. Asla GitHub'a gitmez.
-
 ---
 
-*PATRON BT v6.1.1 — süreklilik*
+*PATRON BT v6.3 — süreklilik + GitHub tek yedek* 🔥

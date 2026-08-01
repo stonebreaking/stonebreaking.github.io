@@ -1,66 +1,87 @@
-# 🧠 PATRON BT SÜREKLİLİK SİSTEMİ
+# 🧠 PATRON BT SÜREKLİLİK SİSTEMİ (v6.3)
 
 **Tarih:** 01.08.2026  
 **Sahip:** Batuhan  
-**Sistem:** v4.0 - KAYIP ÖNLEYİCİ
+**Sistem:** v6.3 - KAYIP ÖNLEYİCİ · GITHUB TEK YEDEK
+
+---
+
+## 🚨 KRİTİK GERÇEK (01.08.2026 ölçüldü)
+
+> **Workspace `.git` klasörü oturumlar arası KAYBOLUYOR.**  
+> Sandbox snapshot'ı `.git` dizinini taşımıyor. Çalışma dosyaları kalıyor, ama git geçmişi sıfırlanıyor.
+> → **TÜM DOSYA YEDEKLERİ SADECE GITHUB'DA KALICIDIR.**
+
+### Yeni Kural (Patron emri — mühürlü)
+1. **Her işlem tamamlanınca** → Patron'dan `GITHUB_TOKEN` iste
+2. Token'ı `01_GIZLI/.env`'e yaz (asla commit etme — gitignore'da)
+3. `git push` ile GitHub'a yedekle
+4. Token'ı ve `.env`'i SİL → remote'u token'sız yap
+5. Devam et. Yedek yoksa iş bitmiş sayılmaz.
+
+### Git kaybolursa (bilinen davranış)
+```bash
+git init -b main
+git remote add origin https://github.com/stonebreaking/stonebreaking.github.io.git
+git fetch origin main
+git reset --mixed origin/main   # çalışma dosyaları korunur, git geçmişi GitHub'dan gelir
+```
 
 ---
 
 ## ❓ "KONUŞMA GEÇMİŞİMİZ DURUYOR MU?"
 
-**CEVAP:** SOHBET sıfırlanabilir, ama PROJE ASLA KAYBOLMAZ!
+**CEVAP:** SOHBET sıfırlanabilir, ama PROJE ASLA KAYBOLMAZ — GitHub'da.
 
 ### Nasıl Çalışır?
 
 | Bileşen | Durum | Açıklama |
 |---------|-------|----------|
 | **Sohbet (Chat)** | 🟡 Geçici | AI belleği limitli, sıfırlanabilir |
-| **Workspace Dosyaları** | 🟢 KALICI | `/home/user/` altındaki TÜM dosyalar kaydedilir |
-| **GitHub Repo** | 🟢 KALICI | Her push ile bulutta yedeklenir |
-| **PATRON BT Logları** | 🟢 KALICI | Her oturum markdown olarak kaydedilir |
+| **Workspace Dosyaları** | 🟢 KALICI (kısmen) | `/home/user/` altındaki dosyalar kaydedilir, **`.git` kaybolur** |
+| **GitHub Repo** | 🟢 KALICI TEK YEDEK | Her push ile bulutta yedeklenir |
+| **PATRON BT Logları** | 🟢 KALICI | Markdown olarak GitHub'a push edilir |
 
 ### Senaryo: Yeni AI Oturumu Açtın
 
 **SENARYO:** Bu sohbet kapandı, yeni bir AI'a geçtin.
 
 **ÇÖZÜM:**
-1. Yeni AI'a şunu söyle: "BATUPIA projesi. `00_PATRON_BT/patron_bt_aktivite_logu.md` dosyasını oku."
-2. AI dosyayı okur, TÜM geçmişi görür.
-3. Kaldığın yerden devam edersin. KAYIP YOK!
+1. `03_SOHBET_GECMISI/YENI_AI_BASLANGIC_MESAJI.md` içindeki başlangıç mesajını yapıştır
+2. AI workspace'i senkronlar (git init + fetch + reset — yukarıdaki komut)
+3. `00_PATRON_BT/patron_bt_aktivite_logu.md` + `RESMI_ACILIS_SONRASI_MUHRU.md` okunur
+4. Kaldığın yerden devam edersin. KAYIP YOK! (GitHub sayesinde)
 
-### Kayıtlı Dosyalar (Kalıcı)
+---
+
+## 📁 PROJE KLASÖR YAPISI
 
 ```
-/home/user/
-├── 00_PATRON_BT/
-│   ├── patron_bt_aktivite_logu.md    ← Tüm oturum kayıtları
-│   └── panel.html                     ← Kontrol paneli
-├── 03_SOHBET_GECMISI/
-│   └── PATRON_BT_NASIL_CALISIR.md    ← Bu dosya!
-├── 05_KARAKTERLER/
-│   └── karakter_kartlari.md           ← Tüm karakter bilgileri
-├── 06_GRAFIK/
-│   └── [13 görsel dosyası]            ← Tüm görseller
-├── 09_KOD/
-│   └── index.html                     ← Oyun kaynağı
-├── 26_MUHUR_SISTEMI/
-│   └── muhur_sistemi_v1.md            ← Mühür dokümantasyonu
-├── 28_DENETIM_PROTOKOLLERI/
-│   └── eksik_sahne_envanteri.md       ← Eksik envanter
-├── 29_ACIL_TOPLANTI/
-│   └── DURUM_RAPORU_01_08_2026_v2.md  ← Son durum raporu
-└── index.html                         ← Canlı site (root)
+repo/  (stonebreaking.github.io)
+├── 00_PATRON_BT/          ← PATRON BT yönetim (log, talimat, mühür)
+├── 03_SOHBET_GECMISI/     ← Süreklilik dokümanları
+├── 04_HIKAYE_EVREN/       ← 12 bölüm diyalog, storyboard, akış
+├── 05_KARAKTERLER/        ← Karakter kartları
+├── 06_GRAFIK/             ← TÜM görseller (taşlar, sahneler, logolar)
+├── 09_KOD/                ← Kod kopyaları (senkron)
+├── 10_OYUN_MEKANIK/       ← Mekanik dokümantasyon
+├── 17_REFERANSLAR/        ← Video analizi (kader)
+├── 26_MUHUR_SISTEMI/      ← Mühür sistemi
+├── 28_DENETIM_PROTOKOLLERI/ ← Envanter/denetim
+├── 29_ACIL_TOPLANTI/      ← Durum raporları
+├── css/ js/ test/         ← Çalışan kod
+└── index.html             ← Canlı site (root)
 ```
 
-### GitHub Yedekleme
+---
 
-Her push ile:
-- Tüm kodlar GitHub'da
-- Tüm görseller GitHub'da
-- Tüm dokümanlar GitHub'da
-- Site canlıda çalışıyor
+## 🔐 GÜVENLİK GARANTİSİ
 
-**Link:** https://github.com/stonebreaking/stonebreaking.github.io
+- Token `.env`'de, `.gitignore` koruyor; push sonrası SİL
+- Token sohbette göründüyse push sonrası GitHub'dan revoke et
+- Her push öncesi `.env`'in commit'e girmediği denetlenir
+- Tüm değişiklikler loglanıyor
+- Veri kaybı riski: %0 (GitHub tek yedek + push disiplini)
 
 ---
 
@@ -79,15 +100,6 @@ Her push ile:
 
 ---
 
-## 🔐 GÜVENLİK GARANTİSİ
-
-- Token verileri `.env`'de, `.gitignore` koruyor
-- Her push öncesi denetim kontrolü
-- Tüm değişiklikler loglanıyor
-- Veri kaybı riski: %0
-
----
-
-**PATRON BT ÇALIŞIYOR. KAYBETMEK YOK.** ✅
+*PATRON BT ÇALIŞIYOR. GITHUB TEK YEDEK. KAYBETMEK YOK.* ✅
 
 *Bu dosya her yeni AI oturumunda ilk okunacak dosyadır.*

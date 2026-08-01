@@ -13,7 +13,7 @@ const ELEMENTS = {
 const SPIRITS = {
   kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',    chapters: [1, 2, 3] },
   baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',     chapters: [4, 5, 6] },
-  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', quote: 'Ben Mand, Kristal Mağaralar\'ın deviyim.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', chapters: [7, 8, 9] },
+  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', quote: 'Ben Mand, Kristal Mağaralar\'ın muhafızıyım.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', chapters: [7, 8, 9] },
   zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',   chapters: [10, 11, 12] },
 };
 
@@ -50,8 +50,6 @@ const ENDLESS_LINES = [
 ];
 
 const TRAY_MAX = 5;
-const MATCH_COUNT = 2; // v6.4.2: 2 aynı yan yana = patlar (eski 3 → 2)
-const MAX_TRAY_FILL = 4; // v6.4.2: maksimum 4 taş doldurulabilir (4 hakkın var)
 const COMBO_WINDOW_MS = 4000;
 
 // Hikaye nefesleri — Good/Great/Perfect YOK
@@ -303,25 +301,28 @@ class StonebreakingGame {
     const layout = this.buildLayout(level);
     while (layout.length % 3 !== 0) layout.pop();
 
+    // v6.4: YIĞIN BAZLI TİP ATAMA — aynı (col,row) yığınındaki 3 taş AYNI TİP
+    // → garanti çözülebilir (her yığın 3 aynı → tepsiye 3'ü → kırılır)
     const groups = layout.length / 3;
-    const bag = [];
-    for (let i = 0; i < groups; i++) {
-      const t = i % this.types.length;
-      bag.push(t, t, t);
-    }
-    for (let i = bag.length - 1; i > 0; i--) {
+    const typeSeq = [];
+    for (let i = 0; i < groups; i++) typeSeq.push(i % this.types.length);
+    for (let i = typeSeq.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [bag[i], bag[j]] = [bag[j], bag[i]];
+      [typeSeq[i], typeSeq[j]] = [typeSeq[j], typeSeq[i]];
     }
+    const stackType = {};
+    const keyOf = (pos) => pos.col.toFixed(2) + '|' + pos.row.toFixed(2);
 
     let id = 0;
     layout.forEach((pos, i) => {
+      const key = keyOf(pos);
+      if (!(key in stackType)) stackType[key] = typeSeq.shift();
       this.tiles.push({
         id: id++,
         col: pos.col,
         row: pos.row,
         z: pos.z,
-        type: bag[i],
+        type: stackType[key],
         active: true,
         glow: 0,
         free: true,
@@ -334,34 +335,26 @@ class StonebreakingGame {
   }
 
   buildLayout(level) {
+    // v6.4: YIĞIN BAZLI layout — her (col,row) yığını 3 taş, AYNI TİP
+    // → üstü açık yığın seçilince 3 aynı tepsiye gider → kırılır
+    // → tahta HER ZAMAN çözülebilir (Mahjong Vita / mahjong solitaire garantisi)
     const out = [];
     const endless = level > 12;
-    const e = endless ? Math.floor((level - 13) / 3) : 0;
-    const baseCols = 6 + (level % 3) + (endless ? 1 + e : 0);
-    const baseRows = 7 + (level % 2) + (endless ? 1 + Math.floor(e / 2) : 0);
-    const layers = 3 + Math.min(2, Math.floor(level / 3)) + (endless ? 1 + Math.min(3, Math.floor((level - 13) / 4)) : 0);
-
-    for (let z = 0; z < layers; z++) {
-      const cols = Math.max(4, baseCols - z);
-      const rows = Math.max(4, baseRows - z);
-      const ox = z * 0.5;
-      const oy = z * 0.5;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (z === 0 && ((r === 0 && c === 0) || (r === 0 && c === cols - 1))) continue;
-          if (z === 0 && r === rows - 1 && (c === 0 || c === cols - 1)) continue;
-          if (z === 1 && r === Math.floor(rows / 2) && c === Math.floor(cols / 2)) continue;
-          out.push({ col: c + ox, row: r + oy, z });
-        }
+    const baseCols = (endless ? 6 : 5) + (level % 2);   // piramit tabanı
+    const baseRows = (endless ? 5 : 4) + (level % 3 === 0 ? 1 : 0);
+    for (let r = 0; r < baseRows; r++) {
+      const cols = Math.max(2, baseCols - r);
+      const offset = (baseCols - cols) / 2;             // piramit ortalı
+      for (let c = 0; c < cols; c++) {
+        out.push({ col: c + offset, row: r, z: 0 });
+        out.push({ col: c + offset, row: r, z: 1 });
+        out.push({ col: c + offset, row: r, z: 2 });
       }
     }
-    const maxTiles = endless ? 66 : 54;
-    const minTiles = endless ? 36 : 30;
-    if (out.length > maxTiles) out.length = maxTiles - (maxTiles % 3);
-    if (out.length < minTiles) {
-      for (let i = out.length; i < minTiles; i++) {
-        out.push({ col: (i % 5) + 1, row: (i % 6) + 1, z: Math.min(layers, 2) });
-      }
+    // taş sayısı 3'ün katı (yığın başına 3)
+    const maxTiles = endless ? 63 : 54;
+    if (out.length > maxTiles) {
+      out.length = Math.floor(maxTiles / 3) * 3;
     }
     return out;
   }
@@ -433,8 +426,8 @@ class StonebreakingGame {
   // ---- input / pick ----
   handleClick(mx, my) {
     const pending = this.tray.length + this.flying.length;
-    if (pending >= MAX_TRAY_FILL) {
-      this.toast('Tepsi dolu! (4 hakkın var)');
+    if (pending >= TRAY_MAX) {
+      this.toast('Tepsi dolu! Geri al veya karıştır.');
       if (typeof this.onFail === 'function') this.onFail('tray_full');
       return;
     }
@@ -457,18 +450,7 @@ class StonebreakingGame {
 
   pickTile(t) {
     if (!t.active || !t.free) return;
-    const pending = this.tray.length + this.flying.length;
-    if (pending >= MAX_TRAY_FILL) return;
-
-    // v6.4.2: Sağ ve sol kenar doluysa yeni taş eklenemez
-    if (this.tray.length > 0) {
-      const leftFull = this.tray[0] !== undefined;
-      const rightFull = this.tray.length >= MAX_TRAY_FILL || this.tray[this.tray.length - 1] !== undefined;
-      if (leftFull && rightFull && this.tray.length >= 2) {
-        this.toast('Sağ ve sol dolu — tepsiye ekleyemezsin');
-        return;
-      }
-    }
+    if (this.tray.length + this.flying.length >= TRAY_MAX) return;
 
     this.history.push({
       tileId: t.id,
@@ -534,13 +516,13 @@ class StonebreakingGame {
 
   resolveMatches() {
     let any = false;
-    // keep clearing while matches exist (v6.4.2: 2 aynı = patlar)
+    // keep clearing while triples exist
     for (let guard = 0; guard < 8; guard++) {
       const counts = {};
       this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
       let clearedType = null;
       for (const [typeStr, count] of Object.entries(counts)) {
-        if (count >= MATCH_COUNT) { clearedType = Number(typeStr); break; }
+        if (count >= 3) { clearedType = Number(typeStr); break; }
       }
       if (clearedType === null) break;
 
@@ -564,18 +546,18 @@ class StonebreakingGame {
       const c = {};
       this.tray.forEach((s) => { c[s.type] = (c[s.type] || 0) + 1; });
       if (!Object.values(c).some((n) => n >= 3)) {
-        // v6.1: SOFT-LOCK ÖNLEME — tepsiye sığmayan taşlar tahtaya geri döner
-        // (klasik triple-match kurtarma; "dokun-hisset" felsefesi: oyuncu asla sıkışmaz)
+        // v6.4: ÇIKMAZ ÖNLEME — tepsi 5 farklı tiple dolarsa taşlar tahtaya geri döner
+        // ("yanlardan sağ-sol dolu, ekleyemezsin" çıkmazı biter; oyuncu asla sıkışmaz)
         this.tray.forEach((s) => {
           const tile = this.tiles.find((t) => t.id === s.id && !t.active);
           if (tile) { tile.active = true; tile.free = true; }
         });
         this.tray = [];
-        this.history = []; // tepsi sıfırlandığı için eski geri-al kayıtları geçersiz
-        if (this.shufflesLeft <= 0) this.shufflesLeft = 1; // kilitli shuffle açılır
+        this.history = [];
+        if (this.shufflesLeft <= 0) this.shufflesLeft = 1;
         this.updateFree();
         this.emitAll();
-        this.toast('⚠️ Tepsi doldu — taşlar geri döndü!');
+        this.toast('⚠️ Çıkmaz! Taşlar yeniden düzenlendi.');
         if (typeof this.onFail === 'function') this.onFail('tray_full');
       }
     }
@@ -877,8 +859,8 @@ class StonebreakingGame {
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // empty slots (4 hak gösterilir)
-    for (let i = 0; i < MAX_TRAY_FILL; i++) {
+    // empty slots
+    for (let i = 0; i < TRAY_MAX; i++) {
       const s = this.slotRect(i);
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
       ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -899,7 +881,7 @@ class StonebreakingGame {
     ctx.fillStyle = 'rgba(255,209,148,0.45)';
     ctx.font = '600 10px system-ui,sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('MÜHÜR TEPSİSİ · 2 aynı = patlar (4 hak)', x + w / 2, y + h - 3);
+    ctx.fillText('MÜHÜR TEPSİSİ · 3 aynı = nefes', x + w / 2, y + h - 3);
   }
 
   drawTile(t) {

@@ -52,7 +52,7 @@ Varyant 2–3: aynı gövde, farklı merkez rune (kılıç, trident, balta, tüy
 |----------|--------------|---------|----------|
 | **Kor** | Erkek oyuncu referansı | Ateş | Alev saç, volkanik zırh, cesur |
 | **Baam** | Kadın oyuncu referansı | Su | Dalga saç, mercan taç, bilge |
-| **Mand** | Toprak ruhu (golem) | Toprak | Kristal granit, sabır |
+| **Mand** | Toprak ruhu (kadın savaşçı) | Toprak | Kristal granit zırh, sabır |
 | **Zepy** | Hava ruhu (eterik) | Hava | Tüy/bulut, özgür |
 
 ### Koleksiyon kartı kuralı (revize devam)
