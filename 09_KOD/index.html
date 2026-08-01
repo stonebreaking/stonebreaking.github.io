@@ -135,12 +135,12 @@
     }
     .spirit-quote.show { opacity: 1; }
 
-    /* ========== GAME ========== */
+    /* ========== GAME v5 (triple tray) ========== */
     #screen-game {
-      background: linear-gradient(160deg, #0a0a15, #12122a 50%, #0c1520);
+      background: linear-gradient(180deg, #0b1a12 0%, #07140f 40%, #050a08 100%);
       display: flex;
       flex-direction: column;
-      padding: 10px 12px 16px;
+      padding: 8px 10px 10px;
       overflow-y: auto;
     }
     .game-top {
@@ -148,76 +148,174 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-    .game-top .brand-logo { font-size: 0.85rem; letter-spacing: 3px; }
-    .hud {
+    .game-top .brand-logo { font-size: 0.78rem; letter-spacing: 3px; }
+    .iq-badge {
+      font-weight: 900;
+      font-size: 1.05rem;
+      color: #ffd194;
+      text-shadow: 0 0 12px rgba(255, 209, 148, 0.55);
+      letter-spacing: 1px;
+    }
+    .iq-badge span { color: #ffb347; }
+    .spirit-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.72rem;
+    }
+    .spirit-chip img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+
+    /* Match tray */
+    .match-tray {
+      width: min(360px, 94%);
+      margin: 4px auto 10px;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 6px;
-      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #3a2818, #24180f);
+      border: 2px solid #6b4a2a;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 0 20px rgba(0,0,0,0.35);
+      position: relative;
     }
-    .hud-item {
-      text-align: center;
-      padding: 8px 4px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
+    .match-tray.glow {
+      border-color: #4ecdc4;
+      box-shadow: 0 0 0 2px rgba(78,205,196,0.35), 0 8px 28px rgba(78,205,196,0.25);
     }
-    .hud-label { font-size: 0.55rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-    .hud-value { font-size: 1.05rem; font-weight: 800; color: #ff6b35; margin-top: 2px; }
+    .match-tray.full {
+      border-color: #ff6b35;
+      animation: btnPulse 1s ease-in-out infinite;
+    }
+    .tray-slot {
+      aspect-ratio: 3/4;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.35);
+      border: 1px dashed rgba(255,255,255,0.08);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+    .tray-slot.filled {
+      border-style: solid;
+      border-color: rgba(255,255,255,0.15);
+      background: #f4efe6;
+    }
+    .tray-slot img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .tray-slot .emoji { font-size: 1.2rem; }
+
+    .hud-mini {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 6px;
+      font-size: 0.72rem;
+      color: #9ab0a0;
+    }
+    .hud-mini b { color: #ffd194; font-weight: 800; }
+
     .canvas-wrap {
       width: 100%;
-      max-width: 600px;
+      max-width: 420px;
       margin: 0 auto;
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.06);
     }
     #gameCanvas {
       width: 100%;
       display: block;
       touch-action: none;
-      background: #141428;
+      background: #0f241a;
     }
     .controls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       justify-content: center;
       flex-wrap: wrap;
-      padding: 14px 0 6px;
+      padding: 12px 0 4px;
     }
-    .spirit-chip {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      font-size: 0.75rem;
-    }
-    .spirit-chip img {
-      width: 28px; height: 28px;
+    .power-btn {
+      width: 64px; height: 64px;
       border-radius: 50%;
-      object-fit: cover;
+      border: 2px solid rgba(255,209,148,0.25);
+      background: radial-gradient(circle at 40% 30%, #3a2a18, #1a120a);
+      color: #ffd194;
+      font-size: 1.35rem;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .power-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .power-btn .badge {
+      position: absolute; top: -2px; right: -2px;
+      min-width: 20px; height: 20px; padding: 0 5px;
+      border-radius: 999px; background: #e74c3c; color: #fff;
+      font-size: 0.7rem; font-weight: 800;
+      display: grid; place-items: center;
+      border: 2px solid #1a120a;
+    }
+    .power-btn.locked .badge { background: #555; }
+    .power-btn.locked::after {
+      content: '🔒';
+      position: absolute; inset: 0;
+      display: grid; place-items: center;
+      font-size: 0.9rem; opacity: 0.85;
+      background: rgba(0,0,0,0.25); border-radius: 50%;
+    }
+    .lvl-tag {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #7a907f;
+      letter-spacing: 2px;
+      margin-top: 2px;
     }
 
-    /* Collection strip (in-game) */
-    .collection-strip {
-      max-width: 600px;
-      margin: 12px auto 0;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 0 2px 20px;
+    /* Victory overlay */
+    #victory-overlay {
+      position: fixed; inset: 0; z-index: 1100;
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column;
+      background: radial-gradient(ellipse at 50% 40%, rgba(40,20,0,0.92), rgba(0,0,0,0.96));
+      text-align: center; padding: 24px;
+      color: #fff;
     }
-    .collection-strip img {
-      width: 100%;
-      border-radius: 10px;
-      aspect-ratio: 2/3;
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,0.08);
+    #victory-overlay.show { display: flex; animation: fadeIn 0.4s ease-out; }
+    #victory-overlay .v-title {
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ffd194, #ff6b35, #ffd194);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 10px 0 6px;
+      animation: sealExplode 0.8s ease-out both;
+    }
+    #victory-overlay .v-sub { color: #ffd194; font-size: 1.4rem; font-weight: 800; margin-bottom: 18px; }
+    .v-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      width: min(360px, 92%); margin: 0 auto 18px;
+    }
+    .v-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,209,148,0.2);
+      border-radius: 14px; padding: 12px 8px;
+    }
+    .v-stat .l { font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    .v-stat .v { font-size: 1.25rem; font-weight: 900; color: #ffd194; margin-top: 4px; }
+    .v-msg { color: #b0b0c0; max-width: 320px; line-height: 1.45; margin: 0 auto 20px; font-size: 0.92rem; }
+    .rank-pill {
+      display: inline-block; padding: 4px 12px; border-radius: 999px;
+      background: linear-gradient(90deg, #ff6b35, #ffd194); color: #1a0a00;
+      font-weight: 900; margin-left: 6px;
     }
 
     .toast {
@@ -235,6 +333,9 @@
       transition: all 0.45s;
       pointer-events: none;
       white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .toast.show {
       transform: translateX(-50%) translateY(0);
@@ -359,33 +460,44 @@
   <!-- ========== 4. OYUN ========== -->
   <section id="screen-game" class="screen" aria-label="Oyun">
     <div class="game-top">
-      <div class="brand-logo sm">STONEBREAKING</div>
+      <button class="btn-ui" type="button" id="btn-menu" style="padding:8px 14px">←</button>
+      <div class="iq-badge">IQ: <span id="hud-iq">40</span></div>
       <div class="spirit-chip" id="spirit-chip">
         <img id="chip-img" src="06_GRAFIK/kor_ates_ruhu.png" alt="" />
-        <span id="chip-text">Kor · Ateş</span>
+        <span id="chip-text">Kor</span>
       </div>
     </div>
-    <div class="hud">
-      <div class="hud-item"><div class="hud-label">Bölüm</div><div class="hud-value" id="hud-level">1</div></div>
-      <div class="hud-item"><div class="hud-label">Puan</div><div class="hud-value" id="hud-score">0</div></div>
-      <div class="hud-item"><div class="hud-label">Hamle</div><div class="hud-value" id="hud-moves">0</div></div>
-      <div class="hud-item"><div class="hud-label">Mühür</div><div class="hud-value" id="hud-seals">0</div></div>
+
+    <div class="match-tray" id="match-tray" aria-label="Eşleşme tepsisi">
+      <div class="tray-slot" data-i="0"></div>
+      <div class="tray-slot" data-i="1"></div>
+      <div class="tray-slot" data-i="2"></div>
+      <div class="tray-slot" data-i="3"></div>
+      <div class="tray-slot" data-i="4"></div>
     </div>
+
+    <div class="hud-mini">
+      <div>Bölüm <b id="hud-level">1</b></div>
+      <div>Mühür <b id="hud-seals">0</b></div>
+      <div>Seri <b id="hud-combo">0</b></div>
+    </div>
+
     <div class="canvas-wrap">
-      <canvas id="gameCanvas" width="600" height="720"></canvas>
+      <canvas id="gameCanvas" width="420" height="610"></canvas>
     </div>
+
     <div class="controls">
-      <button class="btn-ui primary" type="button" id="btn-new">Yeni</button>
-      <button class="btn-ui" type="button" id="btn-shuffle">Karıştır</button>
-      <button class="btn-ui" type="button" id="btn-hint">İpucu</button>
-      <button class="btn-ui" type="button" id="btn-menu">Menü</button>
+      <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır" aria-label="Karıştır">
+        🔀<span class="badge" id="badge-shuffle">0</span>
+      </button>
+      <button class="power-btn" type="button" id="btn-hint" title="İpucu" aria-label="İpucu">
+        💡<span class="badge" id="badge-hint">1</span>
+      </button>
+      <button class="power-btn" type="button" id="btn-undo" title="Geri al" aria-label="Geri al">
+        ↩<span class="badge" id="badge-undo">1</span>
+      </button>
     </div>
-    <div class="collection-strip" aria-label="Koleksiyon">
-      <img src="06_GRAFIK/koleksiyon_karti_kor.png" alt="Kor kart" />
-      <img src="06_GRAFIK/koleksiyon_karti_baam.png" alt="Baam kart" />
-      <img src="06_GRAFIK/koleksiyon_karti_mand.png" alt="Mand kart" />
-      <img src="06_GRAFIK/koleksiyon_karti_zepy.png" alt="Zepy kart" />
-    </div>
+    <div class="lvl-tag">Lv. <span id="hud-lvtag">1</span> · 3 taş = mühür kır</div>
     <div class="sig">© 2026 BATUPIA Studios · Stonebreaking Universe</div>
   </section>
 
@@ -396,17 +508,33 @@
     <p id="ch-quote">…</p>
   </div>
 
+  <!-- Zafer -->
+  <div id="victory-overlay" aria-live="polite">
+    <div style="font-size:2.6rem;animation:spiritGlow 1.5s ease-in-out infinite">◆</div>
+    <div class="v-title">EFSANE MÜHÜR</div>
+    <div class="v-sub">Mühür Açıldı! <span class="rank-pill" id="v-rank">S</span></div>
+    <div class="v-stats">
+      <div class="v-stat"><div class="l">Zaman</div><div class="v" id="v-time">00:00</div></div>
+      <div class="v-stat"><div class="l">IQ</div><div class="v" id="v-iq">0</div></div>
+      <div class="v-stat"><div class="l">Mühür Serisi</div><div class="v" id="v-combo">0</div></div>
+    </div>
+    <p class="v-msg" id="v-msg">Taşları doğru okudun. Evren mühürü titreşti.</p>
+    <button class="btn-ui primary" type="button" id="btn-next-level">Sonraki Bölüm</button>
+    <button class="btn-ui" type="button" id="btn-victory-menu" style="margin-top:10px">Ana Menü</button>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script src="js/game.js"></script>
   <script>
     // =========================================================
-    // STONEBREAKING App Controller v4.0
+    // STONEBREAKING App Controller v5.0 — Triple Match
     // =========================================================
     const state = {
-      mascot: null,   // 'erkek' | 'kadin'
-      spirit: null,   // 'kor' | 'baam' | 'mand' | 'zepy'
+      mascot: null,
+      spirit: null,
       chapter: 1,
+      lastStats: null,
     };
 
     const $ = (s) => document.querySelector(s);
@@ -430,11 +558,9 @@
       });
       const next = document.getElementById(id);
       if (!next) return;
-      // slight delay for crossfade feel
       setTimeout(() => next.classList.add('active'), 80);
     }
 
-    // ---------- Splash cinematic ----------
     function spawnParticles(container, n = 18) {
       if (!container) return;
       const colors = ['#ff6b35', '#4ecdc4', '#c4a35a', '#a8d8ea', '#ffd194'];
@@ -455,21 +581,15 @@
       const seal = $('#logo-seal');
       const logo = $('#brand-logo');
       const btn = $('#btn-start');
-
       spawnParticles($('#splash-particles'));
-
-      // 1) stone pulses already via CSS
       await wait(1600);
-      // 2) crack
       stone.classList.add('crack');
       await wait(900);
       stone.style.display = 'none';
-      // 3) four element orbs
       ['ates', 'su', 'toprak', 'hava'].forEach((k, i) => {
         setTimeout(() => $('#orb-' + k).classList.add('show'), i * 120);
       });
       await wait(1300);
-      // 4) seal + logo
       ['ates', 'su', 'toprak', 'hava'].forEach((k) => {
         const o = $('#orb-' + k);
         o.style.transition = 'opacity 0.5s';
@@ -479,7 +599,6 @@
       logo.style.opacity = '1';
       logo.style.animation = 'logoReveal 1.3s ease-out both, shimmer 4s linear 1.3s infinite';
       await wait(1100);
-      // 5) button
       btn.style.opacity = '1';
       btn.style.pointerEvents = 'auto';
       btn.style.animation = 'btnPulse 2.2s ease-in-out infinite, fadeUp 0.8s ease-out both';
@@ -487,24 +606,90 @@
 
     function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
-    // ---------- Chapter transition ----------
+    function fmtTime(sec) {
+      const s = Math.floor(sec);
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
+    }
+
     async function playChapterTransition(chapterNum) {
       const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === chapterNum)
         || { n: chapterNum, spirit: 'kor', title: 'Bölüm ' + chapterNum, region: '' };
       const sp = (window.STONE_SPIRITS || {})[ch.spirit] || {};
       const el = (window.STONE_ELEMENTS || {})[sp.element] || { emoji: '◆', color: '#ff6b35' };
-
       const ov = $('#chapter-overlay');
       $('#ch-symbol').textContent = el.emoji || '◆';
       $('#ch-symbol').style.setProperty('--glow', el.color || '#ff6b35');
       $('#ch-title').textContent = `Bölüm ${ch.n} · ${ch.title}`;
       $('#ch-quote').textContent = sp.quote || '';
       ov.classList.add('show');
-      await wait(2800);
+      await wait(2400);
       ov.classList.remove('show');
     }
 
-    // ---------- Game ----------
+    function renderTray(slots) {
+      const tray = $('#match-tray');
+      const cells = $$('#match-tray .tray-slot');
+      cells.forEach((cell, i) => {
+        const s = slots[i];
+        cell.innerHTML = '';
+        cell.classList.toggle('filled', !!s);
+        if (!s) return;
+        if (s.img) {
+          const img = document.createElement('img');
+          img.src = s.img;
+          img.alt = s.key || '';
+          cell.appendChild(img);
+        } else {
+          cell.innerHTML = `<span class="emoji">${s.emoji || '◆'}</span>`;
+        }
+      });
+      tray.classList.toggle('full', slots.length >= (window.STONE_TRAY_MAX || 5));
+      tray.classList.toggle('glow', slots.length > 0 && slots.length < (window.STONE_TRAY_MAX || 5));
+    }
+
+    function renderHUD(h) {
+      if (!h) return;
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      set('hud-iq', (Math.round(h.iq * 10) / 10).toFixed(1).replace(/\.0$/, ''));
+      set('hud-level', h.level);
+      set('hud-lvtag', h.level);
+      set('hud-seals', h.seals);
+      set('hud-combo', h.combo);
+      set('badge-hint', h.hintsLeft);
+      set('badge-undo', h.undosLeft);
+      set('badge-shuffle', h.shufflesLeft);
+
+      const sh = $('#btn-shuffle');
+      if (sh) {
+        const locked = h.shufflesLeft <= 0;
+        sh.classList.toggle('locked', locked);
+        sh.disabled = locked;
+      }
+      const hi = $('#btn-hint');
+      if (hi) hi.disabled = h.hintsLeft <= 0;
+      const un = $('#btn-undo');
+      if (un) un.disabled = h.undosLeft <= 0;
+    }
+
+    function showVictory(stats) {
+      state.lastStats = stats;
+      $('#v-rank').textContent = stats.rank || 'A';
+      $('#v-time').textContent = fmtTime(stats.timeSec || 0);
+      $('#v-iq').textContent = (Math.round(stats.iq * 10) / 10).toFixed(1);
+      $('#v-combo').textContent = stats.combo || 0;
+      $('#v-msg').textContent = stats.rank === 'S'
+        ? 'Hiçbir mühür kaçmadı. Sıkışmış taşları kusursuz okudun!'
+        : 'Taşlar kırıldı, mühür uyandı. Bir sonraki bölge seni bekliyor.';
+      $('#btn-next-level').textContent = `Bölüm ${Math.min(12, (stats.level || 1) + 1)}`;
+      $('#victory-overlay').classList.add('show');
+    }
+
+    function hideVictory() {
+      $('#victory-overlay').classList.remove('show');
+    }
+
     let game = null;
 
     async function startGame() {
@@ -512,13 +697,14 @@
       if (!game) {
         game = new window.StonebreakingGame(canvas);
         game.onToast = showToast;
-        game.onWin = async (lvl) => {
-          const next = Math.min(12, lvl + 1);
-          state.chapter = next;
-          game.level = next;
-          game.seals = Math.floor(game.seals) + 1;
-          await playChapterTransition(next);
-          game.newGame(next);
+        game.onHUD = renderHUD;
+        game.onTray = renderTray;
+        game.onFail = () => {
+          const tray = $('#match-tray');
+          tray.classList.add('full');
+        };
+        game.onWin = (stats) => {
+          showVictory(stats);
         };
         await game.preload();
         game.bindInput();
@@ -527,13 +713,9 @@
       const sp = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
       const el = window.STONE_ELEMENTS[sp.element];
       $('#chip-img').src = sp.portrait;
-      $('#chip-text').textContent = `${sp.name} · ${el ? el.name : ''}`;
-      // chapter from spirit default
+      $('#chip-text').textContent = sp.name + (el ? ' · ' + el.name : '');
       const startCh = (sp.chapters && sp.chapters[0]) || 1;
       state.chapter = startCh;
-      game.score = 0;
-      game.moves = 0;
-      game.seals = 0;
       game.resize();
       game.startLoop();
       goScreen('screen-game');
@@ -541,7 +723,16 @@
       game.newGame(startCh);
     }
 
-    // ---------- Selections ----------
+    async function continueNextLevel() {
+      hideVictory();
+      if (!game || !state.lastStats) return;
+      const next = Math.min(12, (state.lastStats.level || state.chapter) + 1);
+      state.chapter = next;
+      await playChapterTransition(next);
+      game.locked = false;
+      game.newGame(next);
+    }
+
     function setupPick(containerSel, attr, onPick) {
       $$(containerSel + ' .pick-card').forEach((card) => {
         const activate = () => {
@@ -585,20 +776,25 @@
         startGame();
       });
 
-      $('#btn-new').addEventListener('click', () => game && game.newGame(state.chapter));
       $('#btn-shuffle').addEventListener('click', () => game && game.shuffle());
       $('#btn-hint').addEventListener('click', () => game && game.hint());
+      $('#btn-undo').addEventListener('click', () => game && game.undo());
       $('#btn-menu').addEventListener('click', () => {
+        hideVictory();
+        if (game) game.stopLoop();
+        goScreen('screen-splash');
+      });
+      $('#btn-next-level').addEventListener('click', () => continueNextLevel());
+      $('#btn-victory-menu').addEventListener('click', () => {
+        hideVictory();
         if (game) game.stopLoop();
         goScreen('screen-splash');
       });
     }
 
-    // Boot
     document.addEventListener('DOMContentLoaded', () => {
       initUI();
       playSplashCinematic();
-      // warm preload game assets in background
       const warm = new Image();
       warm.src = '06_GRAFIK/tas_sembol_su_2.png';
     });

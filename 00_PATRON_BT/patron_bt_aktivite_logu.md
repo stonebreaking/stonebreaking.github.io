@@ -6,6 +6,17 @@
 
 ---
 
+## 🕐 OTURUM KAYDI: 01.08.2026 #2b — VIDEO KADER
+
+| Zaman | Departman | İşlem | Durum |
+|-------|-----------|-------|-------|
+| 01.08 | uploads | Patron videosu indirildi (52MB, 123sn) | ✅ |
+| 01.08 | 17_REFERANSLAR | VIDEO_KADER_ANALIZI.md | ✅ |
+| 01.08 | 09_KOD | Motor v5 Triple Match + Tray + IQ + Kombo | ✅ |
+| 01.08 | index | Tepsi UI + zafer ekranı | ✅ |
+
+---
+
 ## 🕐 OTURUM KAYDI: 01.08.2026 #2
 
 ### Yapılan İşlemler
