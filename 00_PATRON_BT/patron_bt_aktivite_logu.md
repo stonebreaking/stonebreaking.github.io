@@ -1,5 +1,17 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+## 🕐 OTURUM: 01.08.2026 #2c — NEFES + PROFİL + MOBİL FİLM
+
+| İşlem | Durum |
+|-------|-------|
+| Good/Great/Perfect kaldırıldı → hikâye nefesi | ✅ |
+| Mobil full-bleed oyun sahnesi | ✅ |
+| Profil yönetimi (localStorage) | ✅ |
+| Sahne arka planı (ruh region) | ✅ |
+| PATRON BT not | ✅ |
+
+
+
 **Sistem:** PATRON BT v4.0  
 **Son Güncelleme:** 01.08.2026 — Oturum #2  
 **Aktif Oturum:** AI Asistan #2 (Arena Agent)

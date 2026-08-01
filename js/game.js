@@ -35,15 +35,58 @@ const CHAPTERS = [
 const TRAY_MAX = 5;
 const COMBO_WINDOW_MS = 3800;
 
+// Hikaye nefesleri — Good/Great/Perfect YOK
+// Kombo yükseldikçe evrenin nefesi derinleşir
+const SEAL_BREATHS = {
+  spark: [ // 1-2
+    { text: 'Kıvılcım',  sub: 'Taş uyandı' },
+    { text: 'Dokunuş',  sub: 'Mühür titredi' },
+    { text: 'İlk Nefes', sub: 'Evren fark etti' },
+  ],
+  breath: [ // 3-5
+    { text: 'Nefes Al',   sub: 'Ritim tutuldu' },
+    { text: 'Nabız',      sub: 'Taşlar konuşuyor' },
+    { text: 'Derin Nefes', sub: 'Mühür ısınıyor' },
+  ],
+  awaken: [ // 6-9
+    { text: 'Uyanış',     sub: 'Ruh seni gördü' },
+    { text: 'Çatlak',     sub: 'Mühür aralandı' },
+    { text: 'Alev Dansı', sub: 'Elementler hizalandı' },
+  ],
+  seal: [ // 10-14
+    { text: 'Mühür Kır',    sub: 'Zincir koptu' },
+    { text: 'Taş Fısıltı',  sub: 'Kadim söz duyuldu' },
+    { text: 'Ruh Yankısı',  sub: 'Kor · Baam · Mand · Zepy' },
+  ],
+  legend: [ // 15+
+    { text: 'Evren Nefesi',  sub: 'Dört ruh bir arada' },
+    { text: 'Efsane Mühür',  sub: 'Kader senin elinde' },
+    { text: 'Sonsuz Kıvılcım', sub: 'STONEBREAKING' },
+  ],
+};
+
+function breathForCombo(n) {
+  let pool = SEAL_BREATHS.spark;
+  let color = '#ffb088';
+  if (n >= 15) { pool = SEAL_BREATHS.legend; color = '#FFD700'; }
+  else if (n >= 10) { pool = SEAL_BREATHS.seal; color = '#C77DFF'; }
+  else if (n >= 6) { pool = SEAL_BREATHS.awaken; color = '#4ecdc4'; }
+  else if (n >= 3) { pool = SEAL_BREATHS.breath; color = '#7CFFB2'; }
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  return { ...pick, color };
+}
+
 class StonebreakingGame {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.tileW = 52;
-    this.tileH = 64;
-    this.gapX = 4;
-    this.gapY = 4;
-    this.zLift = 10;
+    this.tileW = 58;
+    this.tileH = 72;
+    this.gapX = 3;
+    this.gapY = 3;
+    this.zLift = 11;
+    this.sceneImg = null;
+    this.sceneKey = '';
 
     this.tiles = [];
     this.tray = []; // { type, id }
@@ -119,9 +162,49 @@ class StonebreakingGame {
   resize() {
     const parent = this.canvas.parentElement;
     if (!parent) return;
-    const w = Math.min(parent.clientWidth || 360, 420);
+    // Fill available game stage (mobile-first full width)
+    const w = Math.max(280, Math.floor(parent.clientWidth || 360));
+    let h = Math.floor(parent.clientHeight || 0);
+    if (h < 200) h = Math.floor(w * 1.35);
+    // Internal resolution tracks display for crisp tiles
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.canvas.style.width = w + 'px';
-    this.canvas.style.height = (w * 1.45) + 'px';
+    this.canvas.style.height = h + 'px';
+    this.canvas.width = Math.floor(w * dpr);
+    this.canvas.height = Math.floor(h * dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.viewW = w;
+    this.viewH = h;
+    this.fitTilesToView();
+  }
+
+  fitTilesToView() {
+    const W = this.viewW || 360;
+    const H = this.viewH || 480;
+    // Estimate board footprint from current tiles
+    let maxC = 6, maxR = 7, maxZ = 3;
+    for (const t of this.tiles) {
+      if (!t.active) continue;
+      maxC = Math.max(maxC, t.col + 1);
+      maxR = Math.max(maxR, t.row + 1);
+      maxZ = Math.max(maxZ, t.z);
+    }
+    const padX = 12;
+    const padY = 16;
+    const tw = Math.floor((W - padX * 2 - maxZ * 5) / (maxC + 0.2));
+    const th = Math.floor((H - padY * 2 + maxZ * 8) / (maxR * 0.55 + 1.1));
+    // Keep mahjong-ish ratio ~ 0.78
+    let tileW = Math.max(40, Math.min(78, tw - 2));
+    let tileH = Math.max(50, Math.min(96, Math.floor(tileW / 0.78)));
+    if (tileH > th) {
+      tileH = Math.max(50, th - 2);
+      tileW = Math.max(40, Math.floor(tileH * 0.78));
+    }
+    this.tileW = tileW;
+    this.tileH = tileH;
+    this.gapX = Math.max(2, Math.floor(tileW * 0.06));
+    this.gapY = Math.max(2, Math.floor(tileH * 0.05));
+    this.zLift = Math.max(8, Math.floor(tileH * 0.14));
   }
 
   // ---- level build ----
@@ -184,6 +267,7 @@ class StonebreakingGame {
     });
 
     this.updateFree();
+    this.fitTilesToView();
     this.emitAll();
   }
 
@@ -211,12 +295,11 @@ class StonebreakingGame {
       }
     }
 
-    // Cap size for mobile (~36-72 tiles)
-    if (out.length > 72) out.length = 72 - (72 % 3);
-    if (out.length < 24) {
-      // pad with extra top tiles
-      for (let i = out.length; i < 24; i++) {
-        out.push({ col: (i % 5) + 1, row: (i % 6) + 1, z: layers });
+    // Mobile-friendly density (~30-54 tiles) — video gibi okunaklı yığın
+    if (out.length > 54) out.length = 54 - (54 % 3);
+    if (out.length < 30) {
+      for (let i = out.length; i < 30; i++) {
+        out.push({ col: (i % 5) + 1, row: (i % 6) + 1, z: Math.min(layers, 2) });
       }
     }
     return out;
@@ -237,16 +320,24 @@ class StonebreakingGame {
 
   // ---- geometry ----
   boardOrigin() {
-    // leave room at top of canvas for visual balance (tray is HTML)
-    const cols = 8;
-    const rows = 9;
-    const boardW = cols * (this.tileW + this.gapX);
-    const boardH = rows * (this.tileH * 0.55) + this.tileH;
+    const W = this.viewW || this.canvas.clientWidth || 360;
+    const H = this.viewH || this.canvas.clientHeight || 480;
+    let minC = 99, maxC = 0, minR = 99, maxR = 0, maxZ = 0;
+    for (const t of this.tiles) {
+      if (!t.active) continue;
+      minC = Math.min(minC, t.col); maxC = Math.max(maxC, t.col);
+      minR = Math.min(minR, t.row); maxR = Math.max(maxR, t.row);
+      maxZ = Math.max(maxZ, t.z);
+    }
+    if (minC === 99) { minC = 0; maxC = 6; minR = 0; maxR = 7; }
+    const cols = (maxC - minC) + 1;
+    const rows = (maxR - minR) + 1;
+    const boardW = cols * (this.tileW + this.gapX) + maxZ * 5;
+    const boardH = rows * (this.tileH * 0.52) + this.tileH + maxZ * 2;
     return {
-      x: (this.canvas.width - boardW) / 2,
-      y: 24,
-      boardW,
-      boardH,
+      x: (W - boardW) / 2 - minC * (this.tileW + this.gapX),
+      y: Math.max(10, (H - boardH) / 2 - minR * (this.tileH * 0.52)),
+      boardW, boardH, W, H,
     };
   }
 
@@ -302,11 +393,12 @@ class StonebreakingGame {
 
     // fly animation toward top-center (tray is outside canvas; animate upward)
     const r = this.tileRect(t);
+    const W = this.viewW || 360;
     this.flying.push({
       type: t.type,
       x: r.x, y: r.y,
-      tx: this.canvas.width / 2 - this.tileW / 2,
-      ty: -40,
+      tx: W / 2 - this.tileW / 2,
+      ty: -50,
       life: 0,
       dur: 0.28,
     });
@@ -388,9 +480,10 @@ class StonebreakingGame {
 
     const meta = this.types[type] || this.types[0];
     // shatter particles from tray area (top of canvas)
+    const W = this.viewW || 360;
     for (let i = 0; i < 22; i++) {
       this.particles.push({
-        x: this.canvas.width / 2 + (Math.random() - 0.5) * 120,
+        x: W / 2 + (Math.random() - 0.5) * 120,
         y: 10 + Math.random() * 20,
         vx: (Math.random() - 0.5) * 8,
         vy: Math.random() * 6 + 2,
@@ -400,16 +493,28 @@ class StonebreakingGame {
       });
     }
 
-    // feedback tier
-    let text = 'İyi';
-    let color = '#7CFFB2';
-    if (this.combo >= 20) { text = 'Mükemmel'; color = '#FFD700'; }
-    else if (this.combo >= 10) { text = 'Muhteşem'; color = '#C77DFF'; }
-    else if (this.combo >= 5) { text = 'İyi'; color = '#7CFFB2'; }
-    else { text = 'Mühür'; color = meta.color; }
+    // Hikaye nefesi (Good/Great/Perfect yok)
+    const breath = breathForCombo(this.combo);
+    this.feedback = {
+      text: breath.text,
+      sub: breath.sub,
+      color: breath.color || meta.color,
+      combo: this.combo,
+      life: 1.25,
+    };
+    this.toast(`${breath.text} · Nefes x${this.combo}`);
+    if (typeof this.onBreath === 'function') {
+      this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
+    }
+  }
 
-    this.feedback = { text, color, combo: this.combo, life: 1.1 };
-    this.toast(`${text} · Mühür x${this.combo}`);
+  setScene(url) {
+    if (!url || url === this.sceneKey) return;
+    this.sceneKey = url;
+    const img = new Image();
+    img.onload = () => { this.sceneImg = img; };
+    img.onerror = () => { this.sceneImg = null; };
+    img.src = url;
   }
 
   checkWin() {
@@ -555,24 +660,30 @@ class StonebreakingGame {
   // ---- draw ----
   draw() {
     const ctx = this.ctx;
-    const W = this.canvas.width;
-    const H = this.canvas.height;
-    ctx.clearRect(0, 0, W, H);
+    const W = this.viewW || this.canvas.clientWidth || 360;
+    const H = this.viewH || this.canvas.clientHeight || 480;
+    ctx.clearRect(0, 0, W + 2, H + 2);
 
-    // felt background
-    const g = ctx.createRadialGradient(W / 2, H * 0.4, 40, W / 2, H * 0.5, H * 0.7);
-    g.addColorStop(0, '#1a3a2a');
-    g.addColorStop(1, '#0c1a14');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-
-    // soft vignette pattern
-    ctx.fillStyle = 'rgba(255,255,255,0.015)';
-    for (let i = 0; i < 6; i++) {
-      ctx.beginPath();
-      ctx.arc(W * (0.2 + i * 0.12), H * 0.3, 80 + i * 10, 0, Math.PI * 2);
-      ctx.fill();
+    // Scene / felt background (film sahnesi)
+    if (this.sceneImg) {
+      const iw = this.sceneImg.width, ih = this.sceneImg.height;
+      const scale = Math.max(W / iw, H / ih);
+      const sw = iw * scale, sh = ih * scale;
+      ctx.drawImage(this.sceneImg, (W - sw) / 2, (H - sh) / 2, sw, sh);
+      ctx.fillStyle = 'rgba(6, 16, 12, 0.62)';
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      const g = ctx.createRadialGradient(W / 2, H * 0.4, 40, W / 2, H * 0.5, H * 0.7);
+      g.addColorStop(0, '#1a3a2a');
+      g.addColorStop(1, '#0c1a14');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
     }
+
+    // soft vignette
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(0, 0, W, H * 0.08);
+    ctx.fillRect(0, H * 0.92, W, H * 0.08);
 
     // tiles bottom → top
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => a.z - b.z || a.row - b.row || a.col - b.col);
@@ -603,22 +714,27 @@ class StonebreakingGame {
     }
     ctx.globalAlpha = 1;
 
-    // floating feedback
+    // floating story breath
     if (this.feedback) {
-      this.feedback.life -= 0.018;
+      this.feedback.life -= 0.016;
       if (this.feedback.life <= 0) this.feedback = null;
       else {
         ctx.save();
-        ctx.globalAlpha = Math.min(1, this.feedback.life * 1.4);
+        const a = Math.min(1, this.feedback.life * 1.5);
+        ctx.globalAlpha = a;
         ctx.textAlign = 'center';
-        ctx.font = 'bold 36px system-ui, sans-serif';
+        ctx.font = `bold ${Math.max(28, Math.floor(W * 0.09))}px system-ui, sans-serif`;
         ctx.fillStyle = this.feedback.color;
         ctx.shadowColor = this.feedback.color;
-        ctx.shadowBlur = 20;
-        ctx.fillText(this.feedback.text, W / 2, 80);
-        ctx.font = 'bold 20px system-ui, sans-serif';
+        ctx.shadowBlur = 24;
+        ctx.fillText(this.feedback.text, W / 2, H * 0.14);
+        ctx.shadowBlur = 0;
+        ctx.font = `600 ${Math.max(13, Math.floor(W * 0.038))}px system-ui, sans-serif`;
+        ctx.fillStyle = 'rgba(255,240,210,0.92)';
+        if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, H * 0.14 + 28);
+        ctx.font = `bold ${Math.max(15, Math.floor(W * 0.042))}px system-ui, sans-serif`;
         ctx.fillStyle = '#ffd194';
-        ctx.fillText(`Mühür x${this.feedback.combo}`, W / 2, 110);
+        ctx.fillText(`Nefes x${this.feedback.combo}`, W / 2, H * 0.14 + 52);
         ctx.restore();
       }
     }
@@ -730,3 +846,5 @@ window.STONE_SPIRITS = SPIRITS;
 window.STONE_CHAPTERS = CHAPTERS;
 window.STONE_ELEMENTS = ELEMENTS;
 window.STONE_TRAY_MAX = TRAY_MAX;
+window.STONE_SEAL_BREATHS = SEAL_BREATHS;
+window.STONE_breathForCombo = breathForCombo;
