@@ -1,0 +1,5 @@
+# BATUPIA Git Ignore
+01_GIZLI/.env
+*.log
+.cache/
+node_modules/
