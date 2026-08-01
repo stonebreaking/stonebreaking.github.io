@@ -1,7 +1,6 @@
 // =========================================================
-// STONEBREAKING — Triple Match / Tray Motoru v5.2
-// Birleşik film sahnesi: tepsi CANVAS içinde, taş tepsiye uçar,
-// 3 aynı = nefes/mühür. Click coords = logical CSS px.
+// STONEBREAKING — Triple Match / Tray Motoru v6.0
+// Lava-core master taşlar · tepsi canvas içi · nefes dili · CSS px click
 // =========================================================
 
 const ELEMENTS = {
@@ -123,15 +122,16 @@ class StonebreakingGame {
     this.locked = false;
     this.inputLocked = false; // while resolving
 
+    // PATRON BT v6: ates_06_lava_core = master gövde; core set öncelikli
     this.types = [
-      { key: 'ates_1',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/tas_sembol_ates_1.png' },
-      { key: 'ates_2',   color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_sembol_ates_2.png' },
-      { key: 'su_1',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_1.png' },
-      { key: 'su_2',     color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_sembol_su_2.png' },
-      { key: 'toprak_1', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_1.png' },
-      { key: 'toprak_2', color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
-      { key: 'hava_1',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_1.png' },
-      { key: 'hava_2',   color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_sembol_hava_2.png' },
+      { key: 'ates_core',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/ates_06_lava_core.png' },
+      { key: 'ates_2',      color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_sembol_ates_2.png' },
+      { key: 'su_core',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_core.png' },
+      { key: 'su_2',        color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_sembol_su_2.png' },
+      { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
+      { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
+      { key: 'hava_core',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_core.png' },
+      { key: 'hava_2',      color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_sembol_hava_2.png' },
     ];
 
     this.onWin = null;

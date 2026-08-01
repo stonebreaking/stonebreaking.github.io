@@ -24,26 +24,40 @@
     /* ========== SPLASH ========== */
     #screen-splash {
       background:
-        linear-gradient(180deg, rgba(7,7,15,0.55) 0%, rgba(7,7,15,0.85) 100%),
-        url('06_GRAFIK/sahne_ana_menu.png') center/cover no-repeat;
+        radial-gradient(ellipse at 50% 40%, rgba(40,20,0,0.25) 0%, rgba(7,7,15,0.92) 70%),
+        linear-gradient(180deg, #0a0a14 0%, #07070f 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+      gap: 22px;
     }
     #screen-splash .splash-stage {
       position: relative;
-      width: 280px; height: 220px;
-      display: grid; place-items: center;
+      width: min(300px, 78vw);
+      height: min(300px, 78vw);
+      display: grid;
+      place-items: center;
     }
+    #screen-splash .muhur-logo {
+      width: min(280px, 72vw);
+      height: auto;
+      max-height: 52vh;
+      object-fit: contain;
+      filter: drop-shadow(0 0 28px rgba(255, 107, 53, 0.35));
+      animation: floatY 4s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    #screen-splash .muhur-logo.show { opacity: 1; }
     #screen-splash .byline-mini {
       position: absolute;
-      bottom: 18px;
-      font-size: 0.65rem;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      font-size: 0.58rem;
       letter-spacing: 3px;
-      color: rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.18);
       text-transform: uppercase;
+      pointer-events: none;
     }
 
     /* ========== CHARACTER PICK ========== */
@@ -383,16 +397,21 @@
   <section id="screen-splash" class="screen active" aria-label="Açılış">
     <div class="particles" id="splash-particles"></div>
     <div class="splash-stage" id="splash-stage">
+      <!-- Dokun-hisset: büyük yazı yok — sadece mühür logo -->
       <div class="cin-stone" id="cin-stone" aria-hidden="true"></div>
       <div class="cin-orb ates" id="orb-ates"></div>
       <div class="cin-orb su" id="orb-su"></div>
       <div class="cin-orb toprak" id="orb-toprak"></div>
       <div class="cin-orb hava" id="orb-hava"></div>
-      <div class="logo-seal" id="logo-seal" style="display:none">
-        <span class="rune">◆</span>
-      </div>
+      <img
+        class="muhur-logo"
+        id="muhur-logo"
+        src="06_GRAFIK/logo_stonebreaking_muhur.png"
+        alt="STONEBREAKING"
+        width="280"
+        height="280"
+      />
     </div>
-    <div class="brand-logo" id="brand-logo" style="opacity:0">STONEBREAKING</div>
     <button class="btn-adventure" id="btn-start" style="opacity:0;pointer-events:none" type="button">
       Maceraya Başla
     </button>
@@ -536,8 +555,17 @@
         </div>
       </div>
       <div class="profile-field">
-        <label for="prof-name-input">Oyuncu adı</label>
-        <input id="prof-name-input" type="text" maxlength="18" placeholder="Adını yaz…" autocomplete="nickname" />
+        <label for="prof-name-input">Nick / Oyuncu adı</label>
+        <input id="prof-name-input" type="text" maxlength="18" placeholder="Nick oluştur…" autocomplete="nickname" />
+      </div>
+      <div class="profile-field">
+        <label>Hesap</label>
+        <button class="btn-ui" type="button" id="btn-google-login" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px">
+          <span style="font-weight:700">G</span> Google / Gmail ile giriş
+        </button>
+        <p id="google-login-status" style="font-size:0.72rem;color:#777;margin-top:8px;text-align:center">
+          Yerel nick aktif · Google OAuth Patron client id ile açılacak
+        </p>
       </div>
       <div class="profile-stats" style="margin-top:14px">
         <div class="ps"><div class="l">En Yüksek IQ</div><div class="v" id="prof-best-iq">0</div></div>
@@ -664,28 +692,31 @@
     }
 
     async function playSplashCinematic() {
+      // Resmi açılış: taş kırılır → 4 element → STONEBREAKING mühür logo → Maceraya Başla
+      // Büyük BATUPIA / Universe yazısı YOK (Patron BT mühür)
       const stone = $('#cin-stone');
-      const seal = $('#logo-seal');
-      const logo = $('#brand-logo');
+      const muhur = $('#muhur-logo');
       const btn = $('#btn-start');
       spawnParticles($('#splash-particles'));
-      await wait(1600);
-      stone.classList.add('crack');
+      await wait(1400);
+      if (stone) stone.classList.add('crack');
       await wait(900);
-      stone.style.display = 'none';
+      if (stone) stone.style.display = 'none';
       ['ates', 'su', 'toprak', 'hava'].forEach((k, i) => {
-        setTimeout(() => $('#orb-' + k).classList.add('show'), i * 120);
+        setTimeout(() => {
+          const o = $('#orb-' + k);
+          if (o) o.classList.add('show');
+        }, i * 120);
       });
-      await wait(1300);
+      await wait(1200);
       ['ates', 'su', 'toprak', 'hava'].forEach((k) => {
         const o = $('#orb-' + k);
+        if (!o) return;
         o.style.transition = 'opacity 0.5s';
         o.style.opacity = '0';
       });
-      seal.style.display = 'grid';
-      logo.style.opacity = '1';
-      logo.style.animation = 'logoReveal 1.3s ease-out both, shimmer 4s linear 1.3s infinite';
-      await wait(1100);
+      if (muhur) muhur.classList.add('show');
+      await wait(900);
       btn.style.opacity = '1';
       btn.style.pointerEvents = 'auto';
       btn.style.animation = 'btnPulse 2.2s ease-in-out infinite, fadeUp 0.8s ease-out both';
@@ -950,6 +981,17 @@
       });
       $('#btn-prof-save').addEventListener('click', saveProfileFromUI);
       $('#prof-name-input').addEventListener('change', saveProfileFromUI);
+      $('#btn-google-login').addEventListener('click', () => {
+        // PATRON BT: gerçek OAuth client id gelince bağlanacak (GIS)
+        const st = $('#google-login-status');
+        state.profile.googleStub = true;
+        saveProfile();
+        if (st) {
+          st.textContent = 'Google girişi hazırlanıyor — Client ID mühürlenince aktif (güvenli stub). Nick ile devam edebilirsin.';
+          st.style.color = '#ffd194';
+        }
+        showToast('Google giriş iskeleti mühürlendi');
+      });
     }
 
     document.addEventListener('DOMContentLoaded', () => {

@@ -1,5 +1,14 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.0 MÜHÜR (01.08.2026)
+- ates_06_lava_core master + su/toprak/hava core
+- logo_stonebreaking_muhur splash
+- RESMI_ACILIS_SONRASI_MUHRU.md
+- Profil nick + Google stub
+- Motor core taş seti
+- Push: token bekleniyor
+
+
 ### v5.2 FIX (canlı)
 - Fly-to-tray canvas içi
 - Combo land sonrası resolve
