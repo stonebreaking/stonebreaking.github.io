@@ -423,7 +423,7 @@
     <div class="screen-header">
       <div class="brand-logo sm">STONEBREAKING</div>
       <h1>Maskotunu Seç</h1>
-      <p>Kadın / Erkek — sırt sırta, aynı kader</p>
+      <p>Erkek = Kor (Ateş) · Kadın = Baam (Su) — bütünlük kuralı</p>
     </div>
     <div class="hero-duo">
       <img src="06_GRAFIK/secim_ekrani_sirt_sirta.png" alt="Kor ve Baam sırt sırta" />
@@ -433,16 +433,16 @@
         <span class="badge">🔥</span>
         <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Erkek maskot - Kor" />
         <div class="meta">
-          <div class="name" style="color:#ff6b35">ERKEK</div>
-          <div class="role">Kor referanslı · Ateş</div>
+          <div class="name" style="color:#ff6b35">ERKEK · KOR</div>
+          <div class="role">Maskot referans · Ateş Ruhu · Kart/taş uyumu</div>
         </div>
       </div>
       <div class="pick-card pick-baam" data-mascot="kadin" data-ref="baam" role="button" tabindex="0">
         <span class="badge">💧</span>
         <img src="06_GRAFIK/baam_su_ruhu.png" alt="Kadın maskot - Baam" />
         <div class="meta">
-          <div class="name" style="color:#4ecdc4">KADIN</div>
-          <div class="role">Baam referanslı · Su</div>
+          <div class="name" style="color:#4ecdc4">KADIN · BAAM</div>
+          <div class="role">Maskot referans · Su Ruhu · Kart/taş uyumu</div>
         </div>
       </div>
     </div>
@@ -610,7 +610,7 @@
   <script src="js/game.js"></script>
   <script>
     // =========================================================
-    // STONEBREAKING App Controller v5.2 — Unified canvas tray + fly + breath
+    // STONEBREAKING App Controller v6.1 — Chapters cinematic + Endless + mascot integrity
     // =========================================================
     const PROFILE_KEY = 'stonebreaking_profile_v1';
 
@@ -732,17 +732,29 @@
     }
 
     async function playChapterTransition(chapterNum) {
-      const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === chapterNum)
-        || { n: chapterNum, spirit: 'kor', title: 'Bölüm ' + chapterNum, region: '' };
-      const sp = (window.STONE_SPIRITS || {})[ch.spirit] || {};
+      const ch = (typeof window.STONE_getChapter === 'function')
+        ? window.STONE_getChapter(chapterNum)
+        : ((window.STONE_CHAPTERS || []).find((c) => c.n === chapterNum)
+          || { n: chapterNum, spirit: 'kor', title: 'Bölüm ' + chapterNum, region: '', line: '' });
+      const spId = ch.spirit === 'all' ? (state.spirit || 'kor') : ch.spirit;
+      const sp = (window.STONE_SPIRITS || {})[spId] || {};
       const el = (window.STONE_ELEMENTS || {})[sp.element] || { emoji: '◆', color: '#ff6b35' };
       const ov = $('#chapter-overlay');
-      $('#ch-symbol').textContent = el.emoji || '◆';
-      $('#ch-symbol').style.setProperty('--glow', el.color || '#ff6b35');
-      $('#ch-title').textContent = `Bölüm ${ch.n} · ${ch.title}`;
-      $('#ch-quote').textContent = sp.quote || '';
+      const multi = ch.spirit === 'all' ? '🔥💧🗿💨' : (el.emoji || '◆');
+      $('#ch-symbol').textContent = multi;
+      $('#ch-symbol').style.setProperty('--glow', ch.endless ? '#ffd194' : (el.color || '#ff6b35'));
+      const label = ch.endless
+        ? (chapterNum === 13 ? 'SONSUZ' : `SONSUZ · ${chapterNum - 12}`)
+        : `Bölüm ${ch.n}`;
+      $('#ch-title').textContent = `${label} · ${ch.title}`;
+      $('#ch-quote').textContent = ch.line || sp.quote || '';
+      // region / seal micro line if present
+      const sub = [ch.region, ch.seal].filter(Boolean).join(' · ');
+      if (sub && $('#ch-quote')) {
+        // keep dialogue primary; region as toast soft cue
+      }
       ov.classList.add('show');
-      await wait(2400);
+      await wait(ch.endless ? 2800 : 2600);
       ov.classList.remove('show');
     }
 
@@ -779,8 +791,13 @@
       p.bestBreath = Math.max(p.bestBreath || 0, stats.combo || 0);
       p.totalSeals = (p.totalSeals || 0) + (stats.seals || 0);
       p.wins = (p.wins || 0) + 1;
-      p.chapter = Math.max(p.chapter || 1, Math.min(12, (stats.level || 1) + 1));
-      if (!p.sealsOpened.includes(stats.level)) p.sealsOpened.push(stats.level);
+      const next = (stats.level || 1) + 1;
+      // story 1-12, then endless 13+
+      p.chapter = Math.max(p.chapter || 1, next);
+      if (stats.level <= 12 && !p.sealsOpened.includes(stats.level)) {
+        p.sealsOpened.push(stats.level);
+      }
+      if (stats.level >= 12) p.endlessUnlocked = true;
       p.spirit = state.spirit || p.spirit;
       p.mascot = state.mascot || p.mascot;
       saveProfile();
@@ -789,19 +806,40 @@
     function showVictory(stats) {
       state.lastStats = stats;
       applyProfileToWin(stats);
+      const lvl = stats.level || 1;
+      const ch = (typeof window.STONE_getChapter === 'function') ? window.STONE_getChapter(lvl) : null;
       $('#v-rank').textContent = stats.rank || 'A';
       $('#v-time').textContent = fmtTime(stats.timeSec || 0);
       $('#v-iq').textContent = (Math.round(stats.iq * 10) / 10).toFixed(1);
       $('#v-combo').textContent = stats.combo || 0;
-      const breaths = [
-        'Nefesin taşa değdi. Mühür uyandı.',
-        'Hiçbir mühür kaçmadı — evren seni duydu.',
-        'Sıkışmış taşlar doğru okundu. Ruhlar gülümsedi.',
-      ];
-      $('#v-msg').textContent = stats.rank === 'S'
-        ? breaths[1]
-        : breaths[stats.rank === 'A' ? 2 : 0];
-      $('#btn-next-level').textContent = `Bölüm ${Math.min(12, (stats.level || 1) + 1)}`;
+
+      if (lvl === 12) {
+        $('#v-title') && ($('#v-title').textContent = 'EVREN MÜHRÜ');
+        $('.v-title') && (document.querySelector('#victory-overlay .v-title').textContent = 'EVREN MÜHRÜ');
+        document.querySelector('#victory-overlay .v-sub').innerHTML =
+          '12 mühür tamam · Sonsuz açıldı! <span class="rank-pill" id="v-rank">' + (stats.rank || 'S') + '</span>';
+        // re-bind rank pill after innerHTML
+        const rp = document.querySelector('#victory-overlay .rank-pill');
+        if (rp) rp.textContent = stats.rank || 'S';
+        $('#v-msg').textContent = (ch && ch.line) || 'Dört ruh bir arada. Sonsuz kapı aralandı.';
+        $('#btn-next-level').textContent = 'Sonsuz Mühür';
+      } else if (lvl >= 13) {
+        document.querySelector('#victory-overlay .v-title').textContent = 'SONSUZ NEFES';
+        document.querySelector('#victory-overlay .v-sub').innerHTML =
+          'Dalga ' + (lvl - 12) + ' · Devam <span class="rank-pill">' + (stats.rank || 'A') + '</span>';
+        $('#v-msg').textContent = 'Taşlar bitmez. Nefes serin yaşadı — bir dalga daha?';
+        $('#btn-next-level').textContent = 'Dalga ' + (lvl - 11);
+      } else {
+        document.querySelector('#victory-overlay .v-title').textContent = 'EFSANE MÜHÜR';
+        document.querySelector('#victory-overlay .v-sub').innerHTML =
+          (ch && ch.seal ? ch.seal + ' açıldı! ' : 'Mühür Açıldı! ') +
+          '<span class="rank-pill">' + (stats.rank || 'A') + '</span>';
+        $('#v-msg').textContent = (ch && ch.line)
+          || (stats.rank === 'S'
+            ? 'Hiçbir mühür kaçmadı — evren seni duydu.'
+            : 'Nefesin taşa değdi. Mühür uyandı.');
+        $('#btn-next-level').textContent = `Bölüm ${lvl + 1}`;
+      }
       $('#victory-overlay').classList.add('show');
     }
 
@@ -892,16 +930,30 @@
     async function continueNextLevel() {
       hideVictory();
       if (!game || !state.lastStats) return;
-      const next = Math.min(12, (state.lastStats.level || state.chapter) + 1);
+      const cur = state.lastStats.level || state.chapter || 1;
+      const next = cur + 1; // 12 → 13 endless, then 14+
       state.chapter = next;
       state.profile.chapter = next;
+      if (next >= 13) state.profile.endlessUnlocked = true;
       saveProfile();
-      const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === next);
-      const sp = ch ? window.STONE_SPIRITS[ch.spirit] : null;
-      if (sp && sp.scene) game.setScene(sp.scene);
-      if (sp) {
-        $('#chip-img').src = sp.portrait;
+
+      const ch = (typeof window.STONE_getChapter === 'function')
+        ? window.STONE_getChapter(next)
+        : null;
+      let sp = null;
+      if (ch && ch.spirit && ch.spirit !== 'all') {
+        sp = window.STONE_SPIRITS[ch.spirit];
+      } else if (state.spirit) {
+        sp = window.STONE_SPIRITS[state.spirit];
       }
+      // endless: rotate scene by wave
+      if (next >= 13) {
+        const cycle = ['kor', 'baam', 'mand', 'zepy'][(next - 13) % 4];
+        sp = window.STONE_SPIRITS[cycle] || sp;
+      }
+      if (sp && sp.scene) game.setScene(sp.scene);
+      if (sp) $('#chip-img').src = sp.portrait;
+
       await playChapterTransition(next);
       game.locked = false;
       game.newGame(next);

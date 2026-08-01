@@ -1,6 +1,6 @@
 // =========================================================
-// STONEBREAKING — Triple Match / Tray Motoru v6.0
-// Lava-core master taşlar · tepsi canvas içi · nefes dili · CSS px click
+// STONEBREAKING — Triple Match / Tray Motoru v6.1
+// Lava-core · fly-to-tray · nefes · 12 bölüm diyalog · sonsuz 13+
 // =========================================================
 
 const ELEMENTS = {
@@ -11,26 +11,38 @@ const ELEMENTS = {
 };
 
 const SPIRITS = {
-  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',    chapters: [1, 2, 3] },
-  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',     chapters: [4, 5, 6] },
-  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', quote: 'Ben Mand, Kristal Mağaralar\'ın deviyim.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', chapters: [7, 8, 9] },
-  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',   chapters: [10, 11, 12] },
+  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   mascot: 'erkek', quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',    card: '06_GRAFIK/koleksiyon_karti_kor.png',  chapters: [1, 2, 3] },
+  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     mascot: 'kadin', quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',     card: '06_GRAFIK/koleksiyon_karti_baam.png', chapters: [4, 5, 6] },
+  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', mascot: null,    quote: 'Ben Mand, Kristal Mağaralar\'ın deviyim.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', card: '06_GRAFIK/koleksiyon_karti_mand.png', chapters: [7, 8, 9] },
+  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   mascot: null,    quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',   card: '06_GRAFIK/koleksiyon_karti_zepy.png', chapters: [10, 11, 12] },
 };
 
+// 12 bölüm + sinematik diyalog (çizgi film metinleri)
 const CHAPTERS = [
-  { n: 1,  spirit: 'kor',  title: 'Alev Uyanışı',     region: 'Ateş Vadisi' },
-  { n: 2,  spirit: 'kor',  title: 'Magma Köprüsü',    region: 'Ateş Vadisi' },
-  { n: 3,  spirit: 'kor',  title: 'Volkan Mührü',     region: 'Ateş Vadisi' },
-  { n: 4,  spirit: 'baam', title: 'Dalga Çağrısı',    region: 'Derinlikler' },
-  { n: 5,  spirit: 'baam', title: 'Mercan Labirent',  region: 'Derinlikler' },
-  { n: 6,  spirit: 'baam', title: 'İnci Tahtı',       region: 'Derinlikler' },
-  { n: 7,  spirit: 'mand', title: 'Granit Kapı',      region: 'Kristal Mağara' },
-  { n: 8,  spirit: 'mand', title: 'Kristal Nabız',    region: 'Kristal Mağara' },
-  { n: 9,  spirit: 'mand', title: 'Dağ Mührü',        region: 'Kristal Mağara' },
-  { n: 10, spirit: 'zepy', title: 'Rüzgar Merdiveni', region: 'Gökyüzü Tapınağı' },
-  { n: 11, spirit: 'zepy', title: 'Bulut Labirenti',  region: 'Gökyüzü Tapınağı' },
-  { n: 12, spirit: 'zepy', title: 'Evren Mührü',      region: 'Gökyüzü Tapınağı' },
+  { n: 1,  spirit: 'kor',  title: 'Alev Uyanışı',     region: 'Ateş Vadisi',      seal: 'Kıvılcım Mührü',   line: 'Kor: İlk nefes… taş uyanıyor. Benimle yürü.' },
+  { n: 2,  spirit: 'kor',  title: 'Magma Köprüsü',    region: 'Ateş Vadisi',      seal: 'Köprü Mührü',      line: 'Kor: Magma köprüsü yalnız cesuru taşır. Üç aynı — kır!' },
+  { n: 3,  spirit: 'kor',  title: 'Volkan Mührü',     region: 'Ateş Vadisi',      seal: 'Volkan Mührü',     line: 'Kor: Volkan mühürü açılıyor. Ateş yolun bitti — su çağırıyor.' },
+  { n: 4,  spirit: 'baam', title: 'Dalga Çağrısı',    region: 'Derinlikler',      seal: 'Dalga Mührü',      line: 'Baam: Sakin ol. Dalgalar acele etmez; mühür dinler.' },
+  { n: 5,  spirit: 'baam', title: 'Mercan Labirent',  region: 'Derinlikler',      seal: 'Mercan Mührü',     line: 'Baam: Labirentte kaybolma — üç aynı ritim, bir nefes.' },
+  { n: 6,  spirit: 'baam', title: 'İnci Tahtı',       region: 'Derinlikler',      seal: 'İnci Mührü',       line: 'Baam: İnci tahtı senin. Derinlikler bitti — dağ bekliyor.' },
+  { n: 7,  spirit: 'mand', title: 'Granit Kapı',      region: 'Kristal Mağara',   seal: 'Granit Mührü',     line: 'Mand: Kapı ağırdır. Sabır… taş unutmaz.' },
+  { n: 8,  spirit: 'mand', title: 'Kristal Nabız',    region: 'Kristal Mağara',   seal: 'Kristal Mührü',    line: 'Mand: Nabız kristalde. Duy, eşleştir, mühürle.' },
+  { n: 9,  spirit: 'mand', title: 'Dağ Mührü',        region: 'Kristal Mağara',   seal: 'Dağ Mührü',        line: 'Mand: Dağ mühürü tamam. Gökyüzü seni çağırıyor.' },
+  { n: 10, spirit: 'zepy', title: 'Rüzgar Merdiveni', region: 'Gökyüzü Tapınağı', seal: 'Rüzgar Mührü',     line: 'Zepy: Basamaklar bulut. Hafif ol — nefesin kanat.' },
+  { n: 11, spirit: 'zepy', title: 'Bulut Labirenti',  region: 'Gökyüzü Tapınağı', seal: 'Bulut Mührü',      line: 'Zepy: Labirent sis. Üç aynı yıldız — yolu açar.' },
+  { n: 12, spirit: 'zepy', title: 'Evren Mührü',      region: 'Gökyüzü Tapınağı', seal: 'Evren Mührü',      line: 'Zepy: Dört ruh bir arada. Evren mühürü… sonsuz kapı aralanıyor.' },
 ];
+
+// Sonsuz mod (B12 sonrası)
+const ENDLESS_CHAPTER = {
+  n: 13,
+  spirit: 'all',
+  title: 'Sonsuz Mühür',
+  region: 'Kırık Evren',
+  seal: 'Sonsuz Mühür',
+  line: 'Dört ruh birden: Taşlar bitmez. Nefesin yeter mi?',
+  endless: true,
+};
 
 const TRAY_MAX = 5;
 const COMBO_WINDOW_MS = 4000;
@@ -243,6 +255,7 @@ class StonebreakingGame {
   // ---- level ----
   newGame(level = this.level) {
     this.level = level;
+    this.endless = level >= 13;
     this.tiles = [];
     this.tray = [];
     this.history = [];
@@ -254,15 +267,17 @@ class StonebreakingGame {
     this.inputLocked = false;
     this._winScheduled = false;
 
-    this.iq = 40 + (level - 1) * 2;
+    // Endless: IQ tabanı yüksek, güçler biraz daha cömert, tahta zor
+    const L = this.endless ? 12 + Math.min(20, level - 12) : level;
+    this.iq = this.endless ? 80 + (level - 13) * 3 : 40 + (level - 1) * 2;
     this.combo = 0;
     this.maxCombo = 0;
     this.matches = 0;
     this.moves = 0;
     this.seals = 0;
-    this.hintsLeft = 1 + Math.floor((level - 1) / 4);
-    this.undosLeft = 1 + Math.floor((level - 1) / 3);
-    this.shufflesLeft = level >= 3 ? 1 + Math.floor(level / 5) : 0;
+    this.hintsLeft = 1 + Math.floor((L - 1) / 4) + (this.endless ? 1 : 0);
+    this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? 1 : 0);
+    this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) : 0;
     this.startedAt = performance.now();
     this.comboUntil = 0;
 
@@ -301,13 +316,14 @@ class StonebreakingGame {
 
   buildLayout(level) {
     const out = [];
-    const baseCols = 6 + (level % 3);
-    const baseRows = 7 + (level % 2);
-    const layers = 3 + Math.min(2, Math.floor(level / 3));
+    const endless = level >= 13 || this.endless;
+    const baseCols = 6 + (level % 3) + (endless ? 1 : 0);
+    const baseRows = 7 + (level % 2) + (endless ? 1 : 0);
+    const layers = 3 + Math.min(2, Math.floor((endless ? level : level) / 3)) + (endless ? 1 : 0);
 
     for (let z = 0; z < layers; z++) {
-      const cols = baseCols - z;
-      const rows = baseRows - z;
+      const cols = Math.max(4, baseCols - z);
+      const rows = Math.max(4, baseRows - z);
       const ox = z * 0.5;
       const oy = z * 0.5;
       for (let r = 0; r < rows; r++) {
@@ -319,9 +335,11 @@ class StonebreakingGame {
         }
       }
     }
-    if (out.length > 54) out.length = 54 - (54 % 3);
-    if (out.length < 30) {
-      for (let i = out.length; i < 30; i++) {
+    const maxTiles = endless ? 66 : 54;
+    const minTiles = endless ? 36 : 30;
+    if (out.length > maxTiles) out.length = maxTiles - (maxTiles % 3);
+    if (out.length < minTiles) {
+      for (let i = out.length; i < minTiles; i++) {
         out.push({ col: (i % 5) + 1, row: (i % 6) + 1, z: Math.min(layers, 2) });
       }
     }
@@ -946,7 +964,20 @@ class StonebreakingGame {
 window.StonebreakingGame = StonebreakingGame;
 window.STONE_SPIRITS = SPIRITS;
 window.STONE_CHAPTERS = CHAPTERS;
+window.STONE_ENDLESS = ENDLESS_CHAPTER;
 window.STONE_ELEMENTS = ELEMENTS;
 window.STONE_TRAY_MAX = TRAY_MAX;
 window.STONE_SEAL_BREATHS = SEAL_BREATHS;
 window.STONE_breathForCombo = breathForCombo;
+window.STONE_getChapter = function (n) {
+  if (n >= 13) {
+    return Object.assign({}, ENDLESS_CHAPTER, {
+      n,
+      title: n === 13 ? 'Sonsuz Mühür' : `Sonsuz · Dalga ${n - 12}`,
+      line: n === 13
+        ? ENDLESS_CHAPTER.line
+        : `Sonsuz dalga ${n - 12}: Taşlar sıkılaştı. Nefes x serini koru.`,
+    });
+  }
+  return CHAPTERS.find((c) => c.n === n) || CHAPTERS[0];
+};

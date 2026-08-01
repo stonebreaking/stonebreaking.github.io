@@ -1,5 +1,12 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.1 (devam oturumu)
+- 12 bölüm sinematik diyalogları
+- Sonsuz mod 13+
+- Maskot/kart bütünlük dokümanı
+- Push bekleniyor
+
+
 ### v6.0 MÜHÜR (01.08.2026)
 - ates_06_lava_core master + su/toprak/hava core
 - logo_stonebreaking_muhur splash
