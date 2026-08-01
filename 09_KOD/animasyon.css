@@ -230,6 +230,24 @@
   animation: none;
 }
 
+/* v6.1.1: Sonsuz Mod hızlı giriş butonu (kilit açıldığında) */
+.btn-endless {
+  margin-top: 12px;
+  padding: 12px 30px;
+  border: 1px solid rgba(168, 216, 234, 0.45);
+  border-radius: 999px;
+  background: rgba(168, 216, 234, 0.08);
+  color: #d8f2ff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 0 18px rgba(168, 216, 234, 0.18);
+}
+.btn-endless:active { filter: brightness(1.2); transform: scale(0.98); }
+
 .btn-ui {
   padding: 14px 28px;
   border-radius: 999px;
@@ -308,7 +326,7 @@
   backdrop-filter: blur(6px);
 }
 
-/* ---------- Bölüm geçiş overlay ---------- */
+/* ---------- Bölüm geçiş overlay (v6.1 sinematik) ---------- */
 #chapter-overlay {
   position: fixed;
   inset: 0;
@@ -317,7 +335,8 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: #000;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(20, 10, 30, 0.92) 0%, rgba(0, 0, 0, 0.98) 78%);
   color: #fff;
   text-align: center;
   padding: 24px;
@@ -326,21 +345,79 @@
   display: flex;
   animation: chapterWipe 0.9s ease-out both;
 }
+#chapter-overlay .ch-portrait {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--glow, #ff6b35);
+  box-shadow: 0 0 34px var(--glow, #ff6b35);
+  margin-bottom: 14px;
+  animation: sealExplode 0.8s ease-out both, spiritGlow 2s ease-in-out 0.8s infinite;
+}
 #chapter-overlay .chapter-symbol {
-  font-size: 4rem;
+  font-size: 3rem;
   animation: sealExplode 0.9s ease-out both, spiritGlow 2s ease-in-out 0.9s infinite;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 #chapter-overlay h2 {
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(1.3rem, 5vw, 1.9rem);
   letter-spacing: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
-#chapter-overlay p {
-  color: #bbb;
+#chapter-overlay #ch-region {
+  color: #ffd194;
+  font-size: 0.78rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out 0.25s forwards;
+}
+#ch-lines {
+  width: min(360px, 92vw);
+  min-height: 96px;
+}
+#chapter-overlay .ch-line {
+  color: #e6e2f0;
   max-width: 360px;
-  line-height: 1.5;
-  animation: fadeUp 0.7s ease-out 0.3s both;
+  line-height: 1.55;
+  font-size: 1.02rem;
+  margin: 10px auto;
+  opacity: 0;
+  animation: fadeUp 0.55s ease-out forwards;
+}
+#chapter-overlay .ch-line b {
+  color: var(--glow, #ff6b35);
+  font-weight: 800;
+}
+
+/* ---------- Ses düğmesi ---------- */
+.btn-sound {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffd194;
+  font-size: 1.05rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ---------- Sonsuz mod rozeti (zafer) ---------- */
+.endless-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #a8d8ea, #4ecdc4);
+  color: #06121a;
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+  margin-left: 8px;
+  vertical-align: middle;
+  animation: sealExplode 0.7s ease-out both;
 }
 
 /* ---------- Parçacık alanı ---------- */

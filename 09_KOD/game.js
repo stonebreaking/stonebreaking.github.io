@@ -1,6 +1,6 @@
 // =========================================================
 // STONEBREAKING — Triple Match / Tray Motoru v6.1
-// Lava-core · fly-to-tray · nefes · 12 bölüm diyalog · sonsuz 13+
+// Lava-core master taşlar · tepsi canvas içi · nefes dili · CSS px click
 // =========================================================
 
 const ELEMENTS = {
@@ -11,38 +11,43 @@ const ELEMENTS = {
 };
 
 const SPIRITS = {
-  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   mascot: 'erkek', quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',    card: '06_GRAFIK/koleksiyon_karti_kor.png',  chapters: [1, 2, 3] },
-  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     mascot: 'kadin', quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',     card: '06_GRAFIK/koleksiyon_karti_baam.png', chapters: [4, 5, 6] },
-  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', mascot: null,    quote: 'Ben Mand, Kristal Mağaralar\'ın deviyim.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', card: '06_GRAFIK/koleksiyon_karti_mand.png', chapters: [7, 8, 9] },
-  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   mascot: null,    quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',   card: '06_GRAFIK/koleksiyon_karti_zepy.png', chapters: [10, 11, 12] },
+  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',    chapters: [1, 2, 3] },
+  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',     chapters: [4, 5, 6] },
+  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', quote: 'Ben Mand, Kristal Mağaralar\'ın deviyim.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', chapters: [7, 8, 9] },
+  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',   chapters: [10, 11, 12] },
 };
 
-// 12 bölüm + sinematik diyalog (çizgi film metinleri)
 const CHAPTERS = [
-  { n: 1,  spirit: 'kor',  title: 'Alev Uyanışı',     region: 'Ateş Vadisi',      seal: 'Kıvılcım Mührü',   line: 'Kor: İlk nefes… taş uyanıyor. Benimle yürü.' },
-  { n: 2,  spirit: 'kor',  title: 'Magma Köprüsü',    region: 'Ateş Vadisi',      seal: 'Köprü Mührü',      line: 'Kor: Magma köprüsü yalnız cesuru taşır. Üç aynı — kır!' },
-  { n: 3,  spirit: 'kor',  title: 'Volkan Mührü',     region: 'Ateş Vadisi',      seal: 'Volkan Mührü',     line: 'Kor: Volkan mühürü açılıyor. Ateş yolun bitti — su çağırıyor.' },
-  { n: 4,  spirit: 'baam', title: 'Dalga Çağrısı',    region: 'Derinlikler',      seal: 'Dalga Mührü',      line: 'Baam: Sakin ol. Dalgalar acele etmez; mühür dinler.' },
-  { n: 5,  spirit: 'baam', title: 'Mercan Labirent',  region: 'Derinlikler',      seal: 'Mercan Mührü',     line: 'Baam: Labirentte kaybolma — üç aynı ritim, bir nefes.' },
-  { n: 6,  spirit: 'baam', title: 'İnci Tahtı',       region: 'Derinlikler',      seal: 'İnci Mührü',       line: 'Baam: İnci tahtı senin. Derinlikler bitti — dağ bekliyor.' },
-  { n: 7,  spirit: 'mand', title: 'Granit Kapı',      region: 'Kristal Mağara',   seal: 'Granit Mührü',     line: 'Mand: Kapı ağırdır. Sabır… taş unutmaz.' },
-  { n: 8,  spirit: 'mand', title: 'Kristal Nabız',    region: 'Kristal Mağara',   seal: 'Kristal Mührü',    line: 'Mand: Nabız kristalde. Duy, eşleştir, mühürle.' },
-  { n: 9,  spirit: 'mand', title: 'Dağ Mührü',        region: 'Kristal Mağara',   seal: 'Dağ Mührü',        line: 'Mand: Dağ mühürü tamam. Gökyüzü seni çağırıyor.' },
-  { n: 10, spirit: 'zepy', title: 'Rüzgar Merdiveni', region: 'Gökyüzü Tapınağı', seal: 'Rüzgar Mührü',     line: 'Zepy: Basamaklar bulut. Hafif ol — nefesin kanat.' },
-  { n: 11, spirit: 'zepy', title: 'Bulut Labirenti',  region: 'Gökyüzü Tapınağı', seal: 'Bulut Mührü',      line: 'Zepy: Labirent sis. Üç aynı yıldız — yolu açar.' },
-  { n: 12, spirit: 'zepy', title: 'Evren Mührü',      region: 'Gökyüzü Tapınağı', seal: 'Evren Mührü',      line: 'Zepy: Dört ruh bir arada. Evren mühürü… sonsuz kapı aralanıyor.' },
+  { n: 1,  spirit: 'kor',  title: 'Alev Uyanışı',     region: 'Ateş Vadisi', seal: 'Alev Mühürü', lines: ['Kor: Mühür uyanıyor…', 'Kor: İlk nefesini duydum, Gezgin.', 'Kor: Alev taşlarını kır — vadi seni bekliyor.'] },
+  { n: 2,  spirit: 'kor',  title: 'Magma Köprüsü',    region: 'Ateş Vadisi', seal: 'Alev Mühürü', lines: ['Kor: Magma Köprüsü\'ne adım attın.', 'Kor: Ateş seni sınamak istiyor.', 'Kor: Cesaretinle mühürleri kır, yürü.'] },
+  { n: 3,  spirit: 'kor',  title: 'Volkan Mührü',     region: 'Ateş Vadisi', seal: 'Alev Mühürü', lines: ['Kor: Volkan Mührü\'ne ulaştın.', 'Kor: Benimle son alevi kır.', 'Kor: Alev Mühürü artık senin — başardın!'] },
+  { n: 4,  spirit: 'baam', title: 'Dalga Çağrısı',    region: 'Derinlikler', seal: 'Dalgacık Mühürü', lines: ['Baam: Derinlikler seni çağırıyor.', 'Baam: Dalgalar sabrı öğretir.', 'Baam: Su taşlarını mühürle, sakin kal.'] },
+  { n: 5,  spirit: 'baam', title: 'Mercan Labirent',  region: 'Derinlikler', seal: 'Dalgacık Mühürü', lines: ['Baam: Mercan Labirenti karışık.', 'Baam: Akışı hisset, panikleme.', 'Baam: Bilgelik yolu açılır.'] },
+  { n: 6,  spirit: 'baam', title: 'İnci Tahtı',       region: 'Derinlikler', seal: 'Dalgacık Mühürü', lines: ['Baam: İnci Tahtı\'ndayız.', 'Baam: Derin nefes, bilge hamle.', 'Baam: İnci Mühürü açıldı — deniz seninle.'] },
+  { n: 7,  spirit: 'mand', title: 'Granit Kapı',      region: 'Kristal Mağara', seal: 'Kristal Mühür', lines: ['Mand: Granit Kapı\'ya geldin.', 'Mand: Sabır taşı kırar.', 'Mand: Taşların diliyle konuş.'] },
+  { n: 8,  spirit: 'mand', title: 'Kristal Nabız',    region: 'Kristal Mağara', seal: 'Kristal Mühür', lines: ['Mand: Kristal Nabız atıyor.', 'Mand: Dünyanın kalbini duy.', 'Mand: Sakin ol, sarsılma.'] },
+  { n: 9,  spirit: 'mand', title: 'Dağ Mührü',        region: 'Kristal Mağara', seal: 'Kristal Mühür', lines: ['Mand: Dağ Mühürü son kapı.', 'Mand: Dayanıklılık senin gücün.', 'Mand: Kristal Mühür senin — dağ seni tanıdı.'] },
+  { n: 10, spirit: 'zepy', title: 'Rüzgar Merdiveni', region: 'Gökyüzü Tapınağı', seal: 'Rüzgar Mühürü', lines: ['Zepy: Rüzgar Merdiveni\'ne çık.', 'Zepy: Hafif ol, özgür ol.', 'Zepy: Bulutlar yolu gösterir.'] },
+  { n: 11, spirit: 'zepy', title: 'Bulut Labirenti',  region: 'Gökyüzü Tapınağı', seal: 'Rüzgar Mühürü', lines: ['Zepy: Bulut Labirenti süzülüyor.', 'Zepy: Rüzgarın sesini dinle.', 'Zepy: Görünmeyeni gör.'] },
+  { n: 12, spirit: 'zepy', title: 'Evren Mührü',      region: 'Gökyüzü Tapınağı', seal: 'Evren Mührü', lines: ['Zepy: Evren Mührü son sınav.', 'Zepy: Dört ruh bir arada — Kor, Baam, Mand, Zepy.', 'Zepy: Evren Mührü kırıldı — Sonsuz yol açıldı!'] },
 ];
 
-// Sonsuz mod (B12 sonrası)
 const ENDLESS_CHAPTER = {
   n: 13,
   spirit: 'all',
   title: 'Sonsuz Mühür',
   region: 'Kırık Evren',
   seal: 'Sonsuz Mühür',
-  line: 'Dört ruh birden: Taşlar bitmez. Nefesin yeter mi?',
+  lines: ['Dört ruh birden: Taşlar bitmez.', 'Nefesin yeter mi?', 'Kader senin elinde.'],
   endless: true,
 };
+
+const ENDLESS_LINES = [
+  'Sonsuz mühür yolu açık…',
+  'Nefesini koru, kaderi sen yazarsın.',
+  'Her mühür yeni bir hikâye.',
+  'Taşlar durmadan konuşuyor.',
+];
 
 const TRAY_MAX = 5;
 const COMBO_WINDOW_MS = 4000;
@@ -106,6 +111,10 @@ class StonebreakingGame {
     this.trayPad = 10;
     this.slotW = 48;
     this.slotH = 60;
+    // Güvenli varsayılan: resize() gelene kadar NaN geometri önlenir
+    this.boardTop = 100;
+    this.trayX = 20;
+    this.trayW = 320;
 
     this.tiles = [];
     this.tray = []; // landed slots { type, id }
@@ -124,6 +133,7 @@ class StonebreakingGame {
     this.matches = 0;
     this.moves = 0;
     this.seals = 0;
+    this.endless = false; // v6.1: 12. bölüm sonrası Sonsuz Mod
     this.hintsLeft = 1;
     this.undosLeft = 1;
     this.shufflesLeft = 0;
@@ -135,15 +145,20 @@ class StonebreakingGame {
     this.inputLocked = false; // while resolving
 
     // PATRON BT v6: ates_06_lava_core = master gövde; core set öncelikli
+    // v6.1: aynı lava-core gövde + yeni merkez rune varyantları (yazısız)
     this.types = [
       { key: 'ates_core',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/ates_06_lava_core.png' },
       { key: 'ates_2',      color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_sembol_ates_2.png' },
+      { key: 'ates_3',      color: '#ff6b35', emoji: '🗡️', img: '06_GRAFIK/tas_sembol_ates_3.png' },
       { key: 'su_core',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_core.png' },
       { key: 'su_2',        color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_sembol_su_2.png' },
+      { key: 'su_3',        color: '#4ecdc4', emoji: '🦪', img: '06_GRAFIK/tas_sembol_su_3.png' },
       { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
       { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
+      { key: 'toprak_3',    color: '#c4a35a', emoji: '💎', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
       { key: 'hava_core',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_core.png' },
       { key: 'hava_2',      color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_sembol_hava_2.png' },
+      { key: 'hava_3',      color: '#a8d8ea', emoji: '🌀', img: '06_GRAFIK/tas_sembol_hava_3.png' },
     ];
 
     this.onWin = null;
@@ -152,6 +167,7 @@ class StonebreakingGame {
     this.onTray = null;
     this.onFail = null;
     this.onBreath = null;
+    this.onPick = null; // v6.1: taş seçilince (ses/tepki)
     this._bound = false;
     this._raf = 0;
     this._winScheduled = false;
@@ -255,7 +271,7 @@ class StonebreakingGame {
   // ---- level ----
   newGame(level = this.level) {
     this.level = level;
-    this.endless = level >= 13;
+    this.endless = level > 12; // Sonsuz Mod: 12. bölüm sonrası
     this.tiles = [];
     this.tray = [];
     this.history = [];
@@ -267,7 +283,7 @@ class StonebreakingGame {
     this.inputLocked = false;
     this._winScheduled = false;
 
-    // Endless: IQ tabanı yüksek, güçler biraz daha cömert, tahta zor
+    // Sonsuz Mod tuning'i (remote v6.1 deneyimi): IQ tabanı yüksek, güçler cömert
     const L = this.endless ? 12 + Math.min(20, level - 12) : level;
     this.iq = this.endless ? 80 + (level - 13) * 3 : 40 + (level - 1) * 2;
     this.combo = 0;
@@ -316,10 +332,11 @@ class StonebreakingGame {
 
   buildLayout(level) {
     const out = [];
-    const endless = level >= 13 || this.endless;
-    const baseCols = 6 + (level % 3) + (endless ? 1 : 0);
-    const baseRows = 7 + (level % 2) + (endless ? 1 : 0);
-    const layers = 3 + Math.min(2, Math.floor((endless ? level : level) / 3)) + (endless ? 1 : 0);
+    const endless = level > 12;
+    const e = endless ? Math.floor((level - 13) / 3) : 0;
+    const baseCols = 6 + (level % 3) + (endless ? 1 + e : 0);
+    const baseRows = 7 + (level % 2) + (endless ? 1 + Math.floor(e / 2) : 0);
+    const layers = 3 + Math.min(2, Math.floor(level / 3)) + (endless ? 1 + Math.min(3, Math.floor((level - 13) / 4)) : 0);
 
     for (let z = 0; z < layers; z++) {
       const cols = Math.max(4, baseCols - z);
@@ -482,6 +499,7 @@ class StonebreakingGame {
       landed: false,
     });
 
+    if (typeof this.onPick === 'function') this.onPick(t);
     this.emitAll();
   }
 
@@ -532,7 +550,18 @@ class StonebreakingGame {
       const c = {};
       this.tray.forEach((s) => { c[s.type] = (c[s.type] || 0) + 1; });
       if (!Object.values(c).some((n) => n >= 3)) {
-        this.toast('⚠️ Tepsi doldu!');
+        // v6.1: SOFT-LOCK ÖNLEME — tepsiye sığmayan taşlar tahtaya geri döner
+        // (klasik triple-match kurtarma; "dokun-hisset" felsefesi: oyuncu asla sıkışmaz)
+        this.tray.forEach((s) => {
+          const tile = this.tiles.find((t) => t.id === s.id && !t.active);
+          if (tile) { tile.active = true; tile.free = true; }
+        });
+        this.tray = [];
+        this.history = []; // tepsi sıfırlandığı için eski geri-al kayıtları geçersiz
+        if (this.shufflesLeft <= 0) this.shufflesLeft = 1; // kilitli shuffle açılır
+        this.updateFree();
+        this.emitAll();
+        this.toast('⚠️ Tepsi doldu — taşlar geri döndü!');
         if (typeof this.onFail === 'function') this.onFail('tray_full');
       }
     }
@@ -682,6 +711,7 @@ class StonebreakingGame {
     if (typeof this.onHUD === 'function') {
       this.onHUD({
         level: this.level,
+        endless: this.endless,
         iq: this.iq,
         combo: this.combo,
         maxCombo: this.maxCombo,
@@ -969,14 +999,16 @@ window.STONE_ELEMENTS = ELEMENTS;
 window.STONE_TRAY_MAX = TRAY_MAX;
 window.STONE_SEAL_BREATHS = SEAL_BREATHS;
 window.STONE_breathForCombo = breathForCombo;
+window.STONE_ENDLESS_LINES = ENDLESS_LINES;
+// remote v6.1 API: bölüm verisi (13+ → Sonsuz Dalga)
 window.STONE_getChapter = function (n) {
   if (n >= 13) {
     return Object.assign({}, ENDLESS_CHAPTER, {
       n,
       title: n === 13 ? 'Sonsuz Mühür' : `Sonsuz · Dalga ${n - 12}`,
-      line: n === 13
-        ? ENDLESS_CHAPTER.line
-        : `Sonsuz dalga ${n - 12}: Taşlar sıkılaştı. Nefes x serini koru.`,
+      lines: n === 13
+        ? ENDLESS_CHAPTER.lines
+        : [`Sonsuz dalga ${n - 12}: Taşlar sıkılaştı.`, 'Nefes serini koru.', 'Kader senin elinde.'],
     });
   }
   return CHAPTERS.find((c) => c.n === n) || CHAPTERS[0];
