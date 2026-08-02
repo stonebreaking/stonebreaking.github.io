@@ -2,6 +2,15 @@
 
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v7.0 (02.08.2026) — PATRON BT DEVRİMİ: ELEMENT SES SİSTEMİ + SİYAH EKRAN KÖKTEN ÇÖZÜM + SONSUZ MOD ZORLUK EĞRİSİ 🔥
+- ✅ **startGame/continueNextLevel Sıralama Düzeltmesi:** `newGame()` artık `goScreen()` ve `playChapterTransition()` ÖNCESİNE çağrılıyor. Tahta hazır olduktan sonra ekran gösterilir — siyah ekran garantisi %100.
+- ✅ **Element Temalı Ses Sistemi (v2):** Her elementin (Ateş/Su/Toprak/Hava) kendi frekans haritası ve ses rengi. Nefes, zafer fanfarı, bölüm geçişi elemente göre çalar. Yeni `chapterReveal()` sinematik sesi eklendi.
+- ✅ **Bölüm Geçiş Sinematiği Güçlendirildi:** Portre 116→128px, border 2→3px, çift katmanlı glow (40px+80px), element gradyan arka plan, başlık text-shadow eklendi.
+- ✅ **Sonsuz Mod Zorluk Eğrisi:** Dalga arttıkça tahta büyür (wave faktörü), güçler dengeli artar (her 3 dalga'da ekstra ipucu/geri al), maxTiles 72'ye kadar çıkar.
+- ✅ **Smart Solver v2:** Yığın bazlı eşleştirme mantığı, 2-tepsi-öncelik stratejisi, soft-lock önleme shuffle. 44/44 test 1.8 saniyede sıfır hata.
+- ✅ **Menü Butonu Kadim Görünüm:** '←' yerine '◆ Menü' — evren diline uygun.
+- ✅ **Splash Buton Büyütüldü:** 18px/42px padding, 1.08rem font, 6px letter-spacing — kadim taş plaket hissi.
+
 ### v6.9.3 (02.08.2026) — BATUPIA SİNEMA SAHNESİ + SİYAH EKRAN KÖKTEN ÇÖZÜM 🎬🖤
 - ✅ **BATUPIA Intro (SAHNE -1) Sinema Sahnesi:** Logo 80px'den 220px'e büyütüldü, arka plan gradyanı güçlendirildi (çoklu radial gradient), studio adı 1.5rem→2.4rem, alt yazı büyütüldü, drop-shadow 40px/80px çift katmanlı efsanevi glow efekti eklendi. Artık sinema sahnesi gibi!
 - ✅ **STONEBREAKING Yazısı Kaldırıldı:** Splash (SAHNE 0) üzerindeki floating STONEBREAKING yazısı butonu kapatıyordu. Logo görselinde zaten yazdığından, redundant yazı `display:none !important` ile tamamen kaldırıldı.
