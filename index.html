@@ -158,8 +158,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 18px;
+      justify-content: flex-start;
+      padding-top: 8vh;
+      gap: 8px;
     }
     /* Sahne ARKASI: ken-burns ile yavaşça hareket eder (sahne oynar) */
     #screen-splash::before {
@@ -300,46 +301,45 @@
       position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 14px 32px;
-      border-radius: 4px;
-      border: 3px solid #703a1a;
-      outline: 1.5px solid #140b07;
-      background: linear-gradient(135deg, #1f1511 0%, #2e1a12 50%, #150f0c 100%);
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 26px;
+      border-radius: 6px;
+      border: 2px solid rgba(255,107,53,0.5);
+      background: linear-gradient(180deg, rgba(30,20,15,0.95) 0%, rgba(18,10,6,0.98) 100%);
       box-shadow:
-        0 8px 24px rgba(0,0,0,0.85),
-        inset 0 0 20px rgba(0, 0, 0, 0.95),
-        inset 0 2px 10px rgba(255, 130, 45, 0.4);
+        0 4px 16px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,209,148,0.12),
+        inset 0 -2px 8px rgba(255,107,53,0.08);
       color: #ffd194;
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.82rem;
       font-weight: 900;
       letter-spacing: 4px;
       text-transform: uppercase;
-      text-shadow: 0 0 15px rgba(255,107,53,0.7);
+      text-shadow: 0 0 10px rgba(255,107,53,0.4);
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s, border-color 0.2s;
-      animation: btnSealPulse 2.6s ease-in-out infinite, fadeUp 0.8s ease-out both;
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: btnSealPulse 2.6s ease-in-out infinite;
     }
     .btn-seal .bs-rune {
-      color: #ffd194;
-      font-size: 0.98rem;
-      text-shadow: 0 0 10px rgba(255,107,53,0.9);
+      color: #ff6b35;
+      font-size: 0.65rem;
+      text-shadow: 0 0 6px rgba(255,107,53,0.7);
       animation: runePulse 2.1s ease-in-out infinite;
     }
     .btn-seal.primary { 
-      border-color: #a84e1b; 
-      background: linear-gradient(135deg, #2b1c15 0%, #3e1f14 50%, #1a100c 100%);
+      border-color: rgba(255,107,53,0.6);
+      background: linear-gradient(180deg, rgba(35,22,16,0.95) 0%, rgba(20,12,8,0.98) 100%);
     }
-    .btn-seal:active { transform: translateY(1px) scale(0.98); filter: brightness(1.15); }
+    .btn-seal:active { transform: translateY(1px) scale(0.97); filter: brightness(1.1); }
     .btn-seal:hover { 
-      transform: translateY(-2px); 
-      border-color: #ffd194;
+      transform: translateY(-1px); 
+      border-color: rgba(255,209,148,0.6);
       box-shadow:
-        0 10px 30px rgba(255, 107, 53, 0.35),
-        inset 0 0 20px rgba(0, 0, 0, 0.7),
-        inset 0 2px 15px rgba(255, 179, 71, 0.6);
-      filter: brightness(1.1);
+        0 6px 20px rgba(255,107,53,0.25),
+        inset 0 1px 0 rgba(255,209,148,0.15),
+        inset 0 -2px 10px rgba(255,107,53,0.1);
     }
 
     #screen-splash .byline-mini {
@@ -1116,7 +1116,7 @@
         />
       </div>
     </div>
-    <div class="splash-actions" style="display:none" id="splash-actions">
+    <div class="splash-actions" id="splash-actions">
       <button class="btn-seal primary" id="btn-start" type="button">
         <span class="bs-rune">◆</span><span class="bs-label">Maceraya Başla</span><span class="bs-rune">◆</span>
       </button>
@@ -1546,7 +1546,7 @@
       if (state.splashPlayed) {
         if (stone) stone.style.display = 'none';
         if (muhur) muhur.classList.add('show');
-        if (actions) { actions.style.display = 'flex'; }
+        if (actions) { actions.classList.add('show'); }
         if (btn) { btn.style.animation = 'btnSealPulse 2.6s ease-in-out infinite'; }
         const ebtn = $('#btn-endless');
         if (ebtn && state.profile.endlessUnlocked) ebtn.style.display = 'block';
@@ -1583,7 +1583,7 @@
       // AŞAMA 4: Logo göründükten sonra DOĞRUDAN BUTON
       await wait(800);
       if (actions) {
-        actions.style.display = 'flex';
+        actions.classList.add('show');
         actions.style.animation = 'fadeUp 0.8s ease-out both';
       }
       if (btn) {
