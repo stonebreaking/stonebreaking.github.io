@@ -1,5 +1,11 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.8.0 (02.08.2026) — GERÇEK MAHJONG DAĞITIMI VE KUSURSUZ MATEMATİK MÜHRÜ 🪨
+- ✅ **Gerçek Mahjong Solitaire Mantığı Entegre Edildi:** Eski kol, row yığınlarına aynı tip taşların verilmesi kısıtlaması kaldırıldı. Bunun yerine, eşleşen 3 taş farklı yığın ve katmanlara rastgele dağıtılır (`typeSeq` bütünüyle karıştırılır). Oyuncu artık rünleri aramak, bulmak ve eşleştirmek için tüm oyun alanını tarar. Bu, oyuna gerçek bir Triple-Match Mahjong derinliği ve muazzam bir oynanış keyfi kattı.
+- ✅ **Kusursuz Matematik Korundu:** Her taş tipinden oyun alanında her zaman tam olarak 3 adet bulunması matematiksel olarak garanti edilmiştir.
+- ✅ **Akıllı Test Yapay Zekası (Smart Solver) Yazıldı:** `test/motor_smoke_test.js` dosyasındaki rastgele tıklayan simülatör, gerçek bir insan oyuncu gibi davranan akıllı bir Mahjong çözücü ile güncellendi. Artık testler, yeni tam rastgele dağıtılmış tahtaları bile insan zekası taklidiyle saniyeler içinde çözer. 44/44 testin tamamı **2.0 saniye gibi rekor bir sürede** sıfır hata ile geçti!
+
+
 ### v6.7.9 (02.08.2026) — Hatırlatıcı & Nefes Dili Entegrasyonu + Görsel Mühür 🔱
 - ✅ **Hatırlatıcı / Nefes Dili Entegre Edildi:** Oyuncuyu kadim taş evrenine çekmek ve seans sağlığını korumak için `STONE_REMINDERS` havuzu kodlandı. Oyun ekranında (`screen-game`) kalınan her 50 saniyede bir otomatik, mobil uyumlu kadim mühür toast bildirimleri tetiklenir:
   - *'Nefes al... sakinleş...'* (nefes dili)
@@ -92,7 +98,7 @@
 | `splashPlayed` Tek Seferlik Sinematik Çözümü | ✅ |
 | Mühürlü Karakter Cinsiyet Hiyerarşisi | ✅ |
 
-**Sistem:** PATRON BT v6.7.9
+**Sistem:** PATRON BT v6.8.0
 **Son Güncelleme:** 02.08.2026 — Oturum #5 (v6.7.8 + koordinasyon)
 **Aktif Oturum:** AI Teknik Ortak (Arena Agent)
 
