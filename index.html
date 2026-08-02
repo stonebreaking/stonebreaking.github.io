@@ -1269,7 +1269,8 @@
       chapter: 1,
       lastStats: null,
       returnScreen: 'screen-splash',
-      endlessRequested: false, // v6.1.1: splash'ten Sonsuz Moda doğrudan giriş
+      endlessRequested: false,
+      splashPlayed: false, // sinematik sadece bir kere oynar
       profile: loadProfile(),
     };
 
@@ -1386,6 +1387,20 @@
       const brand = $('.splash-brand');
       const actions = $('#splash-actions');
       const btn = $('#btn-start');
+
+      // Sinematik zaten oynanmışsa → direkt göster (tekrar animasyon YOK)
+      if (state.splashPlayed) {
+        if (stone) stone.style.display = 'none';
+        if (muhur) muhur.classList.add('show');
+        if (brand) { brand.style.display = 'block'; brand.classList.add('show'); }
+        if (actions) { actions.style.display = 'flex'; }
+        if (btn) { btn.style.animation = 'btnSealPulse 2.6s ease-in-out infinite'; }
+        const ebtn = $('#btn-endless');
+        if (ebtn && state.profile.endlessUnlocked) ebtn.style.display = 'block';
+        return;
+      }
+      state.splashPlayed = true;
+
       spawnParticles($('#splash-particles'));
 
       // AŞAMA 1: Taş kırılır
