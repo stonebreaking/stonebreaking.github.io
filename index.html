@@ -219,16 +219,16 @@
     /* ========== CHARACTER PICK ========== */
     #screen-character {
       background:
-        linear-gradient(180deg, rgba(7,7,15,0.4) 0%, rgba(7,7,15,0.92) 100%),
+        linear-gradient(180deg, rgba(7,7,15,0.45) 0%, rgba(7,7,15,0.94) 100%),
         url('06_GRAFIK/secim_ekrani_sirt_sirta.png') center top/cover no-repeat;
       display: flex;
       flex-direction: column;
-      padding: 24px 16px 28px;
+      padding: 20px 16px 24px;
       overflow-y: auto;
     }
     .screen-header {
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       z-index: 2;
     }
     .screen-header h1 {
@@ -241,38 +241,99 @@
       font-size: 0.85rem;
       margin-top: 6px;
     }
-    .hero-duo {
-      width: min(420px, 92%);
-      margin: 0 auto 16px;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
-      animation: fadeUp 0.7s ease-out both;
-    }
-    .hero-duo img {
-      width: 100%;
-      display: block;
-      max-height: 38vh;
-      object-fit: cover;
-      object-position: center 20%;
-    }
-    .duo-picks {
+    /* ---- v6.6: 2 maskot YAN YANA + animasyonlu geçiş ---- */
+    .duo-stage {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      max-width: 440px;
+      max-width: 460px;
       width: 100%;
-      margin: 0 auto;
+      margin: 0 auto 14px;
+      position: relative;
     }
-    .duo-picks .pick-card img { aspect-ratio: 3/4; }
+    /* ortada animasyonlu element ayracı (ateş ↔ su) */
+    .duo-divider {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+      background: radial-gradient(circle at 40% 35%, #2a1a10, #120a06);
+      border: 2px solid rgba(255,209,148,0.55);
+      box-shadow: 0 0 24px rgba(255,107,53,0.45), inset 0 0 14px rgba(255,107,53,0.25);
+      animation: dividerSpin 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .duo-divider span { animation: runePulse 2.1s ease-in-out infinite; }
+    .duo-stage .mascot-card {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.03);
+      transition: transform 0.35s cubic-bezier(0.2,0.9,0.3,1.2), border-color 0.3s, box-shadow 0.3s;
+      animation: mascotSlideIn 0.9s cubic-bezier(0.2,0.8,0.25,1) both;
+    }
+    .duo-stage .mascot-card.m-erkek { animation-delay: 0.05s; --slide: -70px; }
+    .duo-stage .mascot-card.m-kadin { animation-delay: 0.22s; --slide: 70px; }
+    .duo-stage .mascot-card img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: center 22%;
+      transition: transform 0.5s cubic-bezier(0.2,0.8,0.3,1.1), filter 0.4s;
+      filter: saturate(0.85) brightness(0.92);
+    }
+    .duo-stage .mascot-card:hover img { transform: scale(1.05); filter: saturate(1.05) brightness(1); }
+    .duo-stage .mascot-card.selected {
+      border-color: var(--accent, var(--ates));
+      box-shadow: 0 0 0 2px var(--accent, var(--ates)), 0 18px 46px rgba(0,0,0,0.5);
+    }
+    .duo-stage .mascot-card.selected img { transform: scale(1.04); filter: saturate(1.1) brightness(1.04); }
+    /* kart alt etiketi */
+    .mascot-card .mc-label {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      padding: 7px 6px;
+      border-radius: 12px;
+      text-align: center;
+      background: rgba(6,10,14,0.72);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      font-weight: 800;
+      color: #eee;
+    }
+    .mascot-card .mc-label b { display: block; font-size: 0.95rem; letter-spacing: 3px; }
+    .mascot-card .mc-label i { font-style: normal; color: #9a9ab0; font-size: 0.62rem; }
+    /* seçim dalgası */
+    .mascot-card.selected::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      border: 2px solid var(--accent, var(--ates));
+      animation: selectRipple 0.9s ease-out 1;
+      pointer-events: none;
+    }
     .pick-kor { --accent: #ff6b35; }
     .pick-baam { --accent: #4ecdc4; }
     .footer-actions {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 16px;
       padding-bottom: 10px;
     }
 
@@ -596,24 +657,21 @@
       <h1>Maskotunu Seç</h1>
       <p>Kadın / Erkek — sırt sırta, aynı kader</p>
     </div>
-    <div class="hero-duo">
-      <img src="06_GRAFIK/secim_ekrani_sirt_sirta.png" alt="Kor ve Baam sırt sırta" />
-    </div>
-    <div class="duo-picks">
-      <div class="pick-card pick-kor" data-mascot="erkek" data-ref="kor" role="button" tabindex="0">
-        <span class="badge">🔥</span>
+    <!-- v6.6: 2 maskot yan yana + animasyonlu geçiş -->
+    <div class="duo-stage" id="duo-stage">
+      <div class="duo-divider" aria-hidden="true"><span>◆</span></div>
+      <div class="mascot-card pick-kor m-erkek" data-mascot="erkek" data-ref="kor" role="button" tabindex="0">
         <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Erkek maskot - Kor" />
-        <div class="meta">
-          <div class="name" style="color:#ff6b35">ERKEK</div>
-          <div class="role">Kor referanslı · Ateş</div>
+        <div class="mc-label">
+          <b style="color:#ff6b35">ERKEK</b>
+          <i>Kor · Ateş</i>
         </div>
       </div>
-      <div class="pick-card pick-baam" data-mascot="kadin" data-ref="baam" role="button" tabindex="0">
-        <span class="badge">💧</span>
+      <div class="mascot-card pick-baam m-kadin" data-mascot="kadin" data-ref="baam" role="button" tabindex="0">
         <img src="06_GRAFIK/baam_su_ruhu.png" alt="Kadın maskot - Baam" />
-        <div class="meta">
-          <div class="name" style="color:#4ecdc4">KADIN</div>
-          <div class="role">Baam referanslı · Su</div>
+        <div class="mc-label">
+          <b style="color:#4ecdc4">KADIN</b>
+          <i>Baam · Su</i>
         </div>
       </div>
     </div>
@@ -791,7 +849,7 @@
   <script src="js/game.js"></script>
   <script>
     // =========================================================
-    // STONEBREAKING App Controller v6.3 — Sonsuz mod + 12 bölüm sinematik + ses
+    // STONEBREAKING App Controller v6.6 — Sonsuz mod + 12 bölüm sinematik + ses
     // =========================================================
     const PROFILE_KEY = 'stonebreaking_profile_v1';
 
@@ -1199,9 +1257,10 @@
     }
 
     function setupPick(containerSel, attr, onPick) {
-      $$(containerSel + ' .pick-card').forEach((card) => {
+      const cards = $$(containerSel + ' .pick-card, ' + containerSel + ' .mascot-card');
+      cards.forEach((card) => {
         const activate = () => {
-          $$(containerSel + ' .pick-card').forEach((c) => c.classList.remove('selected'));
+          cards.forEach((c) => c.classList.remove('selected'));
           card.classList.add('selected');
           onPick(card.getAttribute(attr), card);
         };

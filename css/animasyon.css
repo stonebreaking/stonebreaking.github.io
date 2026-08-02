@@ -148,6 +148,21 @@
   50% { opacity: 1; transform: scale(1.18); }
 }
 
+/* ---------- v6.6: maskot yan yana seçim animasyonları ---------- */
+@keyframes mascotSlideIn {
+  0% { opacity: 0; transform: translateX(var(--slide, -60px)) scale(0.92); }
+  60% { opacity: 1; transform: translateX(0) scale(1.02); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes dividerSpin {
+  0%, 100% { box-shadow: 0 0 22px rgba(255,107,53,0.45), inset 0 0 14px rgba(255,107,53,0.25); transform: translate(-50%,-50%) rotate(0deg); }
+  50% { box-shadow: 0 0 34px rgba(78,205,196,0.5), inset 0 0 18px rgba(78,205,196,0.3); transform: translate(-50%,-50%) rotate(180deg); }
+}
+@keyframes selectRipple {
+  0% { box-shadow: 0 0 0 0 var(--accent, #ff6b35); opacity: 1; }
+  100% { box-shadow: 0 0 0 26px var(--accent, #ff6b35); opacity: 0; }
+}
+
 /* ---------- Splash pieces ---------- */
 .cin-stone {
   width: 96px;
