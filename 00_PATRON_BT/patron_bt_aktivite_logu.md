@@ -2,6 +2,13 @@
 
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.9.3 (02.08.2026) — BATUPIA SİNEMA SAHNESİ + SİYAH EKRAN KÖKTEN ÇÖZÜM 🎬🖤
+- ✅ **BATUPIA Intro (SAHNE -1) Sinema Sahnesi:** Logo 80px'den 220px'e büyütüldü, arka plan gradyanı güçlendirildi (çoklu radial gradient), studio adı 1.5rem→2.4rem, alt yazı büyütüldü, drop-shadow 40px/80px çift katmanlı efsanevi glow efekti eklendi. Artık sinema sahnesi gibi!
+- ✅ **STONEBREAKING Yazısı Kaldırıldı:** Splash (SAHNE 0) üzerindeki floating STONEBREAKING yazısı butonu kapatıyordu. Logo görselinde zaten yazdığından, redundant yazı `display:none !important` ile tamamen kaldırıldı.
+- ✅ **Maceraya Başla Butonu Büyütüldü:** 16px/36px→18px/42px padding, font-size 0.98rem→1.08rem, letter-spacing 5px→6px. Kadim taş plaket hissi güçlendirildi.
+- ✅ **Siyah Ekran Kökten Çözüldü:** `goScreen()` fonksiyonundaki 80ms gecikme kaldırıldı (ekranlar arası geçişte siyah boşluk yapıyordu). Tüm sahne arka planlarına güçlü gradient fallback eklendi (character, spirit, game canvas). Portre ve ruh kartlarına `min-height` + `background` fallback eklendi — görsel yüklenmese bile kadim karanlık evren görünür.
+- ✅ **Motor Testi:** 44/44 sıfır hata ile geçti (2.0 saniye).
+
 ### v6.9.1 (02.08.2026) — DİZÜT & SİYAH EKRAN DÜZELTMELERİ 🐛
 - ✅ **Ruh Seçim Ekranı Tam Ekran Uyumu:** Grid gap 6→4px, padding sıfırlandı, kart bilgi alanı küçültüldü, alıntı yüksekliği azaltıldı, başlık/footer padding daraltıldı, rozet boyutu küçültüldü. Artık mobil ekranın tamamına sığıyor!
 - ✅ **Splash STONEBREAKING Yazısı Kaldırıldı:** Logo görselinde zaten "STONEBREAKING" var, gereksiz yazı tekrardan kaçınıldı. Buton doğrudan logo göründükten sonra belirir.
