@@ -1,5 +1,10 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.8.2 (02.08.2026) — PROGRESSIVE ASYNC LOADING VE SIFIR BLACK-SCREEN DEVRİMİ 🚀
+- ✅ **Progressive Async Loading Kodlandı:** Eski 25MB'lık resim setinin indirilmesini bekleyen ve oyunu kilitleyen senkron preloader devre dışı bırakıldı. Yerine, resimleri arka planda asenkron olarak indiren ve bittikçe tık tık canvas'a yerleştiren progressive model geliştirildi.
+- ✅ **Sıfır Siyah Ekran Garantisi:** Oyun tahtası ve rünler anında render edilir (emoji ve bazalt zemin fallback'leri ile). Resimler indikçe otomatik redraw ile taşların üstünde belirir. Ağ hızı ne olursa olsun siyah ekranda donma veya bekletme sorunları kökten çözüldü!
+
+
 ### v6.8.0 (02.08.2026) — GERÇEK MAHJONG DAĞITIMI VE KUSURSUZ MATEMATİK MÜHRÜ 🪨
 - ✅ **Gerçek Mahjong Solitaire Mantığı Entegre Edildi:** Eski kol, row yığınlarına aynı tip taşların verilmesi kısıtlaması kaldırıldı. Bunun yerine, eşleşen 3 taş farklı yığın ve katmanlara rastgele dağıtılır (`typeSeq` bütünüyle karıştırılır). Oyuncu artık rünleri aramak, bulmak ve eşleştirmek için tüm oyun alanını tarar. Bu, oyuna gerçek bir Triple-Match Mahjong derinliği ve muazzam bir oynanış keyfi kattı.
 - ✅ **Kusursuz Matematik Korundu:** Her taş tipinden oyun alanında her zaman tam olarak 3 adet bulunması matematiksel olarak garanti edilmiştir.
