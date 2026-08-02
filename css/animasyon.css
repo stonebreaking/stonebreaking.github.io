@@ -148,6 +148,35 @@
   50% { opacity: 1; transform: scale(1.18); }
 }
 
+/* ---------- v6.7 Karakter Seçim — slide-in + ayracı + seçim dalgası ---------- */
+@keyframes slideInLeft {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideInRight {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes separatorSpin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes selectionPulse {
+  0%, 100% {
+    box-shadow: inset 0 0 30px rgba(255,107,53,0.2), 0 0 20px rgba(255,107,53,0.25);
+    border-color: var(--accent, #ff6b35);
+  }
+  50% {
+    box-shadow: inset 0 0 50px rgba(255,107,53,0.35), 0 0 40px rgba(255,107,53,0.45);
+    border-color: #ffd194;
+  }
+}
+@keyframes selectionWave {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 0.7; }
+  100% { opacity: 0; transform: scale(2); }
+}
+
 /* ---------- Splash pieces ---------- */
 .cin-stone {
   width: 96px;

@@ -39,7 +39,7 @@
       content: '';
       position: absolute;
       inset: -12%;
-      background: url('06_GRAFIK/sahne_ana_menu.png') center/cover no-repeat;
+      background: url('06_GRAFIK/acilista_loading_ekrani.png') center/cover no-repeat;
       animation: kenBurns 30s ease-in-out infinite alternate;
       z-index: 0;
       will-change: transform;
@@ -77,12 +77,13 @@
     }
     .seal-aura {
       position: absolute;
-      inset: -10%;
+      inset: -14%;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,107,53,0.30), rgba(255,107,53,0.06) 55%, transparent 74%);
+      background: radial-gradient(circle, rgba(255,107,53,0.18), rgba(255,107,53,0.04) 55%, transparent 74%);
       animation: auraBreath 4.6s ease-in-out infinite;
-      filter: blur(2px);
+      filter: blur(6px);
       pointer-events: none;
+      mix-blend-mode: screen;
     }
     .seal-orbit {
       position: absolute;
@@ -114,28 +115,31 @@
       position: absolute;
       inset: 1%;
       border-radius: 50%;
-      border: 3px solid rgba(255,209,148,0.42);
-      box-shadow: 0 0 0 6px rgba(0,0,0,0.35), 0 0 36px rgba(255,107,53,0.35), inset 0 0 26px rgba(255,107,53,0.18);
+      border: 2px solid rgba(255,209,148,0.18);
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.2), 0 0 44px rgba(255,107,53,0.2), inset 0 0 30px rgba(255,107,53,0.1);
       pointer-events: none;
+      mix-blend-mode: screen;
     }
     #screen-splash .muhur-logo {
       position: relative;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 42%; /* mühür merkeze, üstteki yazı yumuşak fade ile çembere oturur */
+      object-position: center 42%;
       border-radius: 50%;
-      /* v6.4: YUMUŞAK dairesel mask — sert kesim yok, kenarlar doğal erir */
-      -webkit-mask-image: radial-gradient(circle, #000 52%, rgba(0,0,0,0.92) 68%, rgba(0,0,0,0.35) 84%, transparent 97%);
-      mask-image: radial-gradient(circle, #000 52%, rgba(0,0,0,0.92) 68%, rgba(0,0,0,0.35) 84%, transparent 97%);
+      /* v6.7: SAHNEYENE GÖMÜLÜ — kenarlar tamamen erir, logo sahneden doğar */
+      -webkit-mask-image: radial-gradient(circle, #000 38%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.40) 72%, rgba(0,0,0,0.08) 88%, transparent 98%);
+      mask-image: radial-gradient(circle, #000 38%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.40) 72%, rgba(0,0,0,0.08) 88%, transparent 98%);
       -webkit-mask-size: 100% 100%;
       mask-size: 100% 100%;
-      filter: drop-shadow(0 0 26px rgba(255,107,53,0.42));
-      animation: floatY 5s ease-in-out infinite;
+      /* blend: logo sahneye karışır, üstüne yapıştırılmaz */
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 32px rgba(255,107,53,0.5)) brightness(1.15) contrast(1.05);
+      animation: floatY 6s ease-in-out infinite;
       opacity: 0;
-      transition: opacity 0.9s ease;
+      transition: opacity 1.4s ease;
     }
-    #screen-splash .muhur-logo.show { opacity: 1; }
+    #screen-splash .muhur-logo.show { opacity: 0.92; }
 
     /* Evren başlığı — logo içindeki yazı kesilmesin, ayrı ve tam */
     .splash-brand {
@@ -216,56 +220,208 @@
       .btn-seal { padding: 12px 26px; font-size: 0.82rem; letter-spacing: 3px; }
     }
 
-    /* ========== CHARACTER PICK ========== */
+    /* ========== CHARACTER PICK v6.7 — YAN YANA anime portre + element ayracı ========== */
     #screen-character {
-      background:
-        linear-gradient(180deg, rgba(7,7,15,0.4) 0%, rgba(7,7,15,0.92) 100%),
-        url('06_GRAFIK/secim_ekrani_sirt_sirta.png') center top/cover no-repeat;
+      background: #07070f;
       display: flex;
       flex-direction: column;
-      padding: 24px 16px 28px;
-      overflow-y: auto;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
     }
+    /* Arka plan katmanı */
+    #screen-character::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(7,7,15,0.55) 0%, rgba(7,7,15,0.35) 40%, rgba(7,7,15,0.85) 100%),
+        url('06_GRAFIK/final_options_opt2.png') center/cover no-repeat;
+      z-index: 0;
+    }
+    #screen-character > * { position: relative; z-index: 1; }
+
     .screen-header {
       text-align: center;
-      margin-bottom: 14px;
+      padding: max(18px, env(safe-area-inset-top)) 16px 8px;
       z-index: 2;
     }
     .screen-header h1 {
       font-size: clamp(1.1rem, 4.5vw, 1.5rem);
       letter-spacing: 4px;
       font-weight: 800;
+      animation: fadeUp 0.6s ease-out both;
     }
     .screen-header p {
       color: #9a9ab0;
       font-size: 0.85rem;
       margin-top: 6px;
+      animation: fadeUp 0.6s ease-out 0.15s both;
     }
-    .hero-duo {
-      width: min(420px, 92%);
-      margin: 0 auto 16px;
-      border-radius: 18px;
+
+    /* YAN YANA portre sahne — tam yükseklik */
+    .duo-stage {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      position: relative;
+      min-height: 0;
+      padding: 8px 0;
+    }
+    /* Sol portre (Erkek) — slide from left */
+    .duo-portrait {
+      flex: 1;
+      max-width: 48%;
+      position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
-      animation: fadeUp 0.7s ease-out both;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.4s ease, filter 0.4s ease;
     }
-    .hero-duo img {
+    .duo-portrait img {
       width: 100%;
-      display: block;
-      max-height: 38vh;
+      height: 100%;
       object-fit: cover;
-      object-position: center 20%;
+      object-position: center 15%;
+      display: block;
+      transition: transform 0.5s ease, filter 0.4s ease;
     }
-    .duo-picks {
+    .duo-portrait.portrait-left {
+      animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .duo-portrait.portrait-right {
+      animation: slideInRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+    }
+    /* Hover/select efektleri */
+    .duo-portrait:hover img { transform: scale(1.04); }
+    .duo-portrait.selected {
+      transform: scale(1.02);
+      z-index: 3;
+    }
+    .duo-portrait.selected img {
+      filter: brightness(1.1) saturate(1.2);
+    }
+    .duo-portrait.dimmed img {
+      filter: brightness(0.4) saturate(0.3);
+    }
+    .duo-portrait.dimmed { transform: scale(0.96); }
+    /* Alt gradient + isim */
+    .duo-portrait .portrait-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 20px 12px 14px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+      text-align: center;
+    }
+    .duo-portrait .portrait-info .name {
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .duo-portrait .portrait-info .role {
+      font-size: 0.72rem;
+      color: #9a9ab0;
+      margin-top: 3px;
+      letter-spacing: 1px;
+    }
+    .duo-portrait .portrait-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      max-width: 440px;
-      width: 100%;
-      margin: 0 auto;
+      place-items: center;
+      background: rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.15);
+      font-size: 1.2rem;
+      backdrop-filter: blur(8px);
+      animation: fadeUp 0.5s ease-out 0.5s both;
     }
-    .duo-picks .pick-card img { aspect-ratio: 3/4; }
+    /* Seçim çerçeve glow */
+    .duo-portrait.selected::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 3px solid var(--accent, #ff6b35);
+      box-shadow: inset 0 0 40px rgba(255,107,53,0.25), 0 0 30px rgba(255,107,53,0.3);
+      border-radius: 4px;
+      pointer-events: none;
+      animation: selectionPulse 2s ease-in-out infinite;
+    }
+
+    /* ORTA ELEMENT AYRACI */
+    .duo-separator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .separator-orb {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 40% 35%, rgba(255,209,148,0.35), transparent 60%),
+        radial-gradient(circle, #1a1a28 0%, #0a0a12 100%);
+      border: 2px solid rgba(255,209,148,0.5);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      color: #ffd194;
+      text-shadow: 0 0 18px rgba(255,107,53,0.8);
+      box-shadow: 0 0 30px rgba(255,107,53,0.35), inset 0 0 18px rgba(255,209,148,0.12);
+      animation: separatorSpin 8s linear infinite, fadeUp 0.7s ease-out 0.4s both;
+    }
+    .separator-line {
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(180deg, transparent, rgba(255,209,148,0.4), transparent);
+      animation: fadeUp 0.5s ease-out 0.5s both;
+    }
+    /* Seçim dalgası */
+    .selection-wave {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .selection-wave.active {
+      animation: selectionWave 0.7s ease-out forwards;
+      background: radial-gradient(ellipse at center, rgba(255,107,53,0.3), transparent 70%);
+    }
+
+    /* Alt butonlar */
+    .char-footer {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 16px max(14px, env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, rgba(7,7,15,0.95) 0%, rgba(7,7,15,0.6) 100%);
+      z-index: 3;
+      animation: fadeUp 0.6s ease-out 0.6s both;
+    }
+    .char-sig {
+      position: absolute;
+      bottom: max(4px, env(safe-area-inset-bottom));
+      right: 12px;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.15);
+      z-index: 3;
+    }
+
     .pick-kor { --accent: #ff6b35; }
     .pick-baam { --accent: #4ecdc4; }
     .footer-actions {
@@ -280,7 +436,7 @@
     #screen-spirit {
       background:
         linear-gradient(180deg, rgba(7,7,15,0.35) 0%, rgba(7,7,15,0.88) 100%),
-        url('06_GRAFIK/secim_ekrani_4_ruh.png') center top/cover no-repeat;
+        url('06_GRAFIK/secim_ekrani_4_ruh_new.png') center top/cover no-repeat;
       display: flex;
       flex-direction: column;
       padding: 24px 16px 28px;
@@ -570,7 +726,7 @@
         <img
           class="muhur-logo"
           id="muhur-logo"
-          src="06_GRAFIK/logo_stonebreaking_muhur_kare.png"
+          src="06_GRAFIK/logo_stonebreaking_muhur_new.png"
           alt="STONEBREAKING"
           width="280"
           height="280"
@@ -589,39 +745,52 @@
     <div class="byline-mini">by BATUPIA Studios</div>
   </section>
 
-  <!-- ========== 2. KARAKTER SEÇİMİ ========== -->
+  <!-- ========== 2. KARAKTER SEÇİMİ v6.7 — YAN YANA Anime Portre ========== -->
   <section id="screen-character" class="screen" aria-label="Karakter Seçimi">
     <div class="screen-header">
       <div class="brand-logo sm">STONEBREAKING</div>
-      <h1>Maskotunu Seç</h1>
-      <p>Kadın / Erkek — sırt sırta, aynı kader</p>
+      <h1>Stonebreaker'ını Seç</h1>
+      <p>Kadın · Erkek — aynı kader, iki ruh</p>
     </div>
-    <div class="hero-duo">
-      <img src="06_GRAFIK/secim_ekrani_sirt_sirta.png" alt="Kor ve Baam sırt sırta" />
-    </div>
-    <div class="duo-picks">
-      <div class="pick-card pick-kor" data-mascot="erkek" data-ref="kor" role="button" tabindex="0">
-        <span class="badge">🔥</span>
-        <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Erkek maskot - Kor" />
-        <div class="meta">
+
+    <!-- YAN YANA portre sahne -->
+    <div class="duo-stage">
+      <!-- SOL: Erkek Stonebreaker (slide-in from left) -->
+      <div class="duo-portrait portrait-left pick-kor" data-mascot="erkek" data-ref="kor" role="button" tabindex="0">
+        <span class="portrait-badge">🔥</span>
+        <img src="06_GRAFIK/male_opt4.png" alt="Erkek Stonebreaker - Kor" />
+        <div class="portrait-info">
           <div class="name" style="color:#ff6b35">ERKEK</div>
-          <div class="role">Kor referanslı · Ateş</div>
+          <div class="role">Ateş Yolu · Kor</div>
         </div>
       </div>
-      <div class="pick-card pick-baam" data-mascot="kadin" data-ref="baam" role="button" tabindex="0">
-        <span class="badge">💧</span>
-        <img src="06_GRAFIK/baam_su_ruhu.png" alt="Kadın maskot - Baam" />
-        <div class="meta">
+
+      <!-- ORTA: Dönen Element Ayracı -->
+      <div class="duo-separator" aria-hidden="true">
+        <div class="separator-line"></div>
+        <div class="separator-orb">◆</div>
+        <div class="separator-line"></div>
+      </div>
+
+      <!-- SAĞ: Kadın Stonebreaker (slide-in from right) -->
+      <div class="duo-portrait portrait-right pick-baam" data-mascot="kadin" data-ref="baam" role="button" tabindex="0">
+        <span class="portrait-badge">💧</span>
+        <img src="06_GRAFIK/stonebreaker_female_ultimate.png" alt="Kadın Stonebreaker - Baam" />
+        <div class="portrait-info">
           <div class="name" style="color:#4ecdc4">KADIN</div>
-          <div class="role">Baam referanslı · Su</div>
+          <div class="role">Su Yolu · Baam</div>
         </div>
       </div>
+
+      <!-- Seçim dalgası efekti -->
+      <div class="selection-wave" id="selection-wave"></div>
     </div>
-    <div class="footer-actions">
+
+    <div class="char-footer">
       <button class="btn-ui" type="button" id="btn-char-back">Geri</button>
       <button class="btn-ui primary" type="button" id="btn-char-next" disabled>Ruhunu Seç</button>
     </div>
-    <div class="sig">by BATUPIA Studios</div>
+    <div class="char-sig">by BATUPIA Studios</div>
   </section>
 
   <!-- ========== 3. RUH SEÇİMİ ========== -->
@@ -899,8 +1068,10 @@
         o.style.transition = 'opacity 0.5s';
         o.style.opacity = '0';
       });
+      // v6.7: Logo sahneye GÖMÜLÜ gelir (mix-blend-mode: screen)
       if (muhur) muhur.classList.add('show');
-      await wait(900);
+      await wait(1500); // logo tam oturana kadar bekle
+      // Maceraya Başla — logo sahneye oturduktan sonra yumuşakça belirir
       btn.style.opacity = '1';
       btn.style.pointerEvents = 'auto';
       btn.style.animation = 'btnSealPulse 2.6s ease-in-out infinite, fadeUp 0.8s ease-out both';
@@ -1199,9 +1370,12 @@
     }
 
     function setupPick(containerSel, attr, onPick) {
-      $$(containerSel + ' .pick-card').forEach((card) => {
+      const cards = $$(containerSel + ' .pick-card').concat($$(containerSel + ' .duo-portrait'));
+      cards.forEach((card) => {
         const activate = () => {
+          // Remove selected from all (both types)
           $$(containerSel + ' .pick-card').forEach((c) => c.classList.remove('selected'));
+          $$(containerSel + ' .duo-portrait').forEach((c) => c.classList.remove('selected'));
           card.classList.add('selected');
           onPick(card.getAttribute(attr), card);
         };
@@ -1246,9 +1420,27 @@
         });
       })();
 
-      setupPick('#screen-character', 'data-mascot', (v) => {
+      setupPick('#screen-character', 'data-mascot', (v, card) => {
         state.mascot = v;
         $('#btn-char-next').disabled = false;
+        // Seçim dalgası efekti
+        const wave = $('#selection-wave');
+        if (wave) {
+          wave.classList.remove('active');
+          void wave.offsetWidth; // force reflow
+          wave.classList.add('active');
+          setTimeout(() => wave.classList.remove('active'), 700);
+        }
+        // Dimmed efekt: seçilmeyen portre solar
+        $$('#screen-character .duo-portrait').forEach((p) => {
+          if (p === card) {
+            p.classList.remove('dimmed');
+            p.classList.add('selected');
+          } else {
+            p.classList.add('dimmed');
+            p.classList.remove('selected');
+          }
+        });
       });
       $('#btn-char-back').addEventListener('click', () => goScreen('screen-splash'));
       $('#btn-char-next').addEventListener('click', () => {

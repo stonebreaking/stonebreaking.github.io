@@ -147,16 +147,16 @@ class StonebreakingGame {
     // PATRON BT v6: ates_06_lava_core = master gövde; core set öncelikli
     // v6.1: aynı lava-core gövde + yeni merkez rune varyantları (yazısız)
     this.types = [
-      { key: 'ates_core',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/ates_06_lava_core.png' },
+      { key: 'ates_core',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/ates_06_lava_core_new.png' },
       { key: 'ates_2',      color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_sembol_ates_2.png' },
       { key: 'ates_3',      color: '#ff6b35', emoji: '🗡️', img: '06_GRAFIK/tas_sembol_ates_3.png' },
-      { key: 'su_core',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_core.png' },
+      { key: 'su_core',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_core_new.png' },
       { key: 'su_2',        color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_sembol_su_2.png' },
       { key: 'su_3',        color: '#4ecdc4', emoji: '🦪', img: '06_GRAFIK/tas_sembol_su_3.png' },
-      { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
+      { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_core_new.png' },
       { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
       { key: 'toprak_3',    color: '#c4a35a', emoji: '💎', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
-      { key: 'hava_core',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_core.png' },
+      { key: 'hava_core',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_core_new.png' },
       { key: 'hava_2',      color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_sembol_hava_2.png' },
       { key: 'hava_3',      color: '#a8d8ea', emoji: '🌀', img: '06_GRAFIK/tas_sembol_hava_3.png' },
     ];
