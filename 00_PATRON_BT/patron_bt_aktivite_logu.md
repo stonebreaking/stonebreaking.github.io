@@ -1,5 +1,15 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.7.9 (02.08.2026) — Hatırlatıcı & Nefes Dili Entegrasyonu + Görsel Mühür 🔱
+- ✅ **Hatırlatıcı / Nefes Dili Entegre Edildi:** Oyuncuyu kadim taş evrenine çekmek ve seans sağlığını korumak için `STONE_REMINDERS` havuzu kodlandı. Oyun ekranında (`screen-game`) kalınan her 50 saniyede bir otomatik, mobil uyumlu kadim mühür toast bildirimleri tetiklenir:
+  - *'Nefes al... sakinleş...'* (nefes dili)
+  - *'Su iç... ayakta kal...'* (sağlık/uzun seans uyarısı)
+  - *'Bir taş daha... nefes ver...'* (ritim desteği)
+- ✅ **Mühürlü Toast Tasarımı:** Sıradan modern hap şeklindeki turuncu toast pencereleri kaldırıldı; yerine keskin yontulmuş bazalt taşlı, kızgın lav çerçeveli, rün gölgeli kadim bir taş plaket görünümü `.toast` stilinde kodlandı.
+- ✅ **Evren İlerleme Kaydı:** `04_HIKAYE_EVREN/patron_bt_evren_hikaye_ilerlemesi.md` dosyası oluşturularak evrenin hikaye temelleri, mühür taşları, triple-match solitaire oynanışı ve son güncellemeler kalıcı hale getirildi.
+- ✅ **Kadim Taş Sanatı:** `06_GRAFIK/mahjong_evren_taslari.jpg` görseli üretilerek oyunda kullanılacak yontulmuş basalt ve parıldayan element rünlü Mahjong taşlarının sanatsal referansı evrene mühürlendi.
+
+
 ### v6.7.8 (02.08.2026) — Sahne Koordinasyonu MÜHRÜ 🎬
 - ✅ **SAHNE -1 → 0 → 2 → 3 → 4 → 5 tam akış** koordine edildi ve test edildi.
 - ✅ **`splashPlayed` flag'i eklendi:** Splash sinematik animasyonu sadece İLK girişte oynar. Geri dönüşlerde direkt logo ve butonlar gösterilir; gereksiz animasyon beklemeleri engellenerek mobil kullanıcı deneyimi (UX) korundu.
@@ -82,7 +92,7 @@
 | `splashPlayed` Tek Seferlik Sinematik Çözümü | ✅ |
 | Mühürlü Karakter Cinsiyet Hiyerarşisi | ✅ |
 
-**Sistem:** PATRON BT v6.7.8
+**Sistem:** PATRON BT v6.7.9
 **Son Güncelleme:** 02.08.2026 — Oturum #5 (v6.7.8 + koordinasyon)
 **Aktif Oturum:** AI Teknik Ortak (Arena Agent)
 

@@ -954,20 +954,27 @@
       position: fixed;
       bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: linear-gradient(90deg, #ff6b35, #ff8c42);
-      color: #fff;
-      padding: 12px 22px;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 0.9rem;
+      background: linear-gradient(135deg, #1b120f 0%, #0d0705 100%);
+      color: #ffd194;
+      padding: 14px 28px;
+      border-radius: 3px;
+      border: 2px solid #a84e1b;
+      box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.8),
+        inset 0 0 10px rgba(255, 107, 53, 0.25);
+      font-weight: 800;
+      font-size: 0.88rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       z-index: 2000;
       opacity: 0;
-      transition: all 0.45s;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
       pointer-events: none;
       white-space: nowrap;
       max-width: 90vw;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-shadow: 0 0 8px rgba(255,107,53,0.5);
     }
     .toast.show {
       transform: translateX(-50%) translateY(0);
@@ -1318,6 +1325,34 @@
       showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
     }
 
+    const STONE_REMINDERS = [
+      "Nefes al... sakinleş...",
+      "Su iç... ayakta kal...",
+      "Bir taş daha... nefes ver...",
+      "Taşları dinle... ritmi hisset...",
+      "Ruhun mühürlendi... derin nefes al...",
+      "Alevler yükseliyor... zihnini serbest bırak...",
+      "Dalgalar duruluyor... sakinlikle hamle yap...",
+      "Mühür kırıldı... yeni bölge seni çağırıyor..."
+    ];
+    let reminderInterval = null;
+    function startReminders() {
+      stopReminders();
+      reminderInterval = setInterval(() => {
+        const activeScreen = document.querySelector('.screen.active');
+        if (activeScreen && activeScreen.id === 'screen-game') {
+          const msg = STONE_REMINDERS[Math.floor(Math.random() * STONE_REMINDERS.length)];
+          showToast(msg);
+        }
+      }, 50000);
+    }
+    function stopReminders() {
+      if (reminderInterval) {
+        clearInterval(reminderInterval);
+        reminderInterval = null;
+      }
+    }
+
     function goScreen(id) {
       $$('.screen').forEach((el) => {
         if (el.classList.contains('active')) {
@@ -1326,6 +1361,11 @@
           setTimeout(() => el.classList.remove('exit'), 700);
         }
       });
+      if (id === 'screen-game') {
+        startReminders();
+      } else {
+        stopReminders();
+      }
       const next = document.getElementById(id);
       if (!next) return;
       setTimeout(() => {
