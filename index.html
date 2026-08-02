@@ -1463,7 +1463,7 @@
         if (el.classList.contains('active')) {
           el.classList.add('exit');
           el.classList.remove('active');
-          setTimeout(() => el.classList.remove('exit'), 700);
+          setTimeout(() => el.classList.remove('exit'), 500);
         }
       });
       if (id === 'screen-game') {
@@ -1473,10 +1473,13 @@
       }
       const next = document.getElementById(id);
       if (!next) return;
-      // Hemen aktif et — 80ms gecikme siyah ekran yapıyordu
       next.classList.add('active');
       if (id === 'screen-game' && game) {
-        requestAnimationFrame(() => game.resize());
+        // Resize'ı 2 aşamada yap — DOM yerleşince + bir frame sonra
+        requestAnimationFrame(() => {
+          game.resize();
+          requestAnimationFrame(() => game.resize());
+        });
       }
     }
 
@@ -1985,7 +1988,9 @@
         game.onTray = renderTray;
         game.onPick = () => { StoneSound.pick(); };
         game.onBreath = (b) => {
-          StoneSound.breath(b.combo, sp.element);
+          const currentSpirit = state.spirit || 'kor';
+          const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
+          StoneSound.breath(b.combo, currentEl);
           StoneSound.vibrate(18);
         };
         game.onFail = () => {
@@ -1993,7 +1998,9 @@
           StoneSound.vibrate(60);
         };
         game.onWin = (stats) => {
-          StoneSound.win(sp.element);
+          const currentSpirit = state.spirit || 'kor';
+          const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
+          StoneSound.win(currentEl);
           StoneSound.vibrate([30, 40, 70]);
           showVictory(stats);
         };
@@ -2022,11 +2029,14 @@
       saveProfile();
       if (sp.scene) game.setScene(sp.scene);
 
-      // Önce tahtayı oluştur, sonra ekranı göster — siyah ekran YOK
-      game.newGame(startCh);
-      requestAnimationFrame(() => game.resize());
-      game.startLoop();
+      // Önce ekranı göster, sonra resize, sonra newGame — sıralama KRİTİK
       goScreen('screen-game');
+      // DOM'un yerleşmesi için 2 frame bekle
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      game.resize();
+      game.newGame(startCh);
+      game.resize();
+      game.startLoop();
       await playChapterTransition(startCh);
     }
 
@@ -2041,10 +2051,12 @@
       if (next > 12) state.profile.endlessLevel = Math.max(state.profile.endlessLevel || 0, next - 12);
       saveProfile();
 
-      // Önce tahtayı oluştur, sonra sinematik — siyah ekran YOK
-      game.locked = false;
+      // Sıralama: resize → newGame → startLoop
+      game.resize();
       game.newGame(next);
-      requestAnimationFrame(() => game.resize());
+      game.resize();
+      game.locked = false;
+      game.startLoop();
 
       if (next > 12) {
         const spCur = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
