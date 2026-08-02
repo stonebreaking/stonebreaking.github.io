@@ -79,7 +79,21 @@ function makeGame() {
     guard++;
     const free = g.tiles.filter((t) => t.active && t.free);
     if (free.length) {
-      const t = free[Math.floor(Math.random() * free.length)];
+      // Smart solver:
+      // 1. If there's a type in the tray, prioritize picking a free tile of that type
+      const trayTypes = g.tray.map(s => s.type);
+      let t = free.find(x => trayTypes.includes(x.type));
+      if (!t) {
+        // 2. Otherwise, find if there are multiple free tiles of the same type and pick one
+        const counts = {};
+        free.forEach(x => counts[x.type] = (counts[x.type] || 0) + 1);
+        let bestType = null, maxC = -1;
+        for (const [typeStr, count] of Object.entries(counts)) {
+          if (count > maxC) { maxC = count; bestType = typeStr; }
+        }
+        t = free.find(x => x.type === Number(bestType));
+      }
+      if (!t) t = free[0];
       g.handleClick(g.tileRect(t).x + g.tileW / 2, g.tileRect(t).y + g.tileH / 2);
     }
     let safety = 0;

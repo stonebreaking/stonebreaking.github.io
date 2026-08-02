@@ -301,28 +301,29 @@ class StonebreakingGame {
     const layout = this.buildLayout(level);
     while (layout.length % 3 !== 0) layout.pop();
 
-    // v6.4: YIĞIN BAZLI TİP ATAMA — aynı (col,row) yığınındaki 3 taş AYNI TİP
-    // → garanti çözülebilir (her yığın 3 aynı → tepsiye 3'ü → kırılır)
+    // v6.7.9: GERÇEK MAHJONG DAĞITIMI — eşleşen 3 taş farklı yığın ve katmanlara dağıtılır
+    // → rünleri aramak, bulmak ve eşleştirmek gerçek Mahjong solitaire deneyimi yaşatır
+    // → kusursuz matematik: her taş tipinden tam 3 adet bulunur ve tepsi dolarsa çıkmaz önleme çalışır
     const groups = layout.length / 3;
     const typeSeq = [];
-    for (let i = 0; i < groups; i++) typeSeq.push(i % this.types.length);
+    for (let i = 0; i < groups; i++) {
+      const type = i % this.types.length;
+      typeSeq.push(type, type, type);
+    }
+    // Tüm taş tiplerini tamamen karıştır
     for (let i = typeSeq.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [typeSeq[i], typeSeq[j]] = [typeSeq[j], typeSeq[i]];
     }
-    const stackType = {};
-    const keyOf = (pos) => pos.col.toFixed(2) + '|' + pos.row.toFixed(2);
 
     let id = 0;
     layout.forEach((pos, i) => {
-      const key = keyOf(pos);
-      if (!(key in stackType)) stackType[key] = typeSeq.shift();
       this.tiles.push({
         id: id++,
         col: pos.col,
         row: pos.row,
         z: pos.z,
-        type: stackType[key],
+        type: typeSeq[i],
         active: true,
         glow: 0,
         free: true,
