@@ -1231,7 +1231,7 @@
   <!-- ========== 4. OYUN ========== -->
   <section id="screen-game" class="screen" aria-label="Oyun">
     <div class="game-top">
-      <button class="btn-ui" type="button" id="btn-menu" style="padding:8px 14px" aria-label="Menü">←</button>
+      <button class="btn-ui" type="button" id="btn-menu" style="padding:8px 14px;font-size:0.85rem" aria-label="Ana Menü">◆ Menü</button>
       <div class="iq-badge">IQ: <span id="hud-iq">40</span></div>
       <button class="btn-sound" type="button" id="btn-sound" aria-label="Ses aç/kapat">🔊</button>
       <div class="spirit-chip" id="spirit-chip" role="button" tabindex="0" title="Profil">
@@ -1636,6 +1636,7 @@
       }
       if (!lines.length) lines = [sp.quote || 'Mühürler seni bekliyor.'];
       ov.classList.add('show');
+      StoneSound.chapterReveal(sp.element || 'ates');
       await wait(620);
       for (const line of lines) {
         const p = document.createElement('p');
@@ -1982,18 +1983,17 @@
         game.onToast = showToast;
         game.onHUD = renderHUD;
         game.onTray = renderTray;
-        game.onPick = () => { StoneSound.pick(); }; // v6.1: taş seçilince hafif ses
-        game.onBreath = (b) => {                    // v6.1: nefes + titreşim
-          StoneSound.breath(b.combo);
+        game.onPick = () => { StoneSound.pick(); };
+        game.onBreath = (b) => {
+          StoneSound.breath(b.combo, sp.element);
           StoneSound.vibrate(18);
         };
         game.onFail = () => {
-          // v6.1: motor zaten toast gösterir (taşlar geri döner) — burada ses/titreşim
           StoneSound.fail();
           StoneSound.vibrate(60);
         };
         game.onWin = (stats) => {
-          StoneSound.win();
+          StoneSound.win(sp.element);
           StoneSound.vibrate([30, 40, 70]);
           showVictory(stats);
         };
@@ -2010,7 +2010,6 @@
         : (sp.name + (el ? ' · ' + el.name : ''));
       let startCh;
       if (opts.endless && state.profile.endlessUnlocked) {
-        // v6.1.1: Sonsuz Moda doğrudan giriş — kaldığın yerden (rekor + 1)
         startCh = 12 + (state.profile.endlessLevel || 0) + 1;
       } else {
         startCh = state.profile.chapter && state.profile.spirit === state.spirit
@@ -2022,44 +2021,42 @@
       state.profile.mascot = state.mascot;
       saveProfile();
       if (sp.scene) game.setScene(sp.scene);
+
+      // Önce tahtayı oluştur, sonra ekranı göster — siyah ekran YOK
+      game.newGame(startCh);
+      requestAnimationFrame(() => game.resize());
       game.startLoop();
       goScreen('screen-game');
       await playChapterTransition(startCh);
-      game.newGame(startCh);
-      requestAnimationFrame(() => game.resize());
     }
 
     async function continueNextLevel() {
       hideVictory();
       if (!game || !state.lastStats) return;
       const cur = state.lastStats.level || state.chapter;
-      const next = cur + 1; // v6.1: 12 sonrası SINIRSIZ (Sonsuz Mod)
+      const next = cur + 1;
       if (cur === 12) state.profile.endlessUnlocked = true;
       state.chapter = next;
       state.profile.chapter = Math.min(12, next);
       if (next > 12) state.profile.endlessLevel = Math.max(state.profile.endlessLevel || 0, next - 12);
       saveProfile();
 
-      if (next > 12) {
-        // Sonsuz Mod: mevcut ruh sahnesi + sonsuz diyalog
-        const spCur = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
-        if (spCur && spCur.scene) game.setScene(spCur.scene);
-        $('#chip-img').src = spCur.portrait;
-        await playChapterTransition(next);
-        game.locked = false;
-        game.newGame(next);
-        requestAnimationFrame(() => game.resize());
-        return;
-      }
-
-      const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === next);
-      const sp = ch ? window.STONE_SPIRITS[ch.spirit] : null;
-      if (sp && sp.scene) game.setScene(sp.scene);
-      if (sp) $('#chip-img').src = sp.portrait;
-      await playChapterTransition(next);
+      // Önce tahtayı oluştur, sonra sinematik — siyah ekran YOK
       game.locked = false;
       game.newGame(next);
       requestAnimationFrame(() => game.resize());
+
+      if (next > 12) {
+        const spCur = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
+        if (spCur && spCur.scene) game.setScene(spCur.scene);
+        $('#chip-img').src = spCur.portrait;
+      } else {
+        const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === next);
+        const sp = ch ? window.STONE_SPIRITS[ch.spirit] : null;
+        if (sp && sp.scene) game.setScene(sp.scene);
+        if (sp) $('#chip-img').src = sp.portrait;
+      }
+      await playChapterTransition(next);
     }
 
     function setupPick(containerSel, attr, onPick) {

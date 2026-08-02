@@ -291,7 +291,7 @@ class StonebreakingGame {
     this.inputLocked = false;
     this._winScheduled = false;
 
-    // Sonsuz Mod tuning'i (remote v6.1 deneyimi): IQ tabanı yüksek, güçler cömert
+    // Sonsuz Mod tuning'i — dalga arttıkça zorlaşır, güçler dengeli
     const L = this.endless ? 12 + Math.min(20, level - 12) : level;
     this.iq = this.endless ? 80 + (level - 13) * 3 : 40 + (level - 1) * 2;
     this.combo = 0;
@@ -299,9 +299,10 @@ class StonebreakingGame {
     this.matches = 0;
     this.moves = 0;
     this.seals = 0;
-    this.hintsLeft = 1 + Math.floor((L - 1) / 4) + (this.endless ? 1 : 0);
-    this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? 1 : 0);
-    this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) : 0;
+    // Sonsuz Mod güç dengesi: her 3 dalga'da 1 ekstra ipucu ve geri al
+    this.hintsLeft = 1 + Math.floor((L - 1) / 4) + (this.endless ? Math.floor((level - 12) / 3) : 0);
+    this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? Math.floor((level - 12) / 4) : 0);
+    this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0) : 0;
     this.startedAt = performance.now();
     this.comboUntil = 0;
 
@@ -348,8 +349,10 @@ class StonebreakingGame {
     // → tahta HER ZAMAN çözülebilir (Mahjong Vita / mahjong solitaire garantisi)
     const out = [];
     const endless = level > 12;
-    const baseCols = (endless ? 6 : 5) + (level % 2);   // piramit tabanı
-    const baseRows = (endless ? 5 : 4) + (level % 3 === 0 ? 1 : 0);
+    // Sonsuz Mod: dalga arttıkça tahta büyür — ama kontrollü (piramit bütünlüğü korunur)
+    const wave = endless ? Math.min(6, level - 12) : 0;
+    const baseCols = (endless ? 6 : 5) + (level % 2) + Math.floor(wave * 0.5);
+    const baseRows = (endless ? 5 : 4) + (level % 3 === 0 ? 1 : 0) + Math.floor(wave * 0.3);
     for (let r = 0; r < baseRows; r++) {
       const cols = Math.max(2, baseCols - r);
       const offset = (baseCols - cols) / 2;             // piramit ortalı
@@ -359,10 +362,12 @@ class StonebreakingGame {
         out.push({ col: c + offset, row: r, z: 2 });
       }
     }
-    // taş sayısı 3'ün katı (yığın başına 3)
-    const maxTiles = endless ? 63 : 54;
+    // taş sayısı 3'ün katı (yığın başına 3) — piramit bütünlüğü korunarak sınırla
+    const maxTiles = endless ? 72 : 54;
     if (out.length > maxTiles) {
-      out.length = Math.floor(maxTiles / 3) * 3;
+      // Tam piramit satırlarını kes — aralığı bozma
+      const maxStacks = Math.floor(maxTiles / 3);
+      out.length = maxStacks * 3;
     }
     return out;
   }

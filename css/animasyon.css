@@ -392,7 +392,7 @@
   backdrop-filter: blur(6px);
 }
 
-/* ---------- Bölüm geçiş overlay (v6.1 sinematik) ---------- */
+/* ---------- Bölüm geçiş overlay (v6.1 sinematik — v7.0 güçlendirilmiş) ---------- */
 #chapter-overlay {
   position: fixed;
   inset: 0;
@@ -402,7 +402,7 @@
   justify-content: center;
   flex-direction: column;
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(20, 10, 30, 0.92) 0%, rgba(0, 0, 0, 0.98) 78%);
+    radial-gradient(ellipse at 50% 38%, rgba(255,107,53,0.08) 0%, rgba(20, 10, 30, 0.92) 40%, rgba(0, 0, 0, 0.98) 78%);
   color: #fff;
   text-align: center;
   padding: 24px;
@@ -412,31 +412,32 @@
   animation: chapterWipe 0.9s ease-out both;
 }
 #chapter-overlay .ch-portrait {
-  width: 116px;
-  height: 116px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--glow, #ff6b35);
-  box-shadow: 0 0 34px var(--glow, #ff6b35);
-  margin-bottom: 14px;
+  border: 3px solid var(--glow, #ff6b35);
+  box-shadow: 0 0 40px var(--glow, #ff6b35), 0 0 80px rgba(255,107,53,0.2);
+  margin-bottom: 16px;
   animation: sealExplode 0.8s ease-out both, spiritGlow 2s ease-in-out 0.8s infinite;
 }
 #chapter-overlay .chapter-symbol {
-  font-size: 3rem;
+  font-size: 3.5rem;
   animation: sealExplode 0.9s ease-out both, spiritGlow 2s ease-in-out 0.9s infinite;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 #chapter-overlay h2 {
-  font-size: clamp(1.3rem, 5vw, 1.9rem);
-  letter-spacing: 4px;
+  font-size: clamp(1.4rem, 5.5vw, 2rem);
+  letter-spacing: 5px;
   margin-bottom: 6px;
+  text-shadow: 0 0 20px rgba(255,209,148,0.3);
 }
 #chapter-overlay #ch-region {
   color: #ffd194;
-  font-size: 0.78rem;
-  letter-spacing: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 5px;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   opacity: 0;
   animation: fadeUp 0.6s ease-out 0.25s forwards;
 }
