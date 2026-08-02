@@ -174,11 +174,11 @@
 
     #screen-splash .splash-stage {
       position: relative;
-      width: min(292px, 72vw);
-      height: min(292px, 72vw);
+      width: min(260px, 65vw);
+      height: min(260px, 65vw);
       display: grid;
       place-items: center;
-      margin-top: 1vh;
+      margin-top: 2vh;
       flex-shrink: 0;
     }
     /* ---- Mühür madalyonu (logo sahneye işlenir) ---- */
@@ -191,46 +191,46 @@
     }
     .seal-aura {
       position: absolute;
-      inset: -14%;
+      inset: -20%;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,107,53,0.18), rgba(255,107,53,0.04) 55%, transparent 74%);
+      background: radial-gradient(circle, rgba(255,107,53,0.15), rgba(255,107,53,0.03) 55%, transparent 74%);
       animation: auraBreath 4.6s ease-in-out infinite;
-      filter: blur(6px);
+      filter: blur(8px);
       pointer-events: none;
       mix-blend-mode: screen;
     }
     .seal-orbit {
       position: absolute;
-      inset: 3%;
+      inset: -2%;
       border-radius: 50%;
-      border: 1px dashed rgba(255,209,148,0.35);
+      border: 1px solid rgba(255,209,148,0.25);
       animation: orbitSpin 30s linear infinite;
       pointer-events: none;
     }
     .seal-orbit::before {
       content: '';
       position: absolute;
-      inset: 9%;
+      inset: 8%;
       border-radius: 50%;
-      border: 1px solid rgba(255,209,148,0.14);
+      border: 1px dashed rgba(255,209,148,0.12);
     }
     .seal-orbit i {
       position: absolute;
-      width: 15px;
-      height: 15px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      box-shadow: 0 0 12px currentColor;
+      box-shadow: 0 0 14px currentColor, 0 0 4px currentColor;
     }
-    .seal-orbit i.ates   { left: 50%; top: 0%;   transform: translate(-50%, -50%); background: radial-gradient(circle, #ffb088, #ff6b35); color: #ff6b35; }
-    .seal-orbit i.su     { left: 100%; top: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, #b8fff8, #4ecdc4); color: #4ecdc4; }
-    .seal-orbit i.toprak { left: 50%; top: 100%; transform: translate(-50%, -50%); background: radial-gradient(circle, #ecd9a8, #c4a35a); color: #c4a35a; }
-    .seal-orbit i.hava   { left: 0%;  top: 50%;  transform: translate(-50%, -50%); background: radial-gradient(circle, #e8f7ff, #a8d8ea); color: #a8d8ea; }
+    .seal-orbit i.ates   { left: 50%; top: -2%;   transform: translate(-50%, -50%); background: radial-gradient(circle, #ffb088, #ff6b35); color: #ff6b35; }
+    .seal-orbit i.su     { left: 102%; top: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, #b8fff8, #4ecdc4); color: #4ecdc4; }
+    .seal-orbit i.toprak { left: 50%; top: 102%; transform: translate(-50%, -50%); background: radial-gradient(circle, #ecd9a8, #c4a35a); color: #c4a35a; }
+    .seal-orbit i.hava   { left: -2%;  top: 50%;  transform: translate(-50%, -50%); background: radial-gradient(circle, #e8f7ff, #a8d8ea); color: #a8d8ea; }
     .seal-ring {
       position: absolute;
-      inset: 1%;
+      inset: 2%;
       border-radius: 50%;
-      border: 2px solid rgba(255,209,148,0.18);
-      box-shadow: 0 0 0 4px rgba(0,0,0,0.2), 0 0 44px rgba(255,107,53,0.2), inset 0 0 30px rgba(255,107,53,0.1);
+      border: 1.5px solid rgba(255,209,148,0.12);
+      box-shadow: 0 0 30px rgba(255,107,53,0.15), inset 0 0 20px rgba(255,107,53,0.08);
       pointer-events: none;
       mix-blend-mode: screen;
     }
@@ -259,7 +259,7 @@
     .splash-brand {
       position: relative;
       z-index: 3;
-      margin-top: 2px;
+      margin-top: 8px;
       text-align: center;
       font-size: clamp(1.15rem, 5.5vw, 1.7rem);
       font-weight: 900;
@@ -275,47 +275,63 @@
       pointer-events: none;
     }
 
-    /* ---- Taş mühür buton (evren dili) ---- */
+    /* ---- Taş mühür buton (evren dili) — logodan doğar ---- */
     .splash-actions {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 12px;
+      margin-top: 12px;
+      position: relative;
+    }
+    /* Logo → buton organik bağ (ışık huzmesi) */
+    .splash-actions::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 20px;
+      background: linear-gradient(180deg, rgba(255,209,148,0.4), rgba(255,107,53,0.15), transparent);
+      pointer-events: none;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 2s forwards;
     }
     .btn-seal {
       position: relative;
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 15px 34px;
+      padding: 14px 32px;
       border-radius: 13px;
-      border: 2px solid rgba(255,209,148,0.5);
+      border: 1.5px solid rgba(255,209,148,0.4);
       background:
-        radial-gradient(130% 170% at 50% 0%, rgba(255,107,53,0.22), transparent 55%),
+        radial-gradient(130% 170% at 50% 0%, rgba(255,107,53,0.18), transparent 55%),
         linear-gradient(180deg, #2b2418 0%, #171109 55%, #120d07 100%);
       box-shadow:
-        0 0 0 4px rgba(0,0,0,0.4),
-        0 0 0 5px rgba(255,107,53,0.28),
-        0 0 26px rgba(255,107,53,0.35),
-        inset 0 0 20px rgba(255,107,53,0.14);
+        0 0 0 3px rgba(0,0,0,0.35),
+        0 0 0 4px rgba(255,107,53,0.2),
+        0 0 20px rgba(255,107,53,0.25),
+        inset 0 0 16px rgba(255,107,53,0.1);
       color: #ffe8c8;
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 800;
       letter-spacing: 4px;
       text-transform: uppercase;
-      text-shadow: 0 0 14px rgba(255,209,148,0.55);
+      text-shadow: 0 0 12px rgba(255,209,148,0.5);
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
       animation: btnSealPulse 2.6s ease-in-out infinite, fadeUp 0.8s ease-out both;
     }
     .btn-seal .bs-rune {
       color: #ffd194;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       text-shadow: 0 0 10px rgba(255,107,53,0.9);
       animation: runePulse 2.1s ease-in-out infinite;
     }
-    .btn-seal.primary { border-color: rgba(255,107,53,0.68); }
+    .btn-seal.primary { border-color: rgba(255,107,53,0.55); }
     .btn-seal:active { transform: translateY(1px) scale(0.98); filter: brightness(1.15); }
     .btn-seal:hover { transform: translateY(-2px); }
 
