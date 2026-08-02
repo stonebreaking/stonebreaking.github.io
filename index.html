@@ -25,7 +25,6 @@
     #screen-studio-intro {
       position: relative;
       background: #07070f;
-      display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
@@ -151,7 +150,6 @@
       background:
         radial-gradient(ellipse at 50% 36%, rgba(36,16,2,0.42) 0%, rgba(7,7,15,0.50) 52%, rgba(7,7,15,0.94) 100%),
         linear-gradient(180deg, #0a0a14 0%, #07070f 100%);
-      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -183,11 +181,11 @@
 
     #screen-splash .splash-stage {
       position: relative;
-      width: min(280px, 70vw);
-      height: min(280px, 70vw);
+      width: min(220px, 55vw);
+      height: min(220px, 55vw);
       display: grid;
       place-items: center;
-      margin-top: 3vh;
+      margin-top: 2vh;
       flex-shrink: 0;
     }
     /* ---- TEK PARÇA SİNEMATİK SAHNE: logo + orbit + elementler BİRLEŞİK ---- */
@@ -272,11 +270,10 @@
 
     /* ---- Taş mühür buton (evren dili) — logodan doğar ---- */
     .splash-actions {
-      display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      margin-top: 24px;
+      margin-top: 16px;
       position: relative;
     }
     /* Logo → buton organik bağ (ışık huzmesi) */
@@ -297,8 +294,8 @@
       position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      padding: 18px 42px;
+      gap: 10px;
+      padding: 14px 32px;
       border-radius: 4px;
       border: 3px solid #703a1a;
       outline: 1.5px solid #140b07;
@@ -309,9 +306,9 @@
         inset 0 2px 10px rgba(255, 130, 45, 0.4);
       color: #ffd194;
       font-family: inherit;
-      font-size: 1.08rem;
+      font-size: 0.92rem;
       font-weight: 900;
-      letter-spacing: 6px;
+      letter-spacing: 4px;
       text-transform: uppercase;
       text-shadow: 0 0 15px rgba(255,107,53,0.7);
       cursor: pointer;
@@ -350,14 +347,13 @@
       z-index: 3;
     }
     @media (max-height: 680px) {
-      #screen-splash .splash-stage { width: min(232px, 62vw); height: min(232px, 62vw); }
-      .btn-seal { padding: 12px 26px; font-size: 0.82rem; letter-spacing: 3px; }
+      #screen-splash .splash-stage { width: min(180px, 48vw); height: min(180px, 48vw); }
+      .btn-seal { padding: 10px 22px; font-size: 0.78rem; letter-spacing: 3px; }
     }
 
     /* ========== CHARACTER PICK v6.7 — YAN YANA anime portre + element ayracı ========== */
     #screen-character {
       background: #0d0d1a;
-      display: flex;
       flex-direction: column;
       padding: 0;
       overflow: hidden;
@@ -587,7 +583,7 @@
     /* ========== SPIRIT PICK v6.7 — 4 ruh anime düzeni ========== */
     #screen-spirit {
       background: #0d0d1a;
-      display: flex;
+      flex-direction: column;
       flex-direction: column;
       padding: 0;
       overflow: hidden;
@@ -764,7 +760,6 @@
     /* ========== GAME v5.2 — single film stage (tray ON canvas) ========== */
     #screen-game {
       background: #0a1f14;
-      display: flex;
       flex-direction: column;
       padding: 0;
       overflow: hidden;
@@ -880,7 +875,6 @@
     /* Profile screen */
     #screen-profile {
       background: radial-gradient(ellipse at 50% 0%, #1a1030 0%, #07070f 65%);
-      display: flex;
       flex-direction: column;
       padding: 20px 16px 28px;
       overflow-y: auto;
@@ -1463,7 +1457,7 @@
         if (el.classList.contains('active')) {
           el.classList.add('exit');
           el.classList.remove('active');
-          setTimeout(() => el.classList.remove('exit'), 500);
+          setTimeout(() => el.classList.remove('exit'), 400);
         }
       });
       if (id === 'screen-game') {
@@ -1475,7 +1469,6 @@
       if (!next) return;
       next.classList.add('active');
       if (id === 'screen-game' && game) {
-        // Resize'ı 2 aşamada yap — DOM yerleşince + bir frame sonra
         requestAnimationFrame(() => {
           game.resize();
           requestAnimationFrame(() => game.resize());
@@ -1522,16 +1515,14 @@
       }
       // Bekle: logo + yazı animasyonları oynansın
       await wait(3000);
-      // Çıkış
+      // Çıkış — fade out
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(800);
-      if (intro) intro.style.display = 'none';
-      // SAHNE 0'a geç
-      const splash = $('#screen-splash');
-      if (splash) splash.classList.add('active');
+      await wait(500);
+      // SAHNE 0'a geç — goScreen kullan
+      goScreen('screen-splash');
       playSplashCinematic();
     }
 
