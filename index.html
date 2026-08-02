@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="css/animasyon.css?v=72" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
+    .screen { position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0; pointer-events: none; z-index: 0; }
+    .screen.active { opacity: 1; pointer-events: auto; z-index: 20; }
+    .screen.exit { opacity: 0; pointer-events: none; z-index: 10; }
     html, body {
       width: 100%;
       height: 100%;
