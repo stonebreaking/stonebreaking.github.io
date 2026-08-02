@@ -1,5 +1,29 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+# 📋 PATRON BT AKTİVİTE LOGU
+
+### v6.9.1 (02.08.2026) — DİZÜT & SİYAH EKRAN DÜZELTMELERİ 🐛
+- ✅ **Ruh Seçim Ekranı Tam Ekran Uyumu:** Grid gap 6→4px, padding sıfırlandı, kart bilgi alanı küçültüldü, alıntı yüksekliği azaltıldı, başlık/footer padding daraltıldı, rozet boyutu küçültüldü. Artık mobil ekranın tamamına sığıyor!
+- ✅ **Splash STONEBREAKING Yazısı Kaldırıldı:** Logo görselinde zaten "STONEBREAKING" var, gereksiz yazı tekrardan kaçınıldı. Buton doğrudan logo göründükten sonra belirir.
+- ✅ **Karakter Seçim Siyah Ekran Düzeltildi:** `final_options_opt2.png` yerine `secim_ekrani_4_ruh_new.png` (çalışan) kullanıldı. Ek olarak gradient fallback eklendi — görsel yüklenmese bile sağlam kadim karanlık arka plan görünür.
+- ✅ **Ruh Seçim Arka Plan Güçlendirildi:** Aynı dual-layer yaklaşımı uygulandı (gradient taban + görsel overlay).
+- ✅ **Body/Genel Arka Plan Koyulaştırıldı:** #07070f → #0a0a14 — tüm geçişlerde tutarlı derin karanlık tema.
+
+### v6.9 (02.08.2026) — ZİHİN HARİTASI + GOOGLE OAUTH GÜÇLENDİRME 🧠🔐
+- ✅ **Zihin Haritası Kodlandı:** Profil ekranına Canvas tabanlı interaktif 4 element dengesi görselleştirmesi eklendi.
+- ✅ **Element Ağ Yapısı:** 4 ruh (Kor/Baam/Mand/Zepy) arasındaki ilişkiler görselleştirildi:
+  - Karşıt çiftler (kesikli çizgi): Ateş↔Su, Toprak↔Hava
+  - Bitişik çiftler (düz çizgi): Her element komşularıyla bağlı
+  - Merkez mühür logosu
+  - Yayılma çizgileri (element gücüne göre)
+- ✅ **Dinamik Ağırlıklar:** Element ağırlıkları bölüm ilerlemesine göre hesaplanır (1-3 Ateş, 4-6 Su, 7-9 Toprak, 10-12 Hava).
+- ✅ **Google OAuth Stub Güçlendirildi:** GIS entegrasyonu için hazırlık kodu eklendi:
+  - `handleGoogleResponse` callback stub'ı
+  - JWT token decode yapısı
+  - Profil güncelleme akışı
+  - UI feedback (buton durumu, mesaj)
+- ✅ **Canvas DPI Ayarlı:** Zihin Haritası retina display'lerde net görünür.
+
 ### v6.8.3 (02.08.2026) — KADİM GÖRÜNÜM (SKINS) SEÇİM SİSTEMİ ENTEGRASYONU 🎭
 - ✅ **Karakter Görünüm (Skins) Seçimi Entegre Edildi:** Mühür Profili (`screen-profile`) içerisine kadim toprak ruhumuz Mand için alternatif görünüm (Skins) seçici paneli kodlandı.
 - ✅ **3 Alternatif Görünüm:** Oyuncu, profile girdiğinde Mand için 3 farklı kadim görünüm arasında özgürce geçiş yapabilir:

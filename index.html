@@ -13,7 +13,7 @@
       width: 100%;
       height: 100%;
       height: 100dvh;
-      background: #07070f;
+      background: #0a0a14;
       color: #f4f4f8;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       overflow: hidden;
@@ -374,7 +374,7 @@
 
     /* ========== CHARACTER PICK v6.7 — YAN YANA anime portre + element ayracı ========== */
     #screen-character {
-      background: #07070f;
+      background: #0d0d1a;
       display: flex;
       flex-direction: column;
       padding: 0;
@@ -383,14 +383,23 @@
       height: 100%;
       height: 100dvh;
     }
-    /* Arka plan katmanı */
+    /* Arka plan katmanı — görsel yüklenmese bile gradient görünür */
     #screen-character::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(7,7,15,0.55) 0%, rgba(7,7,15,0.35) 40%, rgba(7,7,15,0.85) 100%),
-        url('06_GRAFIK/final_options_opt2.png') center/cover no-repeat;
+        radial-gradient(ellipse at 50% 30%, rgba(255,107,53,0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0f0a18 0%, #0d0816 50%, #0a0a14 100%);
+      z-index: 0;
+    }
+    /* Görsel katmanı (üstte) */
+    #screen-character::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('06_GRAFIK/secim_ekrani_4_ruh_new.png') center/cover no-repeat;
+      opacity: 0.35;
       z-index: 0;
     }
     #screen-character > * { position: relative; z-index: 1; }
@@ -591,7 +600,7 @@
 
     /* ========== SPIRIT PICK v6.7 — 4 ruh anime düzeni ========== */
     #screen-spirit {
-      background: #07070f;
+      background: #0d0d1a;
       display: flex;
       flex-direction: column;
       padding: 0;
@@ -605,22 +614,30 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(7,7,15,0.6) 0%, rgba(7,7,15,0.3) 40%, rgba(7,7,15,0.85) 100%),
-        url('06_GRAFIK/secim_ekrani_4_ruh_new.png') center/cover no-repeat;
+        radial-gradient(ellipse at 50% 30%, rgba(78,205,196,0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #0f0a18 0%, #0d0816 50%, #0a0a14 100%);
+      z-index: 0;
+    }
+    #screen-spirit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('06_GRAFIK/secim_ekrani_4_ruh_new.png') center/cover no-repeat;
+      opacity: 0.35;
       z-index: 0;
     }
     #screen-spirit > * { position: relative; z-index: 1; }
 
     #screen-spirit .screen-header {
-      padding: max(12px, env(safe-area-inset-top)) 16px 4px;
+      padding: max(8px, env(safe-area-inset-top)) 14px 2px;
       flex-shrink: 0;
     }
     #screen-spirit .screen-header h1 {
-      font-size: clamp(0.95rem, 4vw, 1.3rem);
+      font-size: clamp(0.88rem, 3.5vw, 1.2rem);
     }
     #screen-spirit .screen-header p {
-      font-size: 0.75rem;
-      margin-top: 3px;
+      font-size: 0.68rem;
+      margin-top: 2px;
     }
 
     .spirit-grid {
@@ -629,12 +646,12 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: 6px;
+      gap: 4px;
       max-width: 500px;
       width: 96%;
       margin: 0 auto;
       min-height: 0;
-      padding: 2px 0;
+      padding: 0;
     }
     /* Ruh kartları — tam yükseklik, anime portre */
     .spirit-grid .spirit-card {
@@ -664,7 +681,7 @@
     .spirit-card .spirit-info {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      padding: 10px 6px 8px;
+      padding: 6px 4px 5px;
       background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 65%, transparent 100%);
       text-align: center;
     }
@@ -682,16 +699,16 @@
     }
     .spirit-card .spirit-badge {
       position: absolute;
-      top: 6px;
-      left: 6px;
-      width: 28px;
-      height: 28px;
+      top: 4px;
+      left: 4px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       display: grid;
       place-items: center;
       background: rgba(0,0,0,0.5);
       border: 1.5px solid rgba(255,255,255,0.15);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       backdrop-filter: blur(6px);
     }
     /* Seçim efektleri */
@@ -722,12 +739,12 @@
 
     .spirit-quote {
       text-align: center;
-      min-height: 28px;
+      min-height: 22px;
       color: #c8c8d8;
       font-style: italic;
-      font-size: 0.78rem;
-      padding: 4px 16px;
-      max-width: 340px;
+      font-size: 0.72rem;
+      padding: 2px 12px;
+      max-width: 320px;
       margin: 0 auto;
       opacity: 0;
       transition: opacity 0.35s;
@@ -739,7 +756,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      padding: 8px 16px max(10px, env(safe-area-inset-bottom));
+      padding: 6px 14px max(8px, env(safe-area-inset-bottom));
       background: linear-gradient(0deg, rgba(7,7,15,0.95) 0%, rgba(7,7,15,0.6) 100%);
       z-index: 3;
       flex-shrink: 0;
@@ -999,6 +1016,52 @@
       box-shadow: 0 0 10px rgba(255,107,53,0.35);
       background: rgba(255,107,53,0.08) !important;
     }
+
+    /* ========== ZİHİN HARİTASI v6.9 — Element Denge Görselleştirme ========== */
+    #mind-map-section {
+      margin-top: 14px;
+    }
+    #mind-map-label {
+      font-size: 0.75rem;
+      color: #888;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    #mind-map-canvas {
+      width: 100%;
+      height: 160px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,209,148,0.12);
+      display: block;
+    }
+    #mind-map-legend {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .mind-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.6rem;
+      color: #9a9ab0;
+    }
+    .mind-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    #mind-map-tip {
+      font-size: 0.58rem;
+      color: #666;
+      text-align: center;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
     .sig {
       text-align: center;
       font-size: 0.62rem;
@@ -1056,7 +1119,6 @@
         />
       </div>
     </div>
-    <div class="splash-brand" aria-hidden="true" style="display:none">STONEBREAKING</div>
     <div class="splash-actions" style="display:none" id="splash-actions">
       <button class="btn-seal primary" id="btn-start" type="button">
         <span class="bs-rune">◆</span><span class="bs-label">Maceraya Başla</span><span class="bs-rune">◆</span>
@@ -1268,6 +1330,19 @@
         </div>
       </div>
 
+      <!-- v6.9: Zihin Haritası — Element Denge Görselleştirme -->
+      <div id="mind-map-section">
+        <div id="mind-map-label">ELEMENT DENGE HARİTASI</div>
+        <canvas id="mind-map-canvas" width="380" height="160"></canvas>
+        <div id="mind-map-legend">
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#ff6b35"></div><span>Kor · Ateş</span></div>
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#4ecdc4"></div><span>Baam · Su</span></div>
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#c4a35a"></div><span>Mand · Toprak</span></div>
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#a8d8ea"></div><span>Zepy · Hava</span></div>
+        </div>
+        <div id="mind-map-tip">Oyun stiline göre element dengesini keşfet</div>
+      </div>
+
     </div>
     <div class="footer-actions">
       <button class="btn-ui" type="button" id="btn-prof-back">Geri</button>
@@ -1468,7 +1543,6 @@
     async function playSplashCinematic() {
       const stone = $('#cin-stone');
       const muhur = $('#muhur-logo');
-      const brand = $('.splash-brand');
       const actions = $('#splash-actions');
       const btn = $('#btn-start');
 
@@ -1476,7 +1550,6 @@
       if (state.splashPlayed) {
         if (stone) stone.style.display = 'none';
         if (muhur) muhur.classList.add('show');
-        if (brand) { brand.style.display = 'block'; brand.classList.add('show'); }
         if (actions) { actions.style.display = 'flex'; }
         if (btn) { btn.style.animation = 'btnSealPulse 2.6s ease-in-out infinite'; }
         const ebtn = $('#btn-endless');
@@ -1511,14 +1584,7 @@
       });
       if (muhur) muhur.classList.add('show');
 
-      // AŞAMA 4: Logo oturduktan sonra STONEBREAKING yazısı
-      await wait(1200);
-      if (brand) {
-        brand.style.display = 'block';
-        brand.classList.add('show');
-      }
-
-      // AŞAMA 5: Yazı göründükten sonra BUTON (KESİN sıralama)
+      // AŞAMA 4: Logo göründükten sonra DOĞRUDAN BUTON
       await wait(800);
       if (actions) {
         actions.style.display = 'flex';
@@ -1745,6 +1811,9 @@
       }
       
       goScreen('screen-profile');
+      
+      // Zihin Haritası render (gecikme ile canvas hazır olsun)
+      setTimeout(() => drawMindMap(), 120);
     }
 
     function saveProfileFromUI() {
@@ -1755,6 +1824,160 @@
       saveProfile();
       $('#prof-name').textContent = state.profile.name;
       showToast('Profil mühürlendi');
+    }
+
+    // =========================================================
+    // ZİHİN HARİTASI — Element Denge Görselleştirme v6.9
+    // =========================================================
+    function drawMindMap() {
+      const canvas = $('#mind-map-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      // DPI ayarı
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayW = canvas.clientWidth || 320;
+      const displayH = canvas.clientHeight || 160;
+      canvas.width = Math.floor(displayW * dpr);
+      canvas.height = Math.floor(displayH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      
+      const W = displayW;
+      const H = displayH;
+      ctx.clearRect(0, 0, W, H);
+
+      // Arka plan gradyan
+      const bg = ctx.createRadialGradient(W/2, H/2, 10, W/2, H/2, H*0.7);
+      bg.addColorStop(0, 'rgba(255,209,148,0.04)');
+      bg.addColorStop(1, 'rgba(0,0,0,0.2)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Element konumları (4 köşe)
+      const elements = [
+        { id: 'ates',   name: 'Kor',   color: '#ff6b35', emoji: '🔥', x: W*0.5,  y: H*0.18 },
+        { id: 'su',     name: 'Baam',  color: '#4ecdc4', emoji: '💧', x: W*0.82, y: H*0.5   },
+        { id: 'toprak', name: 'Mand',  color: '#c4a35a', emoji: '🗿', x: W*0.5,  y: H*0.82  },
+        { id: 'hava',   name: 'Zepy',  color: '#a8d8ea', emoji: '💨', x: W*0.18, y: H*0.5   },
+      ];
+
+      // Merkez
+      const cx = W/2, cy = H/2;
+
+      // Element güçleri — oyun istatistiklerinden hesapla
+      const p = state.profile;
+      const totalSeals = p.totalSeals || 0;
+      const bestIq = p.bestIq || 0;
+      const bestBreath = p.bestBreath || 0;
+
+      // Denge hesapla (basit: bölüm ilerlemesine göre)
+      const chapterProgress = p.chapter || 1;
+      const weights = {
+        ates:   chapterProgress >= 1 ? Math.min(1, 0.3 + (chapterProgress / 12) * 0.7) : 0.2,
+        su:     chapterProgress >= 4 ? Math.min(1, 0.3 + ((chapterProgress - 3) / 9) * 0.7) : 0.2,
+        toprak: chapterProgress >= 7 ? Math.min(1, 0.3 + ((chapterProgress - 6) / 6) * 0.7) : 0.2,
+        hava:   chapterProgress >= 10 ? Math.min(1, 0.3 + ((chapterProgress - 9) / 3) * 0.7) : 0.2,
+      };
+
+      // Bağlantı çizgileri (elementler arası ilişkiler)
+      ctx.lineWidth = 1.5;
+
+      // Karşıt çiftler (kesikli)
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(255,209,148,0.15)';
+      // Ateş ↔ Su (zıt)
+      ctx.beginPath();
+      ctx.moveTo(elements[0].x, elements[0].y);
+      ctx.lineTo(elements[1].x, elements[1].y);
+      ctx.stroke();
+      // Toprak ↔ Hava (zıt)
+      ctx.beginPath();
+      ctx.moveTo(elements[2].x, elements[2].y);
+      ctx.lineTo(elements[3].x, elements[3].y);
+      ctx.stroke();
+
+      // Bitişik çiftler (düz)
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(255,209,148,0.12)';
+      for (let i = 0; i < 4; i++) {
+        const next = (i + 1) % 4;
+        ctx.beginPath();
+        ctx.moveTo(elements[i].x, elements[i].y);
+        ctx.lineTo(elements[next].x, elements[next].y);
+        ctx.stroke();
+      }
+
+      // Merkez daire (mühür)
+      const centerRadius = 18;
+      const centerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, centerRadius);
+      centerGrad.addColorStop(0, 'rgba(255,209,148,0.3)');
+      centerGrad.addColorStop(1, 'rgba(255,107,53,0.1)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, centerRadius, 0, Math.PI * 2);
+      ctx.fillStyle = centerGrad;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,209,148,0.4)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Merkez rün
+      ctx.font = 'bold 14px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffd194';
+      ctx.fillText('◆', cx, cy);
+
+      // Element noktaları
+      elements.forEach((el, i) => {
+        const weight = weights[el.id] || 0.3;
+        const radius = 14 + weight * 12;
+
+        // Glow efekti
+        ctx.shadowColor = el.color;
+        ctx.shadowBlur = 15 * weight;
+
+        // Element dairesi
+        const grad = ctx.createRadialGradient(el.x, el.y - 4, 0, el.x, el.y, radius);
+        grad.addColorStop(0, el.color);
+        grad.addColorStop(0.6, el.color + 'aa');
+        grad.addColorStop(1, el.color + '44');
+
+        ctx.beginPath();
+        ctx.arc(el.x, el.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Border
+        ctx.strokeStyle = el.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+
+        // Emoji
+        ctx.font = `${Math.floor(radius * 0.9)}px system-ui`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(el.emoji, el.x, el.y);
+
+        // İsim etiketi
+        ctx.font = '600 9px system-ui';
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.fillText(el.name, el.x, el.y + radius + 10);
+      });
+
+      // Yayılma çizgileri (merkezden elementlere)
+      ctx.setLineDash([2, 3]);
+      ctx.lineWidth = 1;
+      elements.forEach((el) => {
+        const weight = weights[el.id] || 0.3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(el.x, el.y);
+        ctx.strokeStyle = el.color + Math.floor(weight * 80).toString(16).padStart(2, '0');
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
     }
 
     let game = null;
@@ -2013,16 +2236,48 @@
       $('#btn-prof-save').addEventListener('click', saveProfileFromUI);
       $('#prof-name-input').addEventListener('change', saveProfileFromUI);
       $('#btn-google-login').addEventListener('click', () => {
-        // PATRON BT: gerçek OAuth client id gelince bağlanacak (GIS)
+        // PATRON BT: Google Identity Services (GIS) OAuth entegrasyonu
+        // NOT: Gerçek Client ID verilince aşağıdaki GIS kodu aktif olacak
+        // const GIS_CLIENT_ID = 'TUA_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+        // window.google.accounts.id.initialize({ client_id: GIS_CLIENT_ID, callback: handleGoogleResponse });
+        
         const st = $('#google-login-status');
+        const btn = $('#btn-google-login');
         state.profile.googleStub = true;
         saveProfile();
         if (st) {
-          st.textContent = 'Google girişi hazırlanıyor — Client ID mühürlenince aktif (güvenli stub). Nick ile devam edebilirsin.';
+          // v6.9: Güçlendirilmiş stub mesajı
+          st.innerHTML = 'Google girişi hazırlanıyor<br><span style="font-size:0.62rem;color:#666">Patron Client ID mühürlenince aktif olur</span>';
           st.style.color = '#ffd194';
         }
-        showToast('Google giriş iskeleti mühürlendi');
+        if (btn) {
+          btn.innerHTML = '<span style="font-weight:700">G</span> Google Hazır (Stub)';
+          btn.style.opacity = '0.7';
+        }
+        showToast('Google giriş hazır — Client ID beklniyor');
       });
+      
+      // Google OAuth callback stub (GIS gelince aktif)
+      window.handleGoogleResponse = function(response) {
+        // PATRON BT: Client ID verilince GIS'ten gelen token burada işlenecek
+        console.log('Google OAuth response:', response);
+        const credential = response.credential || response;
+        if (credential) {
+          // Token decode ve profil güncelle
+          try {
+            const payload = JSON.parse(atob(credential.split('.')[1]));
+            state.profile.name = payload.name || state.profile.name;
+            state.profile.googleEmail = payload.email;
+            state.profile.googlePicture = payload.picture;
+            state.profile.googleStub = false;
+            saveProfile();
+            showToast('Google hesabı bağlandı');
+            openProfile(state.returnScreen);
+          } catch(e) {
+            showToast('Google giriş hatası');
+          }
+        }
+      };
     }
 
     document.addEventListener('DOMContentLoaded', () => {
