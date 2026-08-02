@@ -25,20 +25,20 @@
   overflow: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
-  z-index: 10;
-  display: none;
+  z-index: 0;
+  /* GİZLİ: opacity 0 + z-index 0 + pointer-events none */
 }
 .screen.active {
   opacity: 1;
   pointer-events: auto;
   z-index: 20;
-  display: flex;
+  /* AKTİF: anında görünür, hiçbir transition yok */
 }
 .screen.exit {
   opacity: 0;
   pointer-events: none;
-  display: flex;
+  z-index: 10;
+  /* ÇIKIŞ: fade-out yok, anında kaybolur */
 }
 
 /* ---------- Açılış sinematiği ---------- */
