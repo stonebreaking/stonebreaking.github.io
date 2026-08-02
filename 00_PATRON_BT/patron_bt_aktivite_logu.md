@@ -1,5 +1,14 @@
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v6.8.3 (02.08.2026) — KADİM GÖRÜNÜM (SKINS) SEÇİM SİSTEMİ ENTEGRASYONU 🎭
+- ✅ **Karakter Görünüm (Skins) Seçimi Entegre Edildi:** Mühür Profili (`screen-profile`) içerisine kadim toprak ruhumuz Mand için alternatif görünüm (Skins) seçici paneli kodlandı.
+- ✅ **3 Alternatif Görünüm:** Oyuncu, profile girdiğinde Mand için 3 farklı kadim görünüm arasında özgürce geçiş yapabilir:
+  - *Mand Savaşçısı / Muhafız* (Orijinal portre)
+  - *Toprak Şamanı* (`toprak_ruhu_1.png` - alternatif kadın şaman)
+  - *Erkek İzci* (`toprak_ruhu_2.png` - alternatif erkek toprak izcisi)
+- ✅ **Dinamik Oyun Entegrasyonu:** Seçilen görünüm anında `state.profile.mand_skin` alanına kaydedilir. Profil kaydedildiğinde, hem profil avatarı, hem HUD kafa simgesi hem de bölüm geçiş sinematiğindeki Mand portresi dinamik olarak seçilen bu yeni skinle güncellenir!
+
+
 ### v6.8.2 (02.08.2026) — PROGRESSIVE ASYNC LOADING VE SIFIR BLACK-SCREEN DEVRİMİ 🚀
 - ✅ **Progressive Async Loading Kodlandı:** Eski 25MB'lık resim setinin indirilmesini bekleyen ve oyunu kilitleyen senkron preloader devre dışı bırakıldı. Yerine, resimleri arka planda asenkron olarak indiren ve bittikçe tık tık canvas'a yerleştiren progressive model geliştirildi.
 - ✅ **Sıfır Siyah Ekran Garantisi:** Oyun tahtası ve rünler anında render edilir (emoji ve bazalt zemin fallback'leri ile). Resimler indikçe otomatik redraw ile taşların üstünde belirir. Ağ hızı ne olursa olsun siyah ekranda donma veya bekletme sorunları kökten çözüldü!
