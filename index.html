@@ -991,6 +991,14 @@
       opacity: 1;
     }
 
+        .skin-chip {
+      transition: all 0.25s ease;
+    }
+    .skin-chip.selected {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 10px rgba(255,107,53,0.35);
+      background: rgba(255,107,53,0.08) !important;
+    }
     .sig {
       text-align: center;
       font-size: 0.62rem;
@@ -1241,6 +1249,25 @@
       </div>
       <div style="margin-top:14px;font-size:0.75rem;color:#888;letter-spacing:1px">12 MÜHÜR YOLU</div>
       <div class="seal-track" id="prof-seal-track"></div>
+      <!-- v6.8.3: Toprak Ruhu Görünüm (Skins) Seçimi -->
+      <div id="mand-skin-section" style="margin-top:14px;display:none">
+        <div style="font-size:0.75rem;color:#888;letter-spacing:1px;margin-bottom:8px">Toprak Ruhu Görünümü</div>
+        <div style="display:flex;gap:8px">
+          <div class="skin-chip" id="skin-default" data-skin="06_GRAFIK/mand_toprak_ruhu_erkek.png" style="flex:1;cursor:pointer;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,209,148,0.15);border-radius:10px;padding:6px;text-align:center">
+            <img src="06_GRAFIK/mand_toprak_ruhu_erkek.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px" />
+            <span style="font-size:0.6rem;letter-spacing:0.5px">Muhafız</span>
+          </div>
+          <div class="skin-chip" id="skin-shaman" data-skin="06_GRAFIK/toprak_ruhu_1.png" style="flex:1;cursor:pointer;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,209,148,0.15);border-radius:10px;padding:6px;text-align:center">
+            <img src="06_GRAFIK/toprak_ruhu_1.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px" />
+            <span style="font-size:0.6rem;letter-spacing:0.5px">Şaman</span>
+          </div>
+          <div class="skin-chip" id="skin-scout" data-skin="06_GRAFIK/toprak_ruhu_2.png" style="flex:1;cursor:pointer;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,209,148,0.15);border-radius:10px;padding:6px;text-align:center">
+            <img src="06_GRAFIK/toprak_ruhu_2.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px" />
+            <span style="font-size:0.6rem;letter-spacing:0.5px">İzci</span>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="footer-actions">
       <button class="btn-ui" type="button" id="btn-prof-back">Geri</button>
@@ -1663,6 +1690,12 @@
     function openProfile(from) {
       state.returnScreen = from || 'screen-splash';
       const p = state.profile;
+      
+      // Load selected skin for Mand
+      if (p.mand_skin && window.STONE_SPIRITS && window.STONE_SPIRITS['mand']) {
+        window.STONE_SPIRITS['mand'].portrait = p.mand_skin;
+      }
+      
       const sp = window.STONE_SPIRITS[state.spirit || p.spirit] || null;
       $('#prof-name').textContent = p.name || 'Gezgin';
       $('#prof-name-input').value = p.name || '';
@@ -1690,6 +1723,27 @@
         el.title = 'Bölüm ' + i;
         track.appendChild(el);
       }
+      
+      // Control alternative Mand skins section
+      const activeSpirit = state.spirit || p.spirit;
+      const skinSec = $('#mand-skin-section');
+      if (skinSec) {
+        if (activeSpirit === 'mand' || p.spirit === 'mand') {
+          skinSec.style.display = 'block';
+          // Highlight current skin
+          const currentSkin = p.mand_skin || '06_GRAFIK/mand_toprak_ruhu_erkek.png';
+          $$('.skin-chip').forEach((chip) => {
+            if (chip.getAttribute('data-skin') === currentSkin) {
+              chip.classList.add('selected');
+            } else {
+              chip.classList.remove('selected');
+            }
+          });
+        } else {
+          skinSec.style.display = 'none';
+        }
+      }
+      
       goScreen('screen-profile');
     }
 
@@ -1919,6 +1973,28 @@
         hideVictory();
         if (game) game.stopLoop();
         goScreen('screen-splash');
+      });
+
+      // v6.8.3: Skin-chips listener
+      $$('.skin-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          $$('.skin-chip').forEach((c) => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          const selectedSkin = chip.getAttribute('data-skin');
+          state.profile.mand_skin = selectedSkin;
+          if (window.STONE_SPIRITS && window.STONE_SPIRITS['mand']) {
+            window.STONE_SPIRITS['mand'].portrait = selectedSkin;
+          }
+          saveProfile();
+          // Update profile avatar immediately if we are viewing Mand
+          const activeSpirit = state.spirit || state.profile.spirit;
+          if (activeSpirit === 'mand') {
+            $('#prof-avatar').src = selectedSkin;
+            const chipImg = $('#chip-img');
+            if (chipImg) chipImg.src = selectedSkin;
+          }
+          showToast('Mühür görünümü güncellendi');
+        });
       });
 
       // Profile
