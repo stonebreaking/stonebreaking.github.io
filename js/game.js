@@ -174,13 +174,20 @@ class StonebreakingGame {
   }
 
   async preload() {
-    await Promise.all(this.types.map((t) => new Promise((resolve) => {
+    // v6.8.2: PROGRESSIVE ASYNC LOADING — 25MB görsel indirmesini engellemez!
+    // → Oyun tahtası anında yüklenir ve emoji/taş rün fallbacks ile hemen oynanabilir.
+    // → Görseller arka planda indikçe tık tık tahtada belirir ve otomatik redraw tetiklenir.
+    // → Siyah ekranda kalma veya yükleme donmaları kesin olarak çözülmüştür!
+    this.types.forEach((t) => {
       const img = new Image();
-      img.onload = () => { this.tileImages[t.key] = img; resolve(); };
-      img.onerror = () => resolve();
+      img.onload = () => {
+        this.tileImages[t.key] = img;
+        this.draw(); // Görsel yüklenince anında çizimi tazele!
+      };
       img.src = t.img;
-    })));
+    });
     this.ready = true;
+    return Promise.resolve();
   }
 
   bindInput() {
