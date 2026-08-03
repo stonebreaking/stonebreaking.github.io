@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>STONEBREAKING — Universe</title>
-  <link rel="stylesheet" href="css/animasyon.css?v=88" />
+  <link rel="stylesheet" href="css/animasyon.css?v=89" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
@@ -74,21 +74,37 @@
       animation: lineExpand 1s ease-out 0.5s forwards;
       margin-top: 16px;
     }
-    /* Logo — SINEMA SAHNESİ: büyük, güçlü, ekranı kaplayan */
+    /* Logo — CSS ◆ MÜHÜR + element çatlakları */
     .studio-logo-wrap {
-      width: min(220px, 55vw);
-      height: min(220px, 55vw);
+      width: min(180px, 45vw);
+      height: min(180px, 45vw);
       position: relative;
       opacity: 0;
       animation: studioFadeScale 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+      display: grid;
+      place-items: center;
     }
-    .studio-logo {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 0 40px rgba(255,209,148,0.45)) drop-shadow(0 0 80px rgba(255,107,53,0.2));
-      mix-blend-mode: normal;
-      opacity: 1;
+    .studio-muhur {
+      font-size: clamp(3rem, 10vw, 5rem);
+      color: #ffd194;
+      text-shadow: 0 0 40px rgba(255,209,148,0.6), 0 0 80px rgba(255,107,53,0.3);
+      animation: muhurPulse 3s ease-in-out infinite;
+      z-index: 2;
+    }
+    .studio-muhur-crack {
+      position: absolute;
+      width: 2px;
+      height: 30%;
+      border-radius: 1px;
+      z-index: 1;
+    }
+    .studio-muhur-crack.ates { top: 5%; left: 50%; transform: translateX(-50%); background: linear-gradient(0deg, #ff6b35, transparent); }
+    .studio-muhur-crack.su { right: 5%; top: 50%; transform: translateY(-50%); background: linear-gradient(90deg, #4ecdc4, transparent); }
+    .studio-muhur-crack.toprak { bottom: 5%; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #c4a35a, transparent); }
+    .studio-muhur-crack.hava { left: 5%; top: 50%; transform: translateY(-50%); background: linear-gradient(270deg, #a8d8ea, transparent); }
+    @keyframes muhurPulse {
+      0%, 100% { text-shadow: 0 0 40px rgba(255,209,148,0.6), 0 0 80px rgba(255,107,53,0.3); }
+      50% { text-shadow: 0 0 60px rgba(255,209,148,0.8), 0 0 120px rgba(255,107,53,0.5); }
     }
     /* Studio adı — sinema büyüklüğünde */
     .studio-name {
@@ -249,25 +265,59 @@
       pointer-events: none;
       mix-blend-mode: screen;
     }
-    /* Logo: sahnenin KENDİSİ — mask çok yumuşak, kenarlar tamamen erir */
-    #screen-splash .muhur-logo {
+    /* ---- STONEBREAKING CSS LOGO — yazı + ◆ mühür ---- */
+    .splash-logo-text {
       position: relative;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center 42%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       border-radius: 50%;
       -webkit-mask-image: radial-gradient(circle, #000 82%, transparent 98%);
       mask-image: radial-gradient(circle, #000 82%, transparent 98%);
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      mix-blend-mode: normal;
-      filter: drop-shadow(0 0 25px rgba(255,107,53,0.35)) brightness(1.05) contrast(1.05);
-      animation: floatY 6s ease-in-out infinite;
       opacity: 0;
       transition: opacity 1.8s ease;
+      animation: floatY 6s ease-in-out infinite;
     }
-    #screen-splash .muhur-logo.show { opacity: 0.88; }
+    .splash-logo-text.show { opacity: 1; }
+    .splash-logo-muhur {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      color: #ffd194;
+      text-shadow: 0 0 30px rgba(255,209,148,0.6), 0 0 60px rgba(255,107,53,0.3);
+      animation: muhurPulse 3s ease-in-out infinite;
+      z-index: 2;
+      margin-bottom: 8px;
+    }
+    .splash-logo-crack {
+      position: absolute;
+      width: 2px;
+      height: 25%;
+      border-radius: 1px;
+      z-index: 1;
+    }
+    .splash-logo-crack.ates { top: 8%; left: 50%; transform: translateX(-50%); background: linear-gradient(0deg, #ff6b35, transparent); }
+    .splash-logo-crack.su { right: 8%; top: 50%; transform: translateY(-50%); background: linear-gradient(90deg, #4ecdc4, transparent); }
+    .splash-logo-crack.toprak { bottom: 8%; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #c4a35a, transparent); }
+    .splash-logo-crack.hava { left: 8%; top: 50%; transform: translateY(-50%); background: linear-gradient(270deg, #a8d8ea, transparent); }
+    .splash-logo-title {
+      font-size: clamp(0.8rem, 3.5vw, 1.2rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #ffd194;
+      text-shadow: 0 0 20px rgba(255,209,148,0.4), 0 0 40px rgba(255,107,53,0.2);
+      z-index: 2;
+    }
+    .splash-logo-sub {
+      font-size: clamp(0.45rem, 1.8vw, 0.6rem);
+      letter-spacing: 3px;
+      color: rgba(255,209,148,0.4);
+      text-transform: uppercase;
+      margin-top: 4px;
+      z-index: 2;
+    }
 
     /* Evren başlığı — KALDIRILDI: logo görselinde zaten STONEBREAKING yazıyor,
        floating redundant yazı butonu kapatıyordu. Artık sadece logo görseli + buton var. */
@@ -1395,13 +1445,13 @@
     <div class="studio-bg"></div>
     <div class="studio-content">
       <div class="studio-line-top"></div>
-      <div class="studio-logo-wrap">
-        <img
-          class="studio-logo"
-          id="studio-logo"
-          src="06_GRAFIK/logo_batupia_evren.png"
-          alt="BATUPIA Studios"
-        />
+      <!-- CSS Logo — ◆ mühür + yazı, görsel yok -->
+      <div class="studio-logo-wrap" id="studio-logo">
+        <div class="studio-muhur">◆</div>
+        <div class="studio-muhur-crack ates"></div>
+        <div class="studio-muhur-crack su"></div>
+        <div class="studio-muhur-crack toprak"></div>
+        <div class="studio-muhur-crack hava"></div>
       </div>
       <div class="studio-name">BATUPIA</div>
       <div class="studio-sub">S T U D I O S</div>
@@ -1426,14 +1476,16 @@
         <div class="cin-orb su" id="orb-su"></div>
         <div class="cin-orb toprak" id="orb-toprak"></div>
         <div class="cin-orb hava" id="orb-hava"></div>
-        <img
-          class="muhur-logo"
-          id="muhur-logo"
-          src="06_GRAFIK/logo_stonebreaking_evren.png"
-          alt="STONEBREAKING"
-          width="280"
-          height="280"
-        />
+        <!-- CSS Logo — STONEBREAKING yazı + ◆ mühür -->
+        <div class="splash-logo-text" id="muhur-logo">
+          <div class="splash-logo-muhur">◆</div>
+          <div class="splash-logo-crack ates"></div>
+          <div class="splash-logo-crack su"></div>
+          <div class="splash-logo-crack toprak"></div>
+          <div class="splash-logo-crack hava"></div>
+          <div class="splash-logo-title">STONEBREAKING</div>
+          <div class="splash-logo-sub">Tüm Elementlerin Kırıcısı</div>
+        </div>
       </div>
     </div>
     <div class="splash-actions" id="splash-actions">
