@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>STONEBREAKING — Universe</title>
-  <link rel="stylesheet" href="css/animasyon.css?v=87" />
+  <link rel="stylesheet" href="css/animasyon.css?v=88" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
@@ -996,6 +996,76 @@
       filter: brightness(0.5);
     }
 
+    /* — KİLİTLİ RUH — görsel önizleme var ama seçilemez */
+    .spirit-card.locked {
+      position: relative;
+    }
+    .spirit-card.locked::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: rgba(5,5,16,0.45);
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .spirit-card.locked:hover::before {
+      background: rgba(5,5,16,0.2);
+    }
+    .spirit-card.locked .spirit-lock {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      z-index: 5;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
+      pointer-events: none;
+    }
+    .spirit-card.locked:hover .spirit-lock {
+      opacity: 0.3;
+    }
+    .spirit-card.locked .spirit-info .name {
+      opacity: 0.5;
+    }
+    .spirit-card.locked .spirit-info .role {
+      opacity: 0.4;
+    }
+    .spirit-card.locked .spirit-badge {
+      opacity: 0.3;
+    }
+    .spirit-card.locked .spirit-card-glow {
+      opacity: 0 !important;
+    }
+    /* Kilitli karta tıklayınca uyarı toast */
+    .spirit-lock-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 8px 14px;
+      background: rgba(5,5,16,0.9);
+      border: 1px solid rgba(255,209,148,0.3);
+      border-radius: 8px;
+      color: #ffd194;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+      animation: lockToastFade 2s ease-out forwards;
+      white-space: nowrap;
+    }
+    @keyframes lockToastFade {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      70% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+    }
+
     .spirit-footer {
       display: flex;
       justify-content: center;
@@ -1479,8 +1549,9 @@
             <div class="spirit-quote-inline">"Ateşten doğarım, küllerden dirilirim."</div>
           </div>
         </div>
-        <div class="spirit-card pick-baam" data-spirit="baam" role="button" tabindex="0">
+        <div class="spirit-card pick-baam locked" data-spirit="baam" role="button" tabindex="0">
           <span class="spirit-badge">◆</span>
+          <span class="spirit-lock">🔒</span>
           <div class="spirit-card-glow"></div>
           <div class="spirit-info">
             <div class="name" style="color:#4ecdc4">BAAM</div>
@@ -1488,8 +1559,9 @@
             <div class="spirit-quote-inline">"Derinliklerin sesi, dalgaların gücü."</div>
           </div>
         </div>
-        <div class="spirit-card pick-mand" data-spirit="mand" role="button" tabindex="0">
+        <div class="spirit-card pick-mand locked" data-spirit="mand" role="button" tabindex="0">
           <span class="spirit-badge">◆</span>
+          <span class="spirit-lock">🔒</span>
           <div class="spirit-card-glow"></div>
           <div class="spirit-info">
             <div class="name" style="color:#c4a35a">MAND</div>
@@ -1497,8 +1569,9 @@
             <div class="spirit-quote-inline">"Taşın kalbi, toprağın hafızası."</div>
           </div>
         </div>
-        <div class="spirit-card pick-zepy" data-spirit="zepy" role="button" tabindex="0">
+        <div class="spirit-card pick-zepy locked" data-spirit="zepy" role="button" tabindex="0">
           <span class="spirit-badge">◆</span>
+          <span class="spirit-lock">🔒</span>
           <div class="spirit-card-glow"></div>
           <div class="spirit-info">
             <div class="name" style="color:#a8d8ea">ZEPY</div>
@@ -2479,6 +2552,30 @@
       });
 
       setupPick('#screen-spirit', 'data-spirit', (v, card) => {
+        // KİLİTLİ ruh kontrolü — sadece Kor açık, diğerleri tıklanabilir ama seçilemez
+        if (card.classList.contains('locked')) {
+          // Sinematik sahneyi göster (önizleme)
+          const cinema = $('#spirit-cinema');
+          if (cinema) {
+            cinema.classList.remove('bg-kor', 'bg-baam', 'bg-mand', 'bg-zepy', 'hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+            cinema.classList.add('hover-' + v);
+            // 2 saniye sonra varsayılana dön
+            setTimeout(() => {
+              cinema.classList.remove('hover-' + v);
+            }, 2000);
+          }
+          // Kilit uyarı toast göster
+          const existingToast = card.querySelector('.spirit-lock-toast');
+          if (existingToast) existingToast.remove();
+          const toast = document.createElement('div');
+          toast.className = 'spirit-lock-toast';
+          const spiritNames = { baam: 'Baam', mand: 'Mand', zepy: 'Zepy' };
+          toast.textContent = '◆ ' + (spiritNames[v] || v) + ' kilitli — Önce Kor\'u tamamla';
+          card.appendChild(toast);
+          setTimeout(() => toast.remove(), 2200);
+          return; // Seçim iptal
+        }
+        // Sadece Kor seçilebilir
         state.spirit = v;
         $('#btn-spirit-next').disabled = false;
         // Dimming: seçilmeyen ruh kartları solar
