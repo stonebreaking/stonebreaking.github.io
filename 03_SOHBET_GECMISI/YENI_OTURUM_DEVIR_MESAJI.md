@@ -1,8 +1,8 @@
-# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v8.12)
+# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v8.13)
 
-**Tarih:** 03.08.2026 · **Sürüm:** v8.12 (`01a0984`) · **Patron:** Batuhan / BATUPIA Studios
+**Tarih:** 03.08.2026 · **Sürüm:** v8.13 (`de44af5`) · **Patron:** Batuhan / BATUPIA Studios
 **Canlı:** https://stonebreaking.github.io/ · **Repo:** https://github.com/stonebreaking/stonebreaking.github.io
-**Son Push:** `01a0984` — GitHub'da ✅
+**Son Push:** `de44af5` — GitHub'da ✅
 
 ---
 
@@ -24,7 +24,7 @@ Bu tarz evrenin resmi çizim tarzıdır. Tüm karakter ve sahne görselleri bu t
 ### Black Screen (SİYAH EKRAN) — 3 Aşamalı Çözüm
 1. `visibility: hidden`/`visible` → CSS transition'dan kaldırıldı
 2. `display: none`/`flex` → CSS transition ile çalışmıyor, kaldırıldı
-3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=82`
+3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=83`
 
 ### Inline `.screen` kuralları (index.html `<style>` bloğunda):
 ```css
@@ -66,9 +66,13 @@ Oyun (SAHNE 4) → goScreen → resize → newGame → startLoop
 ## 📁 ÖNEMLİ DOSYALAR
 
 - `index.html` — Ana oyun dosyası (2300+ satır), inline CSS, tüm ekranlar, JS controller
-- `06_GRAFIK/erkek_stonebreaker_volkanik.png` — Erkek Stonebreaker volkanik sahne (v8.12)
-- `06_GRAFIK/kadin_stonebreaker_okyanus.png` — Kadın Stonebreaker okyanus sahne (v8.12)
-- `06_GRAFIK/stonebreaker_ikili_sinematik.png` — Eski ikili sinematik sahne (yedek)
+- `06_GRAFIK/sinematik_01_ikili_tapinak.png` — İkili sinematik sahne (kadim tapınak, 768x1376)
+- `06_GRAFIK/sinematik_02_erkek_volkanik.png` — Erkek sinematik sahne (volkanik zirve, 768x1376)
+- `06_GRAFIK/sinematik_03_kadin_okyanus.png` — Kadın sinematik sahne (okyanus derinlikler, 768x1376)
+- `06_GRAFIK/erkek_stonebreaker_volkanik.png` — Erkek sahne referans
+- `06_GRAFIK/kadin_stonebreaker_okyanus.png` — Kadın sahne referans
+- `06_GRAFIK/stonebreaker_ikili_sinematik.png` — Eski ikili sinematik (yedek)
+- `06_GRAFIK/STONEBREAKER_KIMLIKLERI.md` — Karakter kimlik dosyası
 - `06_GRAFIK/kolye_stonebreaker_muhur.png` — Kolye madalyon tasarımı
 - `06_GRAFIK/stonebreaking_3D_muhur.png` — 3D logo (element renkleri evrene uyarlanmış, ◆ mühür merkeze)
 - `css/animasyon.css` — Animasyon keyframes, `.screen !important` kuralları
@@ -98,6 +102,10 @@ Oyun (SAHNE 4) → goScreen → resize → newGame → startLoop
 - v8.12: CSS clip-path ile yarı yarıya bölünmüş görünüm
 - v8.12: Hover efektleri — tam sahne geçişi (clip-path animasyonu)
 - v8.12: Seçim — seçilen karakterin sahnesi tam ekran
+- v8.13: 3 sinematik sahne sistemi (ikili tapınak / erkek volkanik / kadın okyanus)
+- v8.13: 768x1376 (9:16 dikey mobil format)
+- v8.13: CSS opacity geçiş sistemi (3 sahne)
+- v8.13: STONEBREAKER_KIMLIKLERI.md oluşturuldu
 
 ## ❌ ÇÖZÜLMEMİŞ
 
