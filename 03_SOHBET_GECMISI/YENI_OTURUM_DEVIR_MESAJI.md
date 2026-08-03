@@ -1,8 +1,8 @@
-# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v8.10)
+# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v8.12)
 
-**Tarih:** 03.08.2026 · **Sürüm:** v8.10 (`f3706cd`) · **Patron:** Batuhan / BATUPIA Studios
+**Tarih:** 03.08.2026 · **Sürüm:** v8.12 (`01a0984`) · **Patron:** Batuhan / BATUPIA Studios
 **Canlı:** https://stonebreaking.github.io/ · **Repo:** https://github.com/stonebreaking/stonebreaking.github.io
-**Son Push:** `f3706cd` — GitHub'da ✅
+**Son Push:** `01a0984` — GitHub'da ✅
 
 ---
 
@@ -24,7 +24,7 @@ Bu tarz evrenin resmi çizim tarzıdır. Tüm karakter ve sahne görselleri bu t
 ### Black Screen (SİYAH EKRAN) — 3 Aşamalı Çözüm
 1. `visibility: hidden`/`visible` → CSS transition'dan kaldırıldı
 2. `display: none`/`flex` → CSS transition ile çalışmıyor, kaldırıldı
-3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=80`
+3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=82`
 
 ### Inline `.screen` kuralları (index.html `<style>` bloğunda):
 ```css
@@ -66,7 +66,9 @@ Oyun (SAHNE 4) → goScreen → resize → newGame → startLoop
 ## 📁 ÖNEMLİ DOSYALAR
 
 - `index.html` — Ana oyun dosyası (2300+ satır), inline CSS, tüm ekranlar, JS controller
-- `06_GRAFIK/stonebreaker_ikili_sinematik.png` — Karakter seçim sinematik sahnesi (v8.10)
+- `06_GRAFIK/erkek_stonebreaker_volkanik.png` — Erkek Stonebreaker volkanik sahne (v8.12)
+- `06_GRAFIK/kadin_stonebreaker_okyanus.png` — Kadın Stonebreaker okyanus sahne (v8.12)
+- `06_GRAFIK/stonebreaker_ikili_sinematik.png` — Eski ikili sinematik sahne (yedek)
 - `06_GRAFIK/kolye_stonebreaker_muhur.png` — Kolye madalyon tasarımı
 - `06_GRAFIK/stonebreaking_3D_muhur.png` — 3D logo (element renkleri evrene uyarlanmış, ◆ mühür merkeze)
 - `css/animasyon.css` — Animasyon keyframes, `.screen !important` kuralları
@@ -90,8 +92,12 @@ Oyun (SAHNE 4) → goScreen → resize → newGame → startLoop
 - `.char-pick-zone` sol/sağ tıklama alanı
 - `.char-label-item` alt bilgi paneli (isim, unvan, söz)
 - Kadim taş plaket butonları (btn-seal stili)
-- CSS cache buster `?v=80`
+- CSS cache buster `?v=82`
 - `css/animasyon.css` .screen !important kuralları
+- v8.12: Karakter seçim — iki ayrı sinematik sahne (volkanik + okyanus)
+- v8.12: CSS clip-path ile yarı yarıya bölünmüş görünüm
+- v8.12: Hover efektleri — tam sahne geçişi (clip-path animasyonu)
+- v8.12: Seçim — seçilen karakterin sahnesi tam ekran
 
 ## ❌ ÇÖZÜLMEMİŞ
 
