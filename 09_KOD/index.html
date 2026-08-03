@@ -77,15 +77,20 @@
     }
     /* Logo — CSS ◆ MÜHÜR + element çatlakları */
     .studio-logo-wrap {
-      width: min(180px, 45vw);
-      height: min(180px, 45vw);
+      /* v9.12.1 · M-019: mühürlü seal için büyük ORTALI kutu — 180px taşma/kaçış yok */
+      width: min(340px, 86vw);
+      height: min(340px, 86vw);
       position: relative;
       opacity: 0;
       animation: studioFadeScale 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
       display: grid;
       place-items: center;
+      justify-self: center;
+      margin: 0 auto;
     }
     .studio-muhur {
+      /* v9.12.1 · M-019: CSS mühür+crack KALDIRILDI — seal görselinin içinde zaten var (yineleme yok) */
+      display: none !important;
       font-size: clamp(3rem, 10vw, 5rem);
       color: #ffd194;
       text-shadow: 0 0 40px rgba(255,209,148,0.6), 0 0 80px rgba(255,107,53,0.3);
@@ -93,6 +98,8 @@
       z-index: 2;
     }
     .studio-muhur-crack {
+      /* v9.12.1 · M-019: CSS crack KALDIRILDI — seal görseli kendi ışığını taşıyor */
+      display: none !important;
       position: absolute;
       width: 2px;
       height: 30%;
@@ -1837,8 +1844,8 @@
       <div class="studio-line-top"></div>
       <!-- v9.9: BATUPIA logo görseli + CSS ◆ mühür -->
       <div class="studio-logo-wrap" id="studio-logo">
-        <!-- v9.12.1 · M-019: elmas logo KALDIRILDI — kompozisyon sağa kayıktı (Patron 04.08); mühürlü seal tek BATUPIA görseli, tam ortalı kalıp v2 -->
-        <img src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" style="max-width:min(86vw,520px);position:relative;z-index:1;filter:drop-shadow(0 0 40px rgba(255,150,64,0.5))" />
+        <!-- v9.12.1 · M-019: elmas logo KALDIRILDI — kompozisyon sağa kayıktı (Patron 04.08); mühürlü seal tek BATUPIA görseli, wrap içinde tam ortalı -->
+        <img src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 0 40px rgba(255,150,64,0.5))" />
         <div class="studio-muhur">◆</div>
         <div class="studio-muhur-crack ates"></div>
         <div class="studio-muhur-crack su"></div>
