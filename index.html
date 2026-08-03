@@ -1410,6 +1410,59 @@
       border: 2px solid rgba(255,209,148,0.3);
     }
 
+    /* v9.9: SİNEMATİK KART OVERLAY */
+    #card-overlay {
+      position: fixed; inset: 0; z-index: 55;
+      background: rgba(0,0,0,0.92);
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+    }
+    #card-overlay.show { display: flex; animation: fadeIn 0.5s ease-out; }
+    .card-wrapper {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .card-frame {
+      position: relative; width: min(300px, 80vw); aspect-ratio: 9/16;
+      border-radius: 16px; overflow: hidden;
+      border: 2px solid rgba(255,209,148,0.4);
+      box-shadow: 0 0 40px rgba(255,107,53,0.3), 0 0 80px rgba(78,205,196,0.15);
+    }
+    .card-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .card-holo {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, 
+        rgba(255,107,53,0.12), rgba(78,205,196,0.12), 
+        rgba(196,163,90,0.12), rgba(168,216,234,0.12),
+        rgba(255,107,53,0.12));
+      background-size: 400% 400%;
+      animation: holoShift 3s ease infinite;
+      pointer-events: none; z-index: 2;
+      mix-blend-mode: screen;
+    }
+    @keyframes holoShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .card-shine {
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 55%, transparent 60%);
+      animation: shineMove 4s ease-in-out infinite;
+      pointer-events: none; z-index: 3;
+    }
+    @keyframes shineMove {
+      0% { transform: translateX(-120%); }
+      50%, 100% { transform: translateX(120%); }
+    }
+    .card-info { text-align: center; }
+    .card-badge {
+      font-size: 0.75rem; font-weight: 900; letter-spacing: 2px;
+      background: linear-gradient(90deg, #ff6b35, #ffd194, #4ecdc4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 4px;
+    }
+    .card-desc { font-size: 0.85rem; color: #ccc; max-width: 280px; }
+    .card-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+
     #victory-overlay {
       position: fixed; inset: 0; z-index: 1100;
       display: none; align-items: center; justify-content: center;
@@ -1975,6 +2028,25 @@
     <button class="btn-ui" type="button" id="btn-victory-menu" style="margin-top:10px">Ana Menü</button>
   </div>
 
+  <!-- v9.9: SİNEMATİK ELEMENT KARTI — Pokemon tarzı nadir kart -->
+  <div id="card-overlay" aria-live="polite">
+    <div class="card-wrapper">
+      <div class="card-frame">
+        <div class="card-holo"></div>
+        <img id="card-img" src="" alt="Sinematik Kart" />
+        <div class="card-shine"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-badge" id="card-badge">★ ULTRA NADİR</div>
+        <div class="card-desc" id="card-desc"></div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn-ui primary" type="button" id="btn-card-share">📱 Paylaş / Story At</button>
+      <button class="btn-ui" type="button" id="btn-card-continue">Devam ➜</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
@@ -2383,6 +2455,77 @@
 
     function hideVictory() {
       $('#victory-overlay').classList.remove('show');
+    }
+
+    // v9.9: SİNEMATİK KART — bölüm tamamlandıkça Pokemon tarzı nadir kart
+    const CARD_MAP = {
+      3: { img: '06_GRAFIK/kart_ates_tamam.png', badge: '★ ULTRA NADİR', desc: '🔥 Ateş bölümleri tamamlandı! Sulara geçiliyor… 💧' },
+      6: { img: '06_GRAFIK/kart_su_tamam.png', badge: '★ ULTRA NADİR', desc: '💧 Su bölümleri tamamlandı! Toprağa geçiliyor… 🗿' },
+      9: { img: '06_GRAFIK/kart_toprak_tamam.png', badge: '★ ULTRA NADİR', desc: '🗿 Toprak bölümleri tamamlandı! Rüzgara geçiliyor… 💨' },
+      12: { img: '06_GRAFIK/kart_hava_tamam.png', badge: '★★ LEGENDARY', desc: '💨 Hava tamamlandı! Sonsuz Mühür yolu açık… ∞' },
+    };
+    const VIRAL_CARD = { img: '06_GRAFIK/kart_viral_stonebreaking.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONErREAKING' };
+
+    function showCard(stats) {
+      const lv = stats?.level || state.lastStats?.level || 0;
+      const cardData = CARD_MAP[lv];
+      if (!cardData) { hideCard(); return; }
+
+      const img = $('#card-img');
+      const badge = $('#card-badge');
+      const desc = $('#card-desc');
+      if (img) img.src = cardData.img;
+      if (badge) badge.textContent = cardData.badge;
+      if (desc) desc.textContent = cardData.desc;
+
+      // Store for share
+      state._lastCardImg = cardData.img;
+      state._lastCardDesc = cardData.desc;
+
+      $('#card-overlay')?.classList.add('show');
+    }
+
+    function showViralCard(stats) {
+      const img = $('#card-img');
+      const badge = $('#card-badge');
+      const desc = $('#card-desc');
+      if (img) img.src = VIRAL_CARD.img;
+      if (badge) badge.textContent = VIRAL_CARD.badge;
+
+      const p = state.profile || {};
+      const iqText = stats?.iq ? `IQ: ${Math.round(stats.iq)}` : '';
+      const sealsText = p.sealsOpened?.length ? `Mühür: ${p.sealsOpened.length}` : '';
+      if (desc) desc.textContent = `${VIRAL_CARD.desc} · ${iqText} · ${sealsText}`;
+
+      state._lastCardImg = VIRAL_CARD.img;
+      state._lastCardDesc = VIRAL_CARD.desc;
+
+      $('#card-overlay')?.classList.add('show');
+    }
+
+    function hideCard() {
+      $('#card-overlay')?.classList.remove('show');
+    }
+
+    async function shareCard() {
+      const desc = state._lastCardDesc || 'STONErREAKING — Element Taş Oyunu';
+      const text = `${desc}\n\n◆ stonebreaking.github.io\n#STONEBREAKING #BATUPIA #ElementOyunu`;
+      
+      // Try Web Share API first (mobile)
+      if (navigator.share && navigator.canShare) {
+        try {
+          await navigator.share({ title: 'STONErREAKING', text, url: 'https://stonebreaking.github.io/' });
+          return;
+        } catch (e) { /* user cancelled */ }
+      }
+      
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('📱 Kopyalandı! Story at veya arkadaşına gönder');
+      } catch (e) {
+        showToast('Paylaşım başarısız — ekran görüntüsü al');
+      }
     }
 
     function openProfile(from) {
@@ -2908,6 +3051,18 @@
       $('#btn-set-close')?.addEventListener('click', () => {
         $('#settings-overlay')?.classList.remove('show');
       });
+      // v9.9: Kart butonları
+      $('#btn-card-share')?.addEventListener('click', () => shareCard());
+      $('#btn-card-continue')?.addEventListener('click', () => {
+        hideCard();
+        const stats = state.lastStats;
+        if (stats?.level === 12) {
+          // Viral karttan → sonsuz mod
+          continueNextLevel();
+        } else {
+          continueNextLevel();
+        }
+      });
       // Ses toggle
       $('#btn-set-sound')?.addEventListener('click', () => {
         let muted = false;
@@ -3002,7 +3157,20 @@
         if (game) game.stopLoop();
         goScreen('screen-splash');
       });
-      $('#btn-next-level').addEventListener('click', () => continueNextLevel());
+      // v9.9: Sonraki bölüm → kart göster (element tamamlandıysa)
+      $('#btn-next-level').addEventListener('click', () => {
+        hideVictory();
+        const stats = state.lastStats;
+        const lv = stats?.level || 0;
+        // 4 element tamamlandı = viral kart
+        if (lv === 12) {
+          showViralCard(stats);
+        } else if (CARD_MAP[lv]) {
+          showCard(stats);
+        } else {
+          continueNextLevel();
+        }
+      });
       $('#btn-victory-menu').addEventListener('click', () => {
         hideVictory();
         if (game) game.stopLoop();
