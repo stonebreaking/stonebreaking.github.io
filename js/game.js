@@ -1,6 +1,6 @@
 // =========================================================
-// STONEBREAKING — Triple Match / Tray Motoru v6.2
-// Lava-core master taşlar · tepsi canvas içi · nefes dili · CSS px click
+// STONEBREAKING — Mahjong Solitaire v9.9
+// Klasik Mahjong: aynı serbest karolar8 eşleşir · üstteki kilitler · sol/sağ açar · mühürle patron BT
 // =========================================================
 
 const ELEMENTS = {
@@ -49,7 +49,7 @@ const ENDLESS_LINES = [
   'Taşlar durmadan konuşuyor.',
 ];
 
-const TRAY_MAX = 4;
+// Mahjong Solitaire — TRAY_MAX yok
 const COMBO_WINDOW_MS = 4000;
 
 // Hikaye nefesleri — Good/Great/Perfect YOK
@@ -106,21 +106,16 @@ class StonebreakingGame {
     this.zLift = 10;
 
     // Tray geometry (inside canvas, top)
-    this.trayY = 12;
-    this.trayH = 78;
-    this.trayPad = 10;
-    this.slotW = 48;
-    this.slotH = 60;
+    // Mahjong Solitaire: seçili karo (ilk tıklama)
+    this.selectedTile = null;
     // Güvenli varsayılan: resize() gelene kadar NaN geometri önlenir
     this.boardTop = 100;
     this.trayX = 20;
     this.trayW = 320;
 
     this.tiles = [];
-    this.tray = []; // landed slots { type, id }
-    this.history = [];
-    this.flying = []; // in-flight to tray
-    this.particles = [];
+    this.history = []; // geri al için
+    this.particles = []; this.selectedTile = null;
     this.tileImages = {};
     this.sceneImg = null;
     this.sceneKey = '';
@@ -252,16 +247,11 @@ class StonebreakingGame {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
     // Tray metrics
-    this.trayY = 10;
-    this.trayPad = 10;
-    const trayInnerW = Math.min(w - 24, 360);
-    this.trayW = trayInnerW;
-    this.trayX = (w - trayInnerW) / 2;
+    // Mahjong Solitaire — tahta doğrudan üstten başlar
     this.slotGap = 6;
-    this.slotW = Math.floor((trayInnerW - this.trayPad * 2 - this.slotGap * (TRAY_MAX - 1)) / TRAY_MAX);
+
     this.slotH = this.slotW; // v6.2: kare taş gövdesi (PNG kare → slot kare)
-    this.trayH = this.slotH + this.trayPad * 2;
-    this.boardTop = this.trayY + this.trayH + 8;
+    this.boardTop = 8;
 
     this.fitTilesToView();
   }
@@ -305,10 +295,10 @@ class StonebreakingGame {
     this.level = level;
     this.endless = level > 12; // Sonsuz Mod: 12. bölüm sonrası
     this.tiles = [];
-    this.tray = [];
+
     this.history = [];
-    this.flying = [];
-    this.particles = [];
+
+    this.particles = []; this.selectedTile = null;
     this.hintIds.clear();
     this.feedback = null;
     this.locked = false;
@@ -405,14 +395,29 @@ class StonebreakingGame {
   }
 
   updateFree() {
+    // v9.9: Klasik Mahjong Solitaire — serbest karo kontrolü
+    // Serbest = üstü açık VE (sol açık VEYA sağ açık)
     for (const t of this.tiles) {
       if (!t.active) { t.free = false; continue; }
+      // a) Üstte karo var mı?
       const covered = this.tiles.some((o) =>
         o.active && o.id !== t.id && o.z > t.z &&
         Math.abs(o.col - t.col) < 0.85 &&
         Math.abs(o.row - t.row) < 0.85
       );
-      t.free = !covered;
+      if (covered) { t.free = false; continue; }
+      // b) Sol açık mı? (solunda aynı z'de karo yok)
+      const leftBlocked = this.tiles.some((o) =>
+        o.active && o.id !== t.id && o.z === t.z &&
+        o.row === t.row && Math.abs(o.col - (t.col - 1)) < 0.3
+      );
+      // c) Sağ açık mı?
+      const rightBlocked = this.tiles.some((o) =>
+        o.active && o.id !== t.id && o.z === t.z &&
+        o.row === t.row && Math.abs(o.col - (t.col + 1)) < 0.3
+      );
+      // Serbest = sol açık VEYA sağ açık
+      t.free = !leftBlocked || !rightBlocked;
     }
   }
 
@@ -450,7 +455,7 @@ class StonebreakingGame {
     };
   }
 
-  /** Target rect for tray slot index (0..TRAY_MAX-1) */
+  /** Target rect for tray slot index (0..4-1) */
   slotRect(index) {
     const x = this.trayX + this.trayPad + index * (this.slotW + this.slotGap);
     const y = this.trayY + this.trayPad;
@@ -461,154 +466,135 @@ class StonebreakingGame {
   predictSlotIndex(type) {
     // same grouping rule as insertTray
     let idx = -1;
-    for (let i = 0; i < this.tray.length; i++) {
+    for (let i = 0; i < 0; i++) {
       if (this.tray[i].type === type) idx = i;
     }
-    if (idx >= 0) return Math.min(idx + 1, TRAY_MAX - 1);
-    return Math.min(this.tray.length, TRAY_MAX - 1);
+    if (idx >= 0) return Math.min(idx + 1, 4 - 1);
+    return Math.min(0, 4 - 1);
   }
 
   // ---- input / pick ----
   handleClick(mx, my) {
-    const pending = this.tray.length + this.flying.length;
-    if (pending >= TRAY_MAX) {
-      this.toast('Tepsi dolu! Geri al veya karıştır.');
-      if (typeof this.onFail === 'function') this.onFail('tray_full');
-      return;
-    }
-
+    // v9.9: Klasik Mahjong Solitaire — iki serbest aynı karo = eşleş
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => b.z - a.z || b.row - a.row);
     for (const t of sorted) {
       const r = this.tileRect(t);
       if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
         if (!t.free) {
-          this.toast('🔒 Altta kalan taş');
+          this.toast('🔒 Kilidi açık değil — üstteki veya yan karoları kaldır');
           t.glow = 0.6;
           setTimeout(() => { if (t.active) t.glow = 0; }, 220);
           return;
         }
-        this.pickTile(t);
+        this.selectTile(t);
         return;
       }
     }
+    // Boş alana tıkla → seçimi kaldır
+    if (this.selectedTile) {
+      this.selectedTile.glow = 0;
+      this.selectedTile = null;
+      this.emitAll();
+    }
   }
 
-  pickTile(t) {
+  selectTile(t) {
     if (!t.active || !t.free) return;
-    if (this.tray.length + this.flying.length >= TRAY_MAX) return;
 
-    this.history.push({
-      tileId: t.id,
-      tray: this.tray.map((x) => ({ ...x })),
-      iq: this.iq,
+    // İlk seçim
+    if (!this.selectedTile) {
+      this.selectedTile = t;
+      t.glow = 1.5;
+      this.emitAll();
+      return;
+    }
+
+    // Aynı karo → seçimi kaldır
+    if (this.selectedTile.id === t.id) {
+      this.selectedTile.glow = 0;
+      this.selectedTile = null;
+      this.emitAll();
+      return;
+    }
+
+    // İkinci seçim — aynı tip mi?
+    if (this.selectedTile.type === t.type) {
+      // EŞLEŞTİ! İki karo kaldır
+      const first = this.selectedTile;
+      this.selectedTile = null;
+
+      this.history.push({
+        tile1Id: first.id, tile1Type: first.type,
+        tile2Id: t.id, tile2Type: t.type,
+        iq: this.iq, combo: this.combo,
+        matches: this.matches, seals: this.seals,
+        maxCombo: this.maxCombo,
+      });
+
+      first.active = false;
+      t.active = false;
+      first.glow = 0;
+      t.glow = 0;
+      this.moves++;
+      this.hintIds.delete(first.id);
+      this.hintIds.delete(t.id);
+
+      // Patlatma efekti
+      const r1 = this.tileRect(first);
+      const r2 = this.tileRect(t);
+      this.spawnShatter(r1.x + r1.w/2, r1.y + r1.h/2, this.types[first.type]?.color || '#ffd194');
+      this.spawnShatter(r2.x + r2.w/2, r2.y + r2.h/2, this.types[t.type]?.color || '#ffd194');
+
+      this.updateFree();
+      this.onMatch(first.type);
+      this.emitAll();
+      this.checkWin();
+      if (typeof this.onPick === 'function') this.onPick(t);
+    } else {
+      // Farklı tip → ilk seçimi kaldır, yeni seç
+      this.selectedTile.glow = 0;
+      this.selectedTile = t;
+      t.glow = 1.5;
+      this.toast('◆ Farklı sembol — aynı karoları eşleştir');
+      this.emitAll();
+    }
+  }
+
+  onMatch(type) {
+    const now = performance.now();
+    if (now <= this.comboUntil) this.combo += 1;
+    else this.combo = 1;
+    this.comboUntil = now + COMBO_WINDOW_MS;
+    this.maxCombo = Math.max(this.maxCombo, this.combo);
+    this.matches += 1;
+    this.seals += 1;
+
+    const speedBonus = Math.min(1.5, this.combo * 0.12);
+    const gain = 1.2 + this.combo * 0.35 + speedBonus;
+    this.iq = Math.round((this.iq + gain) * 10) / 10;
+
+    const meta = this.types[type] || this.types[0];
+    const breath = breathForCombo(this.combo);
+    this.feedback = {
+      text: breath.text,
+      sub: breath.sub,
+      color: breath.color || meta.color,
       combo: this.combo,
-      matches: this.matches,
-      seals: this.seals,
-      maxCombo: this.maxCombo,
-    });
-
-    t.active = false;
-    this.moves++;
-    this.hintIds.delete(t.id);
-    this.updateFree();
-
-    const r = this.tileRect(t);
-    // Predict landing slot AFTER current tray + in-flight of same type
-    const ghostTray = this.tray.map((s) => s.type);
-    this.flying.forEach((f) => {
-      // simulate insert
-      let idx = -1;
-      for (let i = 0; i < ghostTray.length; i++) if (ghostTray[i] === f.type) idx = i;
-      if (idx >= 0) ghostTray.splice(idx + 1, 0, f.type);
-      else ghostTray.push(f.type);
-    });
-    let landIdx = -1;
-    for (let i = 0; i < ghostTray.length; i++) if (ghostTray[i] === t.type) landIdx = i;
-    if (landIdx >= 0) landIdx = landIdx + 1;
-    else landIdx = ghostTray.length;
-    landIdx = Math.min(landIdx, TRAY_MAX - 1);
-
-    const target = this.slotRect(landIdx);
-
-    this.flying.push({
-      type: t.type,
-      id: t.id,
-      x0: r.x, y0: r.y, w0: r.w, h0: r.h,
-      x1: target.x, y1: target.y, w1: target.w, h1: target.h,
-      t: 0,
-      dur: 0.32,
-      landed: false,
-    });
-
-    if (typeof this.onPick === 'function') this.onPick(t);
-    this.emitAll();
-  }
-
-  insertTray(type, id) {
-    let idx = -1;
-    for (let i = 0; i < this.tray.length; i++) {
-      if (this.tray[i].type === type) idx = i;
+      life: 1.35,
+    };
+    this.toast(`${breath.text} · Nefes x${this.combo}`);
+    if (typeof this.onBreath === 'function') {
+      this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
     }
-    if (idx >= 0) this.tray.splice(idx + 1, 0, { type, id });
-    else this.tray.push({ type, id });
   }
 
-  onFlyLanded(f) {
-    this.insertTray(f.type, f.id);
-    this.resolveMatches();
-    this.emitAll();
-  }
 
-  resolveMatches() {
-    let any = false;
-    // keep clearing while triples exist
-    for (let guard = 0; guard < 8; guard++) {
-      const counts = {};
-      this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
-      let clearedType = null;
-      for (const [typeStr, count] of Object.entries(counts)) {
-        if (count >= 2) { clearedType = Number(typeStr); break; }
-      }
-      if (clearedType === null) break;
 
-      // remove first 2 of type (pair = patla!)
-      let left = 2;
-      const removeIdx = [];
-      this.tray.forEach((s, i) => {
-        if (s.type === clearedType && left > 0) { removeIdx.push(i); left--; }
-      });
-      // shatter at their slot positions before remove
-      removeIdx.forEach((i) => {
-        const sr = this.slotRect(i);
-        this.spawnShatter(sr.x + sr.w / 2, sr.y + sr.h / 2, this.types[clearedType].color);
-      });
-      this.tray = this.tray.filter((_, i) => !removeIdx.includes(i));
-      this.onPair(clearedType);
-      any = true;
-    }
 
-    if (this.tray.length >= TRAY_MAX) {
-      const c = {};
-      this.tray.forEach((s) => { c[s.type] = (c[s.type] || 0) + 1; });
-      if (!Object.values(c).some((n) => n >= 2)) {
-        // v9.9: ÇIKMAZ YOK — Vita Mahjong: layout garantili çözülebilir
-        // ("yanlardan sağ-sol dolu, ekleyemezsin" çıkmazı biter; oyuncu asla sıkışmaz)
-        this.tray.forEach((s) => {
-          const tile = this.tiles.find((t) => t.id === s.id && !t.active);
-          if (tile) { tile.active = true; tile.free = true; }
-        });
-        this.tray = [];
-        this.history = [];
-        if (this.shufflesLeft <= 0) this.shufflesLeft = 1;
-        this.updateFree();
-        this.emitAll();
-        this.toast('⚠️ Çıkmaz! Taşlar yeniden düzenlendi.');
-        if (typeof this.onFail === 'function') this.onFail('tray_full');
-      }
-    }
-    if (any) this.checkWin();
-    else this.checkWin();
-  }
+
+
+
+
 
   onPair(type) {
     const now = performance.now();
@@ -653,12 +639,12 @@ class StonebreakingGame {
 
   checkWin() {
     const rem = this.tiles.filter((t) => t.active).length;
-    if (rem === 0 && this.tray.length === 0 && this.flying.length === 0) {
+    if (rem === 0) {
       if (this._winScheduled) return;
       this._winScheduled = true;
       setTimeout(() => {
         this._winScheduled = false;
-        if (this.tiles.some((t) => t.active) || this.tray.length || this.flying.length) return;
+        if (this.tiles.some((t) => t.active) || 0 || 0) return;
         this.locked = true;
         const elapsed = Math.max(1, (performance.now() - this.startedAt) / 1000);
         if (typeof this.onWin === 'function') {
@@ -670,6 +656,7 @@ class StonebreakingGame {
             seals: this.seals,
             moves: this.moves,
             timeSec: elapsed,
+            element: this.currentElement,
             rank: this.rankFor(this.iq, this.maxCombo),
           });
         }
@@ -688,7 +675,6 @@ class StonebreakingGame {
   undo() {
     if (this.undosLeft <= 0) { this.toast('Geri al yok'); return false; }
     if (!this.history.length) { this.toast('Geri alınacak hamle yok'); return false; }
-    if (this.flying.length) { this.toast('Taş uçuyor…'); return false; }
     const snap = this.history.pop();
     const tile = this.tiles.find((t) => t.id === snap.tileId);
     if (tile) tile.active = true;
@@ -710,8 +696,8 @@ class StonebreakingGame {
     this.updateFree();
     const free = this.tiles.filter((t) => t.active && t.free);
     const trayCount = {};
-    this.tray.forEach((s) => { trayCount[s.type] = (trayCount[s.type] || 0) + 1; });
-    this.flying.forEach((f) => { trayCount[f.type] = (trayCount[f.type] || 0) + 1; });
+    [].forEach((s) => { trayCount[s.type] = (trayCount[s.type] || 0) + 1; });
+    [].forEach((f) => { trayCount[f.type] = (trayCount[f.type] || 0) + 1; });
 
     let best = null, bestScore = -1;
     const byType = {};
@@ -733,7 +719,7 @@ class StonebreakingGame {
 
   shuffle() {
     if (this.shufflesLeft <= 0) { this.toast('Karıştır kilitli / yok'); return false; }
-    if (this.flying.length) return false;
+    if (0) return false;
     const active = this.tiles.filter((t) => t.active);
     const types = active.map((t) => t.type);
     for (let i = types.length - 1; i > 0; i--) {
@@ -763,13 +749,12 @@ class StonebreakingGame {
         hintsLeft: this.hintsLeft,
         undosLeft: this.undosLeft,
         shufflesLeft: this.shufflesLeft,
-        trayLen: this.tray.length,
-        trayMax: TRAY_MAX,
+        element: this.currentElement,
       });
     }
     // tray is drawn on canvas; still notify for optional HTML mirror
     if (typeof this.onTray === 'function') {
-      this.onTray(this.tray.map((s) => ({
+      this.onTray([].map((s) => ({
         type: s.type,
         key: this.types[s.type]?.key,
         color: this.types[s.type]?.color,
@@ -817,7 +802,7 @@ class StonebreakingGame {
 
     // ---- FLYING toward tray ----
     const dt = 1 / 60;
-    for (let i = this.flying.length - 1; i >= 0; i--) {
+    for (let i = 0 - 1; i >= 0; i--) {
       const f = this.flying[i];
       f.t += dt / f.dur;
       const p = Math.min(1, f.t);
@@ -880,55 +865,7 @@ class StonebreakingGame {
     }
   }
 
-  drawTray() {
-    const ctx = this.ctx;
-    const x = this.trayX;
-    const y = this.trayY;
-    const w = this.trayW;
-    const h = this.trayH;
 
-    // wood tray plate
-    const g = ctx.createLinearGradient(x, y, x, y + h);
-    g.addColorStop(0, '#4a3220');
-    g.addColorStop(1, '#2a1a10');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, 14);
-    ctx.fill();
-
-    // glow border by state
-    const pending = this.tray.length + this.flying.length;
-    let border = '#6b4a2a';
-    if (pending >= TRAY_MAX) border = '#ff6b35';
-    else if (this.tray.length > 0) border = '#4ecdc4';
-    ctx.strokeStyle = border;
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    // empty slots
-    for (let i = 0; i < TRAY_MAX; i++) {
-      const s = this.slotRect(i);
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(s.x, s.y, s.w, s.h, 8);
-      ctx.fill();
-      ctx.stroke();
-    }
-
-    // landed tiles in tray
-    this.tray.forEach((slot, i) => {
-      const s = this.slotRect(i);
-      this.drawTileFace(slot.type, s.x, s.y, s.w, s.h, 1, false, true);
-    });
-
-    // label
-    ctx.fillStyle = 'rgba(255,209,148,0.45)';
-    ctx.font = '600 10px system-ui,sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('MÜHÜR TEPSİSİ · 3 aynı = nefes', x + w / 2, y + h - 3);
-  }
 
   drawTile(t) {
     const r = this.tileRect(t);
@@ -1050,7 +987,7 @@ window.STONE_SPIRITS = SPIRITS;
 window.STONE_CHAPTERS = CHAPTERS;
 window.STONE_ENDLESS = ENDLESS_CHAPTER;
 window.STONE_ELEMENTS = ELEMENTS;
-window.STONE_TRAY_MAX = TRAY_MAX;
+// Mahjong: no 4
 window.STONE_SEAL_BREATHS = SEAL_BREATHS;
 window.STONE_breathForCombo = breathForCombo;
 window.STONE_ENDLESS_LINES = ENDLESS_LINES;
