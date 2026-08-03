@@ -258,26 +258,31 @@ class StonebreakingGame {
   fitTilesToView() {
     const W = this.viewW;
     const H = this.viewH - this.boardTop - 8;
-    let maxC = 6, maxR = 7, maxZ = 3;
+    let maxC = 0, maxR = 0, maxZ = 0;
+    let minC = 99, minR = 99;
     for (const t of this.tiles) {
       if (!t.active) continue;
-      maxC = Math.max(maxC, t.col + 1);
-      maxR = Math.max(maxR, t.row + 1);
+      minC = Math.min(minC, t.col);
+      minR = Math.min(minR, t.row);
+      maxC = Math.max(maxC, t.col);
+      maxR = Math.max(maxR, t.row);
       maxZ = Math.max(maxZ, t.z);
     }
-    const tw = Math.floor((W - 16 - maxZ * 4) / (maxC + 0.15));
-    const th = Math.floor((H - 8 + maxZ * 6) / (maxR * 0.5 + 0.55));
-    // v6.2: KARE TAŞ — PNG kare olduğundan yüzey de kare; sembol max büyür
-    let tileW = Math.max(46, Math.min(80, tw - 2));
+    const cols = (maxC - minC) + 1;
+    const rows = (maxR - minR) + 1;
+    const tw = Math.floor((W - 12 - maxZ * 4) / (cols + 0.15));
+    const th = Math.floor((H - 8 + maxZ * 6) / (rows * 0.52 + 0.55));
+    // KARE TAŞ — PNG kare olduğundan yüzey de kare
+    let tileW = Math.max(42, Math.min(80, tw - 2));
     let tileH = tileW;
     if (tileH > th) {
-      tileH = Math.max(46, th - 2);
+      tileH = Math.max(42, th - 2);
       tileW = tileH;
     }
     this.tileW = tileW;
     this.tileH = tileH;
-    this.gapX = Math.max(2, Math.floor(tileW * 0.035)); // sıkı: tam arka arkaya
-    this.zLift = Math.max(6, Math.floor(tileH * 0.10));
+    this.gapX = Math.max(2, Math.floor(tileW * 0.04));
+    this.zLift = Math.max(6, Math.floor(tileH * 0.12));
   }
 
   setScene(url) {
@@ -365,30 +370,39 @@ class StonebreakingGame {
   }
 
   buildLayout(level) {
-    // v6.4: YIĞIN BAZLI layout — her (col,row) yığını 3 taş, AYNI TİP
-    // → aynı serbest karoları tıkla → eşleş → kaybol
-    // → tahta HER ZAMAN çözülebilir (Mahjong Vita / mahjong solitaire garantisi)
+    // v9.10.2: Mahjong Solitaire — 2 katmanlı klasik layout
+    // Alt katman (z=0): dikdörtgen grid
+    // Üst katman (z=1): yarım-offset küçük grid (tam ortada)
+    // Her tip ÇİFT sayıda → eşleşme garantili
     const out = [];
     const endless = level > 12;
-    // Sonsuz Mod: dalga arttıkça tahta büyür — ama kontrollü (piramit bütünlüğü korunur)
     const wave = endless ? Math.min(6, level - 12) : 0;
-    const baseCols = (endless ? 6 : 5) + (level % 2) + Math.floor(wave * 0.5);
-    const baseRows = (endless ? 5 : 4) + (level % 3 === 0 ? 1 : 0) + Math.floor(wave * 0.3);
+    
+    // Alt katman (z=0) — 6x5 grid
+    const baseCols = endless ? 8 + Math.floor(wave * 0.3) : 6;
+    const baseRows = endless ? 5 + Math.floor(wave * 0.2) : 5;
     for (let r = 0; r < baseRows; r++) {
-      const cols = Math.max(2, baseCols - r);
-      const offset = (baseCols - cols) / 2;             // piramit ortalı
-      for (let c = 0; c < cols; c++) {
-        out.push({ col: c + offset, row: r, z: 0 });
-        out.push({ col: c + offset, row: r, z: 1 });
-        out.push({ col: c + offset, row: r, z: 2 });
+      for (let c = 0; c < baseCols; c++) {
+        out.push({ col: c, row: r, z: 0 });
       }
     }
-    // taş sayısı 3'ün katı (yığın başına 3) — piramit bütünlüğü korunarak sınırla
-    const maxTiles = endless ? 72 : 54;
+    
+    // Üst katman (z=1) — yarım-offset, 1 kenar boşluk
+    const topCols = Math.max(2, baseCols - 2);
+    const topRows = Math.max(2, baseRows - 2);
+    for (let r = 0; r < topRows; r++) {
+      for (let c = 0; c < topCols; c++) {
+        out.push({ col: c + 0.5, row: r + 0.5, z: 1 });
+      }
+    }
+    
+    // ÇİFT sayı garantisi
+    if (out.length % 2 !== 0) out.pop();
+    
+    // Max tile limit
+    const maxTiles = endless ? 80 : 54;
     if (out.length > maxTiles) {
-      // Tam piramit satırlarını kes — aralığı bozma
-      const maxStacks = Math.floor(maxTiles / 3);
-      out.length = maxStacks * 3;
+      out.length = Math.floor(maxTiles / 2) * 2;
     }
     return out;
   }
