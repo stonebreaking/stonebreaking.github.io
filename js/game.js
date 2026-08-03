@@ -49,7 +49,7 @@ const ENDLESS_LINES = [
   'Taşlar durmadan konuşuyor.',
 ];
 
-const TRAY_MAX = 5;
+const TRAY_MAX = 4;
 const COMBO_WINDOW_MS = 4000;
 
 // Hikaye nefesleri — Good/Great/Perfect YOK
@@ -146,20 +146,43 @@ class StonebreakingGame {
 
     // PATRON BT v6: ates_06_lava_core = master gövde; core set öncelikli
     // v6.1: aynı lava-core gövde + yeni merkez rune varyantları (yazısız)
-    this.types = [
-      { key: 'ates_core',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/ates_06_lava_core_new.png' },
-      { key: 'ates_2',      color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_sembol_ates_2.png' },
-      { key: 'ates_3',      color: '#ff6b35', emoji: '🗡️', img: '06_GRAFIK/tas_sembol_ates_3.png' },
-      { key: 'su_core',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_core_new.png' },
-      { key: 'su_2',        color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_sembol_su_2.png' },
-      { key: 'su_3',        color: '#4ecdc4', emoji: '🦪', img: '06_GRAFIK/tas_sembol_su_3.png' },
-      { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_core_new.png' },
-      { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
-      { key: 'toprak_3',    color: '#c4a35a', emoji: '💎', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
-      { key: 'hava_core',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_core_new.png' },
-      { key: 'hava_2',      color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_sembol_hava_2.png' },
-      { key: 'hava_3',      color: '#a8d8ea', emoji: '🌀', img: '06_GRAFIK/tas_sembol_hava_3.png' },
-    ];
+    // v9.9: Element izolasyonu — bölüm elementinin taşları SADECE o element
+    this.elementSets = {
+      ates: [
+        { key: 'ates_core', color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/tas_ates_core.png' },
+        { key: 'ates_2',    color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_ates_2.png' },
+        { key: 'ates_3',    color: '#ff6b35', emoji: '🗡️', img: '06_GRAFIK/tas_ates_3.png' },
+        { key: 'ates_4',    color: '#ff6b35', emoji: '◆',  img: '06_GRAFIK/tas_ates_4.png' },
+        { key: 'ates_5',    color: '#ff6b35', emoji: '🌀', img: '06_GRAFIK/tas_ates_5.png' },
+        { key: 'ates_6',    color: '#ff6b35', emoji: '🌟', img: '06_GRAFIK/tas_ates_6.png' },
+      ],
+      su: [
+        { key: 'su_core', color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_su_core.png' },
+        { key: 'su_2',    color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_su_2.png' },
+        { key: 'su_3',    color: '#4ecdc4', emoji: '🦪', img: '06_GRAFIK/tas_su_3.png' },
+        { key: 'su_4',    color: '#4ecdc4', emoji: '🌊', img: '06_GRAFIK/tas_su_4.png' },
+        { key: 'su_5',    color: '#4ecdc4', emoji: '🌧️', img: '06_GRAFIK/tas_su_5.png' },
+        { key: 'su_6',    color: '#4ecdc4', emoji: '❄️', img: '06_GRAFIK/tas_su_6.png' },
+      ],
+      toprak: [
+        { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_toprak_core.png' },
+        { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_toprak_2.png' },
+        { key: 'toprak_3',    color: '#c4a35a', emoji: '💎', img: '06_GRAFIK/tas_toprak_3.png' },
+        { key: 'toprak_4',    color: '#c4a35a', emoji: '⛰️', img: '06_GRAFIK/tas_toprak_4.png' },
+        { key: 'toprak_5',    color: '#c4a35a', emoji: '🌱', img: '06_GRAFIK/tas_toprak_5.png' },
+        { key: 'toprak_6',    color: '#c4a35a', emoji: '🛡️', img: '06_GRAFIK/tas_toprak_6.png' },
+      ],
+      hava: [
+        { key: 'hava_core', color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_hava_core.png' },
+        { key: 'hava_2',    color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_hava_2.png' },
+        { key: 'hava_3',    color: '#a8d8ea', emoji: '🌀', img: '06_GRAFIK/tas_hava_3.png' },
+        { key: 'hava_4',    color: '#a8d8ea', emoji: '☁️', img: '06_GRAFIK/tas_hava_4.png' },
+        { key: 'hava_5',    color: '#a8d8ea', emoji: '⚡', img: '06_GRAFIK/tas_hava_5.png' },
+        { key: 'hava_6',    color: '#a8d8ea', emoji: '🌬️', img: '06_GRAFIK/tas_hava_6.png' },
+      ],
+    };
+    this.currentElement = 'ates';
+    this.types = Object.values(this.elementSets).flat();
 
     this.onWin = null;
     this.onToast = null;
@@ -178,7 +201,8 @@ class StonebreakingGame {
     // → Oyun tahtası anında yüklenir ve emoji/taş rün fallbacks ile hemen oynanabilir.
     // → Görseller arka planda indikçe tık tık tahtada belirir ve otomatik redraw tetiklenir.
     // → Siyah ekranda kalma veya yükleme donmaları kesin olarak çözülmüştür!
-    this.types.forEach((t) => {
+    const allTypes = Object.values(this.elementSets).flat();
+    allTypes.forEach((t) => {
       const img = new Image();
       img.onload = () => {
         this.tileImages[t.key] = img;
@@ -307,16 +331,24 @@ class StonebreakingGame {
     this.comboUntil = 0;
 
     const layout = this.buildLayout(level);
-    while (layout.length % 3 !== 0) layout.pop();
+    // v9.9: 2'li eşleşme — tepside 2 aynı sembol = patla! (Vita Mahjong)
+    while (layout.length % 2 !== 0) layout.pop();
 
-    // v6.7.9: GERÇEK MAHJONG DAĞITIMI — eşleşen 3 taş farklı yığın ve katmanlara dağıtılır
-    // → rünleri aramak, bulmak ve eşleştirmek gerçek Mahjong solitaire deneyimi yaşatır
-    // → kusursuz matematik: her taş tipinden tam 3 adet bulunur ve tepsi dolarsa çıkmaz önleme çalışır
-    const groups = layout.length / 3;
+    // v9.9: ELEMENT İZOLASYONU — her level SADECE 1 elementin taşlarını kullanır
+    const ELEM_ORDER = ['ates', 'su', 'toprak', 'hava'];
+    const elementKey = this.endless
+      ? ELEM_ORDER[Math.floor(Math.random() * 4)]
+      : ELEM_ORDER[(level - 1) % 4];
+    this.currentElement = elementKey;
+    const elementTypes = this.elementSets[elementKey];
+    this.types = elementTypes; // SADECE bu elementin taşları
+
+    // v9.9: 2'li DAĞITIM — her tip 2 adet (çift), Vita Mahjong garantili çözülebilir
+    const groups = layout.length / 2;
     const typeSeq = [];
     for (let i = 0; i < groups; i++) {
-      const type = i % this.types.length;
-      typeSeq.push(type, type, type);
+      const type = i % elementTypes.length;
+      typeSeq.push(type, type);
     }
     // Tüm taş tiplerini tamamen karıştır
     for (let i = typeSeq.length - 1; i > 0; i--) {
@@ -535,12 +567,12 @@ class StonebreakingGame {
       this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
       let clearedType = null;
       for (const [typeStr, count] of Object.entries(counts)) {
-        if (count >= 3) { clearedType = Number(typeStr); break; }
+        if (count >= 2) { clearedType = Number(typeStr); break; }
       }
       if (clearedType === null) break;
 
-      // remove first 3 of type
-      let left = 3;
+      // remove first 2 of type (pair = patla!)
+      let left = 2;
       const removeIdx = [];
       this.tray.forEach((s, i) => {
         if (s.type === clearedType && left > 0) { removeIdx.push(i); left--; }
@@ -551,15 +583,15 @@ class StonebreakingGame {
         this.spawnShatter(sr.x + sr.w / 2, sr.y + sr.h / 2, this.types[clearedType].color);
       });
       this.tray = this.tray.filter((_, i) => !removeIdx.includes(i));
-      this.onTriple(clearedType);
+      this.onPair(clearedType);
       any = true;
     }
 
     if (this.tray.length >= TRAY_MAX) {
       const c = {};
       this.tray.forEach((s) => { c[s.type] = (c[s.type] || 0) + 1; });
-      if (!Object.values(c).some((n) => n >= 3)) {
-        // v6.4: ÇIKMAZ ÖNLEME — tepsi 5 farklı tiple dolarsa taşlar tahtaya geri döner
+      if (!Object.values(c).some((n) => n >= 2)) {
+        // v9.9: ÇIKMAZ YOK — Vita Mahjong: layout garantili çözülebilir
         // ("yanlardan sağ-sol dolu, ekleyemezsin" çıkmazı biter; oyuncu asla sıkışmaz)
         this.tray.forEach((s) => {
           const tile = this.tiles.find((t) => t.id === s.id && !t.active);
@@ -578,7 +610,7 @@ class StonebreakingGame {
     else this.checkWin();
   }
 
-  onTriple(type) {
+  onPair(type) {
     const now = performance.now();
     if (now <= this.comboUntil) this.combo += 1;
     else this.combo = 1;
@@ -721,6 +753,7 @@ class StonebreakingGame {
       this.onHUD({
         level: this.level,
         endless: this.endless,
+        element: this.currentElement,
         iq: this.iq,
         combo: this.combo,
         maxCombo: this.maxCombo,
