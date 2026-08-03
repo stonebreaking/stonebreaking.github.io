@@ -110,8 +110,7 @@ class StonebreakingGame {
     this.selectedTile = null;
     // Güvenli varsayılan: resize() gelene kadar NaN geometri önlenir
     this.boardTop = 100;
-    this.trayX = 20;
-    this.trayW = 320;
+
 
     this.tiles = [];
     this.history = []; // geri al için
@@ -321,7 +320,7 @@ class StonebreakingGame {
     this.comboUntil = 0;
 
     const layout = this.buildLayout(level);
-    // v9.9: 2'li eşleşme — tepside 2 aynı sembol = patla! (Vita Mahjong)
+    // v9.9: Klasik Mahjong Solitaire — tepsi YOK, direkt tahta eşleşme
     while (layout.length % 2 !== 0) layout.pop();
 
     // v9.9: ELEMENT İZOLASYONU — her level SADECE 1 elementin taşlarını kullanır
@@ -367,7 +366,7 @@ class StonebreakingGame {
 
   buildLayout(level) {
     // v6.4: YIĞIN BAZLI layout — her (col,row) yığını 3 taş, AYNI TİP
-    // → üstü açık yığın seçilince 3 aynı tepsiye gider → kırılır
+    // → aynı serbest karoları tıkla → eşleş → kaybol
     // → tahta HER ZAMAN çözülebilir (Mahjong Vita / mahjong solitaire garantisi)
     const out = [];
     const endless = level > 12;
@@ -455,24 +454,7 @@ class StonebreakingGame {
     };
   }
 
-  /** Target rect for tray slot index (0..4-1) */
-  slotRect(index) {
-    const x = this.trayX + this.trayPad + index * (this.slotW + this.slotGap);
-    const y = this.trayY + this.trayPad;
-    return { x, y, w: this.slotW, h: this.slotH };
-  }
-
   /** Where the next inserted tile of this type will land */
-  predictSlotIndex(type) {
-    // same grouping rule as insertTray
-    let idx = -1;
-    for (let i = 0; i < 0; i++) {
-      if (this.tray[i].type === type) idx = i;
-    }
-    if (idx >= 0) return Math.min(idx + 1, 4 - 1);
-    return Math.min(0, 4 - 1);
-  }
-
   // ---- input / pick ----
   handleClick(mx, my) {
     // v9.9: Klasik Mahjong Solitaire — iki serbest aynı karo = eşleş
@@ -588,14 +570,6 @@ class StonebreakingGame {
     }
   }
 
-
-
-
-
-
-
-
-
   onPair(type) {
     const now = performance.now();
     if (now <= this.comboUntil) this.combo += 1;
@@ -678,7 +652,7 @@ class StonebreakingGame {
     const snap = this.history.pop();
     const tile = this.tiles.find((t) => t.id === snap.tileId);
     if (tile) tile.active = true;
-    this.tray = snap.tray;
+    // Mahjong: no tray
     this.iq = snap.iq;
     this.combo = snap.combo;
     this.matches = snap.matches;
@@ -696,15 +670,13 @@ class StonebreakingGame {
     this.updateFree();
     const free = this.tiles.filter((t) => t.active && t.free);
     const trayCount = {};
-    [].forEach((s) => { trayCount[s.type] = (trayCount[s.type] || 0) + 1; });
-    [].forEach((f) => { trayCount[f.type] = (trayCount[f.type] || 0) + 1; });
 
     let best = null, bestScore = -1;
     const byType = {};
     free.forEach((t) => { (byType[t.type] = byType[t.type] || []).push(t); });
     for (const [typeStr, list] of Object.entries(byType)) {
       const type = Number(typeStr);
-      const score = (trayCount[type] || 0) * 10 + Math.min(3, list.length);
+      const score = Math.min(3, list.length);
       if (score > bestScore) { bestScore = score; best = list[0]; }
     }
     if (!best) { this.toast('İpucu bulunamadı'); return false; }
@@ -752,16 +724,7 @@ class StonebreakingGame {
         element: this.currentElement,
       });
     }
-    // tray is drawn on canvas; still notify for optional HTML mirror
-    if (typeof this.onTray === 'function') {
-      this.onTray([].map((s) => ({
-        type: s.type,
-        key: this.types[s.type]?.key,
-        color: this.types[s.type]?.color,
-        emoji: this.types[s.type]?.emoji,
-        img: this.types[s.type]?.img,
-      })));
-    }
+    // Mahjong: no tray
   }
 
   toast(msg) {
@@ -794,7 +757,7 @@ class StonebreakingGame {
     // (çizgi deseni kaldırıldı — temiz film zemini)
 
     // ---- TRAY (on canvas) ----
-    this.drawTray();
+    // Mahjong: no tray drawing
 
     // ---- BOARD tiles ----
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => a.z - b.z || a.row - b.row || a.col - b.col);
@@ -864,8 +827,6 @@ class StonebreakingGame {
       this.emitAll();
     }
   }
-
-
 
   drawTile(t) {
     const r = this.tileRect(t);
