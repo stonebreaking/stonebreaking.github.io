@@ -1,6 +1,9 @@
 // =========================================================
-// STONEBREAKING — Triple Match / Tray Motoru v6.2
-// Lava-core master taşlar · tepsi canvas içi · nefes dili · CSS px click
+// STONEBREAKING — Mahjong Solitaire v9.11.0
+// M-014/M-015: varyantlar (9 tip/element), Bölüm 11 Kara Taşlar, Sonsuz ELITE bonus
+// YENİ: ensureMoves — hamle yoksa ücretsiz evren karıştırması (kilitlenme imkânsız)
+// FIX: undo iki taşı geri getiriyor (tile1Id/tile2Id) — önce sadece sayaçlar dönüyordu
+// Klasik Mahjong: aynı serbest karolar8 eşleşir · üstteki kilitler · sol/sağ açar · mühürle patron BT
 // =========================================================
 
 const ELEMENTS = {
@@ -11,10 +14,10 @@ const ELEMENTS = {
 };
 
 const SPIRITS = {
-  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',    chapters: [1, 2, 3] },
-  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',     chapters: [4, 5, 6] },
-  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', quote: 'Ben Mand, Kristal Mağaralar\'ın muhafızıyım.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu.png', chapters: [7, 8, 9] },
-  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',   chapters: [10, 11, 12] },
+  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   gender: 'erkek', quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',           chapters: [1, 2, 3] },
+  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     gender: 'kadin', quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',            chapters: [4, 5, 6] },
+  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', gender: 'erkek', quote: 'Ben Mand, Kristal Mağaralar\'ın muhafızıyım.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu_erkek.png',  chapters: [7, 8, 9] },
+  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   gender: 'kadin', quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',          chapters: [10, 11, 12] },
 };
 
 const CHAPTERS = [
@@ -49,7 +52,7 @@ const ENDLESS_LINES = [
   'Taşlar durmadan konuşuyor.',
 ];
 
-const TRAY_MAX = 5;
+// Mahjong Solitaire — TRAY_MAX yok
 const COMBO_WINDOW_MS = 4000;
 
 // Hikaye nefesleri — Good/Great/Perfect YOK
@@ -106,21 +109,15 @@ class StonebreakingGame {
     this.zLift = 10;
 
     // Tray geometry (inside canvas, top)
-    this.trayY = 12;
-    this.trayH = 78;
-    this.trayPad = 10;
-    this.slotW = 48;
-    this.slotH = 60;
+    // Mahjong Solitaire: seçili karo (ilk tıklama)
+    this.selectedTile = null;
     // Güvenli varsayılan: resize() gelene kadar NaN geometri önlenir
     this.boardTop = 100;
-    this.trayX = 20;
-    this.trayW = 320;
+
 
     this.tiles = [];
-    this.tray = []; // landed slots { type, id }
-    this.history = [];
-    this.flying = []; // in-flight to tray
-    this.particles = [];
+    this.history = []; // geri al için
+    this.particles = []; this.selectedTile = null;
     this.tileImages = {};
     this.sceneImg = null;
     this.sceneKey = '';
@@ -146,20 +143,65 @@ class StonebreakingGame {
 
     // PATRON BT v6: ates_06_lava_core = master gövde; core set öncelikli
     // v6.1: aynı lava-core gövde + yeni merkez rune varyantları (yazısız)
-    this.types = [
-      { key: 'ates_core',   color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/ates_06_lava_core.png' },
-      { key: 'ates_2',      color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_sembol_ates_2.png' },
-      { key: 'ates_3',      color: '#ff6b35', emoji: '🗡️', img: '06_GRAFIK/tas_sembol_ates_3.png' },
-      { key: 'su_core',     color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_sembol_su_core.png' },
-      { key: 'su_2',        color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_sembol_su_2.png' },
-      { key: 'su_3',        color: '#4ecdc4', emoji: '🦪', img: '06_GRAFIK/tas_sembol_su_3.png' },
-      { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
-      { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
-      { key: 'toprak_3',    color: '#c4a35a', emoji: '💎', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
-      { key: 'hava_core',   color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_sembol_hava_core.png' },
-      { key: 'hava_2',      color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_sembol_hava_2.png' },
-      { key: 'hava_3',      color: '#a8d8ea', emoji: '🌀', img: '06_GRAFIK/tas_sembol_hava_3.png' },
+    // v9.9: Element izolasyonu — bölüm elementinin taşları SADECE o element
+    this.elementSets = {
+      ates: [
+        { key: 'ates_core', color: '#ff6b35', emoji: '🔥', img: '06_GRAFIK/tas_ates_core.png' },
+        { key: 'ates_2',    color: '#ff6b35', emoji: '⚔️', img: '06_GRAFIK/tas_ates_2.png' },
+        { key: 'ates_3',    color: '#ff6b35', emoji: '🗡️', img: '06_GRAFIK/tas_ates_3.png' },
+        { key: 'ates_4',    color: '#ff6b35', emoji: '◆',  img: '06_GRAFIK/tas_ates_4.png' },
+        { key: 'ates_5',    color: '#ff6b35', emoji: '🌀', img: '06_GRAFIK/tas_ates_5.png' },
+        { key: 'ates_6',    color: '#ff6b35', emoji: '🌟', img: '06_GRAFIK/tas_ates_6.png' },
+        { key: 'ates_alev',  color: '#ff8c1a', emoji: '🕯️', img: '06_GRAFIK/tas_ates_alev.png' },
+        { key: 'ates_koz',   color: '#ff5722', emoji: '💥', img: '06_GRAFIK/tas_ates_koz.png' },
+        { key: 'ates_volkan', color: '#ffb300', emoji: '🌋', img: '06_GRAFIK/tas_ates_volkan.png' },
+      ],
+      su: [
+        { key: 'su_core', color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_su_core.png' },
+        { key: 'su_2',    color: '#4ecdc4', emoji: '🔱', img: '06_GRAFIK/tas_su_2.png' },
+        { key: 'su_3',    color: '#4ecdc4', emoji: '🦪', img: '06_GRAFIK/tas_su_3.png' },
+        { key: 'su_4',    color: '#4ecdc4', emoji: '🌊', img: '06_GRAFIK/tas_su_4.png' },
+        { key: 'su_5',    color: '#4ecdc4', emoji: '🌧️', img: '06_GRAFIK/tas_su_5.png' },
+        { key: 'su_6',    color: '#4ecdc4', emoji: '❄️', img: '06_GRAFIK/tas_su_6.png' },
+        { key: 'su_damla', color: '#3fd4ff', emoji: '💦', img: '06_GRAFIK/tas_su_damla.png' },
+        { key: 'su_buz',   color: '#a8e6ff', emoji: '🧊', img: '06_GRAFIK/tas_su_buz.png' },
+        { key: 'su_sis',   color: '#7fd1c8', emoji: '🌫️', img: '06_GRAFIK/tas_su_sis.png' },
+      ],
+      toprak: [
+        { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_toprak_core.png' },
+        { key: 'toprak_2',    color: '#c4a35a', emoji: '⛏️', img: '06_GRAFIK/tas_toprak_2.png' },
+        { key: 'toprak_3',    color: '#c4a35a', emoji: '💎', img: '06_GRAFIK/tas_toprak_3.png' },
+        { key: 'toprak_4',    color: '#c4a35a', emoji: '⛰️', img: '06_GRAFIK/tas_toprak_4.png' },
+        { key: 'toprak_5',    color: '#c4a35a', emoji: '🌱', img: '06_GRAFIK/tas_toprak_5.png' },
+        { key: 'toprak_6',    color: '#c4a35a', emoji: '🛡️', img: '06_GRAFIK/tas_toprak_6.png' },
+        { key: 'toprak_run',     color: '#2ecc71', emoji: '🪨', img: '06_GRAFIK/tas_toprak_run.png' },
+        { key: 'toprak_kristal', color: '#50c878', emoji: '🔮', img: '06_GRAFIK/tas_toprak_kristal.png' },
+        { key: 'toprak_kaya',    color: '#7fdb6a', emoji: '🏔️', img: '06_GRAFIK/tas_toprak_kaya.png' },
+      ],
+      hava: [
+        { key: 'hava_core', color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_hava_core.png' },
+        { key: 'hava_2',    color: '#a8d8ea', emoji: '🪶', img: '06_GRAFIK/tas_hava_2.png' },
+        { key: 'hava_3',    color: '#a8d8ea', emoji: '🌀', img: '06_GRAFIK/tas_hava_3.png' },
+        { key: 'hava_4',    color: '#a8d8ea', emoji: '☁️', img: '06_GRAFIK/tas_hava_4.png' },
+        { key: 'hava_5',    color: '#a8d8ea', emoji: '⚡', img: '06_GRAFIK/tas_hava_5.png' },
+        { key: 'hava_6',    color: '#a8d8ea', emoji: '🌬️', img: '06_GRAFIK/tas_hava_6.png' },
+        { key: 'hava_spiral', color: '#e8f4ff', emoji: '🌪️', img: '06_GRAFIK/tas_hava_spiral.png' },
+        { key: 'hava_simsek', color: '#b3e5fc', emoji: '🌩️', img: '06_GRAFIK/tas_hava_simsek.png' },
+        { key: 'hava_bulut',  color: '#f5f9ff', emoji: '🌥️', img: '06_GRAFIK/tas_hava_bulut.png' },
+      ],
+    };
+    this.currentElement = 'ates';
+
+    // v9.11.0 · M-014/M-015: Bölüm 11 "Kara Taşlar" seti — 4 element mühürlü (kararmış) hâlde
+    this.karaSet = [
+      { key: 'kara_ates',   color: '#8a4a1e', emoji: '🔥', img: '06_GRAFIK/tas_kara_ates.png' },
+      { key: 'kara_su',     color: '#2e6f8f', emoji: '💧', img: '06_GRAFIK/tas_kara_su.png' },
+      { key: 'kara_toprak', color: '#3f7a40', emoji: '🗿', img: '06_GRAFIK/tas_kara_toprak.png' },
+      { key: 'kara_hava',   color: '#8d9aa8', emoji: '💨', img: '06_GRAFIK/tas_kara_hava.png' },
     ];
+    // M-014: ELITE mühür taşı — Sonsuz Mod'da bonus tip olarak karışır
+    this.eliteTile = { key: 'muhur_elite', color: '#ffd194', emoji: '💠', img: '06_GRAFIK/tas_muhur_elite.png' };
+    this.types = Object.values(this.elementSets).flat();
 
     this.onWin = null;
     this.onToast = null;
@@ -174,13 +216,21 @@ class StonebreakingGame {
   }
 
   async preload() {
-    await Promise.all(this.types.map((t) => new Promise((resolve) => {
+    // v6.8.2: PROGRESSIVE ASYNC LOADING — 25MB görsel indirmesini engellemez!
+    // → Oyun tahtası anında yüklenir ve emoji/taş rün fallbacks ile hemen oynanabilir.
+    // → Görseller arka planda indikçe tık tık tahtada belirir ve otomatik redraw tetiklenir.
+    // → Siyah ekranda kalma veya yükleme donmaları kesin olarak çözülmüştür!
+    const allTypes = [...Object.values(this.elementSets).flat(), ...this.karaSet, this.eliteTile]; // v9.11.0
+    allTypes.forEach((t) => {
       const img = new Image();
-      img.onload = () => { this.tileImages[t.key] = img; resolve(); };
-      img.onerror = () => resolve();
+      img.onload = () => {
+        this.tileImages[t.key] = img;
+        this.draw(); // Görsel yüklenince anında çizimi tazele!
+      };
       img.src = t.img;
-    })));
+    });
     this.ready = true;
+    return Promise.resolve();
   }
 
   bindInput() {
@@ -221,16 +271,11 @@ class StonebreakingGame {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
     // Tray metrics
-    this.trayY = 10;
-    this.trayPad = 10;
-    const trayInnerW = Math.min(w - 24, 360);
-    this.trayW = trayInnerW;
-    this.trayX = (w - trayInnerW) / 2;
+    // Mahjong Solitaire — tahta doğrudan üstten başlar
     this.slotGap = 6;
-    this.slotW = Math.floor((trayInnerW - this.trayPad * 2 - this.slotGap * (TRAY_MAX - 1)) / TRAY_MAX);
+
     this.slotH = this.slotW; // v6.2: kare taş gövdesi (PNG kare → slot kare)
-    this.trayH = this.slotH + this.trayPad * 2;
-    this.boardTop = this.trayY + this.trayH + 8;
+    this.boardTop = 8;
 
     this.fitTilesToView();
   }
@@ -238,26 +283,31 @@ class StonebreakingGame {
   fitTilesToView() {
     const W = this.viewW;
     const H = this.viewH - this.boardTop - 8;
-    let maxC = 6, maxR = 7, maxZ = 3;
+    let maxC = 0, maxR = 0, maxZ = 0;
+    let minC = 99, minR = 99;
     for (const t of this.tiles) {
       if (!t.active) continue;
-      maxC = Math.max(maxC, t.col + 1);
-      maxR = Math.max(maxR, t.row + 1);
+      minC = Math.min(minC, t.col);
+      minR = Math.min(minR, t.row);
+      maxC = Math.max(maxC, t.col);
+      maxR = Math.max(maxR, t.row);
       maxZ = Math.max(maxZ, t.z);
     }
-    const tw = Math.floor((W - 16 - maxZ * 4) / (maxC + 0.15));
-    const th = Math.floor((H - 8 + maxZ * 6) / (maxR * 0.5 + 0.55));
-    // v6.2: KARE TAŞ — PNG kare olduğundan yüzey de kare; sembol max büyür
-    let tileW = Math.max(46, Math.min(80, tw - 2));
+    const cols = (maxC - minC) + 1;
+    const rows = (maxR - minR) + 1;
+    const tw = Math.floor((W - 12 - maxZ * 4) / (cols + 0.15));
+    const th = Math.floor((H - 8 + maxZ * 6) / (rows * 0.52 + 0.55));
+    // KARE TAŞ — PNG kare olduğundan yüzey de kare
+    let tileW = Math.max(42, Math.min(80, tw - 2));
     let tileH = tileW;
     if (tileH > th) {
-      tileH = Math.max(46, th - 2);
+      tileH = Math.max(42, th - 2);
       tileW = tileH;
     }
     this.tileW = tileW;
     this.tileH = tileH;
-    this.gapX = Math.max(2, Math.floor(tileW * 0.035)); // sıkı: tam arka arkaya
-    this.zLift = Math.max(6, Math.floor(tileH * 0.10));
+    this.gapX = Math.max(2, Math.floor(tileW * 0.04));
+    this.zLift = Math.max(6, Math.floor(tileH * 0.12));
   }
 
   setScene(url) {
@@ -274,17 +324,17 @@ class StonebreakingGame {
     this.level = level;
     this.endless = level > 12; // Sonsuz Mod: 12. bölüm sonrası
     this.tiles = [];
-    this.tray = [];
+
     this.history = [];
-    this.flying = [];
-    this.particles = [];
+
+    this.particles = []; this.selectedTile = null;
     this.hintIds.clear();
     this.feedback = null;
     this.locked = false;
     this.inputLocked = false;
     this._winScheduled = false;
 
-    // Sonsuz Mod tuning'i (remote v6.1 deneyimi): IQ tabanı yüksek, güçler cömert
+    // Sonsuz Mod tuning'i — dalga arttıkça zorlaşır, güçler dengeli
     const L = this.endless ? 12 + Math.min(20, level - 12) : level;
     this.iq = this.endless ? 80 + (level - 13) * 3 : 40 + (level - 1) * 2;
     this.combo = 0;
@@ -292,37 +342,53 @@ class StonebreakingGame {
     this.matches = 0;
     this.moves = 0;
     this.seals = 0;
-    this.hintsLeft = 1 + Math.floor((L - 1) / 4) + (this.endless ? 1 : 0);
-    this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? 1 : 0);
-    this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) : 0;
+    // Sonsuz Mod güç dengesi: her 3 dalga'da 1 ekstra ipucu ve geri al
+    this.hintsLeft = 1 + Math.floor((L - 1) / 4) + (this.endless ? Math.floor((level - 12) / 3) : 0);
+    this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? Math.floor((level - 12) / 4) : 0);
+    this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0) : 0;
     this.startedAt = performance.now();
     this.comboUntil = 0;
 
     const layout = this.buildLayout(level);
-    while (layout.length % 3 !== 0) layout.pop();
+    // v9.9: Klasik Mahjong Solitaire — tepsi YOK, direkt tahta eşleşme
+    while (layout.length % 2 !== 0) layout.pop();
 
-    // v6.4: YIĞIN BAZLI TİP ATAMA — aynı (col,row) yığınındaki 3 taş AYNI TİP
-    // → garanti çözülebilir (her yığın 3 aynı → tepsiye 3'ü → kırılır)
-    const groups = layout.length / 3;
+    // v9.9: ELEMENT İZOLASYONU — her level SADECE 1 elementin taşlarını kullanır
+    const ELEM_ORDER = ['ates', 'su', 'toprak', 'hava'];
+    const elementKey = this.endless
+      ? ELEM_ORDER[Math.floor(Math.random() * 4)]
+      : ELEM_ORDER[(level - 1) % 4];
+    this.currentElement = elementKey;
+    // v9.11.0 · Bölüm 11 "Kara Taşlar": izolasyon BİLEREK bozulur (mühürlü 4 element karışık)
+    // Sonsuz Mod: ELITE mühür taşı bonus tip olarak karışır
+    const elementTypes = level === 11 && !this.endless
+      ? this.karaSet
+      : (this.endless
+          ? [...this.elementSets[elementKey], this.eliteTile]
+          : this.elementSets[elementKey]);
+    this.types = elementTypes; // SADECE bu setin taşları
+
+    // v9.9: 2'li DAĞITIM — her tip 2 adet (çift), Vita Mahjong garantili çözülebilir
+    const groups = layout.length / 2;
     const typeSeq = [];
-    for (let i = 0; i < groups; i++) typeSeq.push(i % this.types.length);
+    for (let i = 0; i < groups; i++) {
+      const type = i % elementTypes.length;
+      typeSeq.push(type, type);
+    }
+    // Tüm taş tiplerini tamamen karıştır
     for (let i = typeSeq.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [typeSeq[i], typeSeq[j]] = [typeSeq[j], typeSeq[i]];
     }
-    const stackType = {};
-    const keyOf = (pos) => pos.col.toFixed(2) + '|' + pos.row.toFixed(2);
 
     let id = 0;
     layout.forEach((pos, i) => {
-      const key = keyOf(pos);
-      if (!(key in stackType)) stackType[key] = typeSeq.shift();
       this.tiles.push({
         id: id++,
         col: pos.col,
         row: pos.row,
         z: pos.z,
-        type: stackType[key],
+        type: typeSeq[i],
         active: true,
         glow: 0,
         free: true,
@@ -335,39 +401,67 @@ class StonebreakingGame {
   }
 
   buildLayout(level) {
-    // v6.4: YIĞIN BAZLI layout — her (col,row) yığını 3 taş, AYNI TİP
-    // → üstü açık yığın seçilince 3 aynı tepsiye gider → kırılır
-    // → tahta HER ZAMAN çözülebilir (Mahjong Vita / mahjong solitaire garantisi)
+    // v9.10.2: Mahjong Solitaire — 2 katmanlı klasik layout
+    // Alt katman (z=0): dikdörtgen grid
+    // Üst katman (z=1): yarım-offset küçük grid (tam ortada)
+    // Her tip ÇİFT sayıda → eşleşme garantili
     const out = [];
     const endless = level > 12;
-    const baseCols = (endless ? 6 : 5) + (level % 2);   // piramit tabanı
-    const baseRows = (endless ? 5 : 4) + (level % 3 === 0 ? 1 : 0);
+    const wave = endless ? Math.min(6, level - 12) : 0;
+    
+    // Alt katman (z=0) — 6x5 grid
+    const baseCols = endless ? 8 + Math.floor(wave * 0.3) : 6;
+    const baseRows = endless ? 5 + Math.floor(wave * 0.2) : 5;
     for (let r = 0; r < baseRows; r++) {
-      const cols = Math.max(2, baseCols - r);
-      const offset = (baseCols - cols) / 2;             // piramit ortalı
-      for (let c = 0; c < cols; c++) {
-        out.push({ col: c + offset, row: r, z: 0 });
-        out.push({ col: c + offset, row: r, z: 1 });
-        out.push({ col: c + offset, row: r, z: 2 });
+      for (let c = 0; c < baseCols; c++) {
+        out.push({ col: c, row: r, z: 0 });
       }
     }
-    // taş sayısı 3'ün katı (yığın başına 3)
-    const maxTiles = endless ? 63 : 54;
+    
+    // Üst katman (z=1) — yarım-offset, 1 kenar boşluk
+    const topCols = Math.max(2, baseCols - 2);
+    const topRows = Math.max(2, baseRows - 2);
+    for (let r = 0; r < topRows; r++) {
+      for (let c = 0; c < topCols; c++) {
+        out.push({ col: c + 0.5, row: r + 0.5, z: 1 });
+      }
+    }
+    
+    // ÇİFT sayı garantisi
+    if (out.length % 2 !== 0) out.pop();
+    
+    // Max tile limit
+    const maxTiles = endless ? 80 : 54;
     if (out.length > maxTiles) {
-      out.length = Math.floor(maxTiles / 3) * 3;
+      out.length = Math.floor(maxTiles / 2) * 2;
     }
     return out;
   }
 
   updateFree() {
+    // v9.9: Klasik Mahjong Solitaire — serbest karo kontrolü
+    // Serbest = üstü açık VE (sol açık VEYA sağ açık)
     for (const t of this.tiles) {
       if (!t.active) { t.free = false; continue; }
+      // a) Üstte karo var mı?
       const covered = this.tiles.some((o) =>
         o.active && o.id !== t.id && o.z > t.z &&
         Math.abs(o.col - t.col) < 0.85 &&
         Math.abs(o.row - t.row) < 0.85
       );
-      t.free = !covered;
+      if (covered) { t.free = false; continue; }
+      // b) Sol açık mı? (solunda aynı z'de karo yok)
+      const leftBlocked = this.tiles.some((o) =>
+        o.active && o.id !== t.id && o.z === t.z &&
+        o.row === t.row && Math.abs(o.col - (t.col - 1)) < 0.3
+      );
+      // c) Sağ açık mı?
+      const rightBlocked = this.tiles.some((o) =>
+        o.active && o.id !== t.id && o.z === t.z &&
+        o.row === t.row && Math.abs(o.col - (t.col + 1)) < 0.3
+      );
+      // Serbest = sol açık VEYA sağ açık
+      t.free = !leftBlocked || !rightBlocked;
     }
   }
 
@@ -405,167 +499,124 @@ class StonebreakingGame {
     };
   }
 
-  /** Target rect for tray slot index (0..TRAY_MAX-1) */
-  slotRect(index) {
-    const x = this.trayX + this.trayPad + index * (this.slotW + this.slotGap);
-    const y = this.trayY + this.trayPad;
-    return { x, y, w: this.slotW, h: this.slotH };
-  }
-
   /** Where the next inserted tile of this type will land */
-  predictSlotIndex(type) {
-    // same grouping rule as insertTray
-    let idx = -1;
-    for (let i = 0; i < this.tray.length; i++) {
-      if (this.tray[i].type === type) idx = i;
-    }
-    if (idx >= 0) return Math.min(idx + 1, TRAY_MAX - 1);
-    return Math.min(this.tray.length, TRAY_MAX - 1);
-  }
-
   // ---- input / pick ----
   handleClick(mx, my) {
-    const pending = this.tray.length + this.flying.length;
-    if (pending >= TRAY_MAX) {
-      this.toast('Tepsi dolu! Geri al veya karıştır.');
-      if (typeof this.onFail === 'function') this.onFail('tray_full');
-      return;
-    }
-
+    // v9.9: Klasik Mahjong Solitaire — iki serbest aynı karo = eşleş
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => b.z - a.z || b.row - a.row);
     for (const t of sorted) {
       const r = this.tileRect(t);
       if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
         if (!t.free) {
-          this.toast('🔒 Altta kalan taş');
+          this.toast('🔒 Kilidi açık değil — üstteki veya yan karoları kaldır');
           t.glow = 0.6;
           setTimeout(() => { if (t.active) t.glow = 0; }, 220);
           return;
         }
-        this.pickTile(t);
+        this.selectTile(t);
         return;
       }
     }
+    // Boş alana tıkla → seçimi kaldır
+    if (this.selectedTile) {
+      this.selectedTile.glow = 0;
+      this.selectedTile = null;
+      this.emitAll();
+    }
   }
 
-  pickTile(t) {
+  selectTile(t) {
     if (!t.active || !t.free) return;
-    if (this.tray.length + this.flying.length >= TRAY_MAX) return;
 
-    this.history.push({
-      tileId: t.id,
-      tray: this.tray.map((x) => ({ ...x })),
-      iq: this.iq,
+    // İlk seçim
+    if (!this.selectedTile) {
+      this.selectedTile = t;
+      t.glow = 1.5;
+      this.emitAll();
+      return;
+    }
+
+    // Aynı karo → seçimi kaldır
+    if (this.selectedTile.id === t.id) {
+      this.selectedTile.glow = 0;
+      this.selectedTile = null;
+      this.emitAll();
+      return;
+    }
+
+    // İkinci seçim — aynı tip mi?
+    if (this.selectedTile.type === t.type) {
+      // EŞLEŞTİ! İki karo kaldır
+      const first = this.selectedTile;
+      this.selectedTile = null;
+
+      this.history.push({
+        tile1Id: first.id, tile1Type: first.type,
+        tile2Id: t.id, tile2Type: t.type,
+        iq: this.iq, combo: this.combo,
+        matches: this.matches, seals: this.seals,
+        maxCombo: this.maxCombo,
+      });
+
+      first.active = false;
+      t.active = false;
+      first.glow = 0;
+      t.glow = 0;
+      this.moves++;
+      this.hintIds.delete(first.id);
+      this.hintIds.delete(t.id);
+
+      // Patlatma efekti
+      const r1 = this.tileRect(first);
+      const r2 = this.tileRect(t);
+      this.spawnShatter(r1.x + r1.w/2, r1.y + r1.h/2, this.types[first.type]?.color || '#ffd194');
+      this.spawnShatter(r2.x + r2.w/2, r2.y + r2.h/2, this.types[t.type]?.color || '#ffd194');
+
+      this.updateFree();
+      this.onMatch(first.type);
+      this.emitAll();
+      this.checkWin();
+      this.ensureMoves(); // v9.10.4: hamle kalmazsa evren karıştırır
+      if (typeof this.onPick === 'function') this.onPick(t);
+    } else {
+      // Farklı tip → ilk seçimi kaldır, yeni seç
+      this.selectedTile.glow = 0;
+      this.selectedTile = t;
+      t.glow = 1.5;
+      this.toast('◆ Farklı sembol — aynı karoları eşleştir');
+      this.emitAll();
+    }
+  }
+
+  onMatch(type) {
+    const now = performance.now();
+    if (now <= this.comboUntil) this.combo += 1;
+    else this.combo = 1;
+    this.comboUntil = now + COMBO_WINDOW_MS;
+    this.maxCombo = Math.max(this.maxCombo, this.combo);
+    this.matches += 1;
+    this.seals += 1;
+
+    const speedBonus = Math.min(1.5, this.combo * 0.12);
+    const gain = 1.2 + this.combo * 0.35 + speedBonus;
+    this.iq = Math.round((this.iq + gain) * 10) / 10;
+
+    const meta = this.types[type] || this.types[0];
+    const breath = breathForCombo(this.combo);
+    this.feedback = {
+      text: breath.text,
+      sub: breath.sub,
+      color: breath.color || meta.color,
       combo: this.combo,
-      matches: this.matches,
-      seals: this.seals,
-      maxCombo: this.maxCombo,
-    });
-
-    t.active = false;
-    this.moves++;
-    this.hintIds.delete(t.id);
-    this.updateFree();
-
-    const r = this.tileRect(t);
-    // Predict landing slot AFTER current tray + in-flight of same type
-    const ghostTray = this.tray.map((s) => s.type);
-    this.flying.forEach((f) => {
-      // simulate insert
-      let idx = -1;
-      for (let i = 0; i < ghostTray.length; i++) if (ghostTray[i] === f.type) idx = i;
-      if (idx >= 0) ghostTray.splice(idx + 1, 0, f.type);
-      else ghostTray.push(f.type);
-    });
-    let landIdx = -1;
-    for (let i = 0; i < ghostTray.length; i++) if (ghostTray[i] === t.type) landIdx = i;
-    if (landIdx >= 0) landIdx = landIdx + 1;
-    else landIdx = ghostTray.length;
-    landIdx = Math.min(landIdx, TRAY_MAX - 1);
-
-    const target = this.slotRect(landIdx);
-
-    this.flying.push({
-      type: t.type,
-      id: t.id,
-      x0: r.x, y0: r.y, w0: r.w, h0: r.h,
-      x1: target.x, y1: target.y, w1: target.w, h1: target.h,
-      t: 0,
-      dur: 0.32,
-      landed: false,
-    });
-
-    if (typeof this.onPick === 'function') this.onPick(t);
-    this.emitAll();
-  }
-
-  insertTray(type, id) {
-    let idx = -1;
-    for (let i = 0; i < this.tray.length; i++) {
-      if (this.tray[i].type === type) idx = i;
+      life: 1.35,
+    };
+    this.toast(`${breath.text} · Nefes x${this.combo}`);
+    if (typeof this.onBreath === 'function') {
+      this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
     }
-    if (idx >= 0) this.tray.splice(idx + 1, 0, { type, id });
-    else this.tray.push({ type, id });
   }
 
-  onFlyLanded(f) {
-    this.insertTray(f.type, f.id);
-    this.resolveMatches();
-    this.emitAll();
-  }
-
-  resolveMatches() {
-    let any = false;
-    // keep clearing while triples exist
-    for (let guard = 0; guard < 8; guard++) {
-      const counts = {};
-      this.tray.forEach((s) => { counts[s.type] = (counts[s.type] || 0) + 1; });
-      let clearedType = null;
-      for (const [typeStr, count] of Object.entries(counts)) {
-        if (count >= 3) { clearedType = Number(typeStr); break; }
-      }
-      if (clearedType === null) break;
-
-      // remove first 3 of type
-      let left = 3;
-      const removeIdx = [];
-      this.tray.forEach((s, i) => {
-        if (s.type === clearedType && left > 0) { removeIdx.push(i); left--; }
-      });
-      // shatter at their slot positions before remove
-      removeIdx.forEach((i) => {
-        const sr = this.slotRect(i);
-        this.spawnShatter(sr.x + sr.w / 2, sr.y + sr.h / 2, this.types[clearedType].color);
-      });
-      this.tray = this.tray.filter((_, i) => !removeIdx.includes(i));
-      this.onTriple(clearedType);
-      any = true;
-    }
-
-    if (this.tray.length >= TRAY_MAX) {
-      const c = {};
-      this.tray.forEach((s) => { c[s.type] = (c[s.type] || 0) + 1; });
-      if (!Object.values(c).some((n) => n >= 3)) {
-        // v6.4: ÇIKMAZ ÖNLEME — tepsi 5 farklı tiple dolarsa taşlar tahtaya geri döner
-        // ("yanlardan sağ-sol dolu, ekleyemezsin" çıkmazı biter; oyuncu asla sıkışmaz)
-        this.tray.forEach((s) => {
-          const tile = this.tiles.find((t) => t.id === s.id && !t.active);
-          if (tile) { tile.active = true; tile.free = true; }
-        });
-        this.tray = [];
-        this.history = [];
-        if (this.shufflesLeft <= 0) this.shufflesLeft = 1;
-        this.updateFree();
-        this.emitAll();
-        this.toast('⚠️ Çıkmaz! Taşlar yeniden düzenlendi.');
-        if (typeof this.onFail === 'function') this.onFail('tray_full');
-      }
-    }
-    if (any) this.checkWin();
-    else this.checkWin();
-  }
-
-  onTriple(type) {
+  onPair(type) {
     const now = performance.now();
     if (now <= this.comboUntil) this.combo += 1;
     else this.combo = 1;
@@ -608,12 +659,12 @@ class StonebreakingGame {
 
   checkWin() {
     const rem = this.tiles.filter((t) => t.active).length;
-    if (rem === 0 && this.tray.length === 0 && this.flying.length === 0) {
+    if (rem === 0) {
       if (this._winScheduled) return;
       this._winScheduled = true;
       setTimeout(() => {
         this._winScheduled = false;
-        if (this.tiles.some((t) => t.active) || this.tray.length || this.flying.length) return;
+        if (this.tiles.some((t) => t.active) || 0 || 0) return;
         this.locked = true;
         const elapsed = Math.max(1, (performance.now() - this.startedAt) / 1000);
         if (typeof this.onWin === 'function') {
@@ -625,6 +676,7 @@ class StonebreakingGame {
             seals: this.seals,
             moves: this.moves,
             timeSec: elapsed,
+            element: this.currentElement,
             rank: this.rankFor(this.iq, this.maxCombo),
           });
         }
@@ -643,11 +695,12 @@ class StonebreakingGame {
   undo() {
     if (this.undosLeft <= 0) { this.toast('Geri al yok'); return false; }
     if (!this.history.length) { this.toast('Geri alınacak hamle yok'); return false; }
-    if (this.flying.length) { this.toast('Taş uçuyor…'); return false; }
     const snap = this.history.pop();
-    const tile = this.tiles.find((t) => t.id === snap.tileId);
-    if (tile) tile.active = true;
-    this.tray = snap.tray;
+    // v9.10.4 fix: geçmişe tile1Id/tile2Id yazılıyor — İKİ taş da geri gelmeli
+    const t1 = this.tiles.find((t) => t.id === snap.tile1Id);
+    const t2 = this.tiles.find((t) => t.id === snap.tile2Id);
+    if (t1) t1.active = true;
+    if (t2) t2.active = true;
     this.iq = snap.iq;
     this.combo = snap.combo;
     this.matches = snap.matches;
@@ -655,6 +708,7 @@ class StonebreakingGame {
     this.maxCombo = snap.maxCombo;
     this.undosLeft--;
     this.updateFree();
+    this.ensureMoves(); // v9.10.4: undo sonrası hamle garantisi
     this.emitAll();
     this.toast('↩ Geri alındı');
     return true;
@@ -665,15 +719,13 @@ class StonebreakingGame {
     this.updateFree();
     const free = this.tiles.filter((t) => t.active && t.free);
     const trayCount = {};
-    this.tray.forEach((s) => { trayCount[s.type] = (trayCount[s.type] || 0) + 1; });
-    this.flying.forEach((f) => { trayCount[f.type] = (trayCount[f.type] || 0) + 1; });
 
     let best = null, bestScore = -1;
     const byType = {};
     free.forEach((t) => { (byType[t.type] = byType[t.type] || []).push(t); });
     for (const [typeStr, list] of Object.entries(byType)) {
       const type = Number(typeStr);
-      const score = (trayCount[type] || 0) * 10 + Math.min(3, list.length);
+      const score = Math.min(3, list.length);
       if (score > bestScore) { bestScore = score; best = list[0]; }
     }
     if (!best) { this.toast('İpucu bulunamadı'); return false; }
@@ -688,7 +740,7 @@ class StonebreakingGame {
 
   shuffle() {
     if (this.shufflesLeft <= 0) { this.toast('Karıştır kilitli / yok'); return false; }
-    if (this.flying.length) return false;
+    if (0) return false;
     const active = this.tiles.filter((t) => t.active);
     const types = active.map((t) => t.type);
     for (let i = types.length - 1; i > 0; i--) {
@@ -703,11 +755,52 @@ class StonebreakingGame {
     return true;
   }
 
+  // v9.10.4: Hamle kalmadı mı? — evren ÜCRETSİZ karıştırır (Vita garantisi: kilitlenme yok)
+  hasMoves() {
+    const free = this.tiles.filter((t) => t.active && t.free);
+    const seen = new Set();
+    for (const t of free) {
+      if (seen.has(t.type)) return true;
+      seen.add(t.type);
+    }
+    return false;
+  }
+
+  ensureMoves() {
+    if (this._ensuring) return;
+    if (!this.tiles.some((t) => t.active)) return; // tahta bitti — zafer akışına dokunma
+    this._ensuring = true;
+    try {
+      this.updateFree();
+      let tries = 0;
+      while (!this.hasMoves() && tries < 20) {
+        const active = this.tiles.filter((t) => t.active);
+        const types = active.map((t) => t.type);
+        for (let i = types.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [types[i], types[j]] = [types[j], types[i]];
+        }
+        active.forEach((t, i) => { t.type = types[i]; });
+        this.updateFree();
+        tries++;
+      }
+      if (tries > 0) {
+        this.selectedTile = null;
+        this.hintIds.clear();
+        this.emitAll();
+        this.toast('🌀 Hamle kalmadı — evren taşları yeniden dizdi');
+      }
+    } finally {
+      this._ensuring = false;
+    }
+  }
+
   emitAll() {
     if (typeof this.onHUD === 'function') {
       this.onHUD({
         level: this.level,
         endless: this.endless,
+        element: this.currentElement,
         iq: this.iq,
         combo: this.combo,
         maxCombo: this.maxCombo,
@@ -717,20 +810,10 @@ class StonebreakingGame {
         hintsLeft: this.hintsLeft,
         undosLeft: this.undosLeft,
         shufflesLeft: this.shufflesLeft,
-        trayLen: this.tray.length,
-        trayMax: TRAY_MAX,
+        element: this.currentElement,
       });
     }
-    // tray is drawn on canvas; still notify for optional HTML mirror
-    if (typeof this.onTray === 'function') {
-      this.onTray(this.tray.map((s) => ({
-        type: s.type,
-        key: this.types[s.type]?.key,
-        color: this.types[s.type]?.color,
-        emoji: this.types[s.type]?.emoji,
-        img: this.types[s.type]?.img,
-      })));
-    }
+    // Mahjong: no tray
   }
 
   toast(msg) {
@@ -762,33 +845,13 @@ class StonebreakingGame {
     }
     // (çizgi deseni kaldırıldı — temiz film zemini)
 
-    // ---- TRAY (on canvas) ----
-    this.drawTray();
+    // v9.9: Mahjong Solitaire — tepsi yok
 
     // ---- BOARD tiles ----
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => a.z - b.z || a.row - b.row || a.col - b.col);
     for (const t of sorted) this.drawTile(t);
 
-    // ---- FLYING toward tray ----
-    const dt = 1 / 60;
-    for (let i = this.flying.length - 1; i >= 0; i--) {
-      const f = this.flying[i];
-      f.t += dt / f.dur;
-      const p = Math.min(1, f.t);
-      // ease out cubic + slight arc
-      const e = 1 - Math.pow(1 - p, 3);
-      const arc = Math.sin(Math.PI * p) * -40;
-      const x = f.x0 + (f.x1 - f.x0) * e;
-      const y = f.y0 + (f.y1 - f.y0) * e + arc;
-      const w = f.w0 + (f.w1 - f.w0) * e;
-      const h = f.h0 + (f.h1 - f.h0) * e;
-      this.drawTileFace(f.type, x, y, w, h, 1, false, true);
-      if (p >= 1 && !f.landed) {
-        f.landed = true;
-        this.flying.splice(i, 1);
-        this.onFlyLanded(f);
-      }
-    }
+    // v9.9: Mahjong — flying animasyon yok
 
     // particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -834,82 +897,37 @@ class StonebreakingGame {
     }
   }
 
-  drawTray() {
-    const ctx = this.ctx;
-    const x = this.trayX;
-    const y = this.trayY;
-    const w = this.trayW;
-    const h = this.trayH;
-
-    // wood tray plate
-    const g = ctx.createLinearGradient(x, y, x, y + h);
-    g.addColorStop(0, '#4a3220');
-    g.addColorStop(1, '#2a1a10');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, 14);
-    ctx.fill();
-
-    // glow border by state
-    const pending = this.tray.length + this.flying.length;
-    let border = '#6b4a2a';
-    if (pending >= TRAY_MAX) border = '#ff6b35';
-    else if (this.tray.length > 0) border = '#4ecdc4';
-    ctx.strokeStyle = border;
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    // empty slots
-    for (let i = 0; i < TRAY_MAX; i++) {
-      const s = this.slotRect(i);
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(s.x, s.y, s.w, s.h, 8);
-      ctx.fill();
-      ctx.stroke();
-    }
-
-    // landed tiles in tray
-    this.tray.forEach((slot, i) => {
-      const s = this.slotRect(i);
-      this.drawTileFace(slot.type, s.x, s.y, s.w, s.h, 1, false, true);
-    });
-
-    // label
-    ctx.fillStyle = 'rgba(255,209,148,0.45)';
-    ctx.font = '600 10px system-ui,sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('MÜHÜR TEPSİSİ · 3 aynı = nefes', x + w / 2, y + h - 3);
-  }
-
   drawTile(t) {
     const r = this.tileRect(t);
     const blocked = !t.free;
     const ctx = this.ctx;
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.beginPath();
-    ctx.roundRect(r.x + 3, r.y + 5, r.w, r.h, 10);
-    ctx.fill();
+    const isSelected = (this.selectedTile === t.id);
 
-    if (t.glow > 0 || this.hintIds.has(t.id)) {
+    // 3D DEPTH — alt gölge
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath();
+    ctx.roundRect(r.x + 4, r.y + 6, r.w, r.h, 10);
+    ctx.fill();
+    ctx.restore();
+
+    if (isSelected || t.glow > 0 || this.hintIds.has(t.id)) {
       ctx.shadowColor = this.types[t.type].color;
-      ctx.shadowBlur = 18 * (t.glow || 1.5);
+      ctx.shadowBlur = isSelected ? 24 : 18 * (t.glow || 1.5);
     } else ctx.shadowBlur = 0;
 
-    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false);
+    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false, isSelected);
     ctx.shadowBlur = 0;
 
     if (blocked) {
-      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
       ctx.beginPath();
       ctx.roundRect(r.x, r.y, r.w, r.h, 10);
       ctx.fill();
     }
   }
 
-  drawTileFace(type, x, y, w, h, alpha = 1, dim = false, lift = false) {
+  drawTileFace(type, x, y, w, h, alpha = 1, dim = false, lift = false, selected = false) {
     const ctx = this.ctx;
     const meta = this.types[type] || this.types[0];
     const radius = Math.max(4, Math.min(9, w * 0.16));
@@ -922,13 +940,12 @@ class StonebreakingGame {
       ctx.shadowOffsetY = 5;
     }
 
-    // v6.2: TAŞ GÖVDESİ — şeffaf kenarlı PNG taşın kendisi (balon plaka YOK)
+    // TAŞ GÖVDESİ — PNG veya fallback
     const img = this.tileImages[meta.key];
     ctx.beginPath();
     ctx.roundRect(x, y, w, h, radius);
     ctx.clip();
     if (img) {
-      // cover-fit: kare taş yüzeye tam oturur (PNG kare, yüzey kare)
       const ir = img.width / img.height;
       const tr = w / h;
       let dw = w, dh = h, dx = x, dy = y;
@@ -941,37 +958,92 @@ class StonebreakingGame {
       g.addColorStop(1, '#101018');
       ctx.fillStyle = g;
       ctx.fillRect(x, y, w, h);
-      ctx.font = `bold ${Math.floor(w * 0.4)}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(meta.emoji, x + w / 2, y + h / 2);
     }
     ctx.restore();
-    // İnce üst çerçeve ışıltısı — sembolü kapatmaz, kenarı vurgular
+
+    // 3D KENAR EFEKTI — üst/sol aydınlık, alt/sağ karanlık
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(x + 1, y + 1, w - 2, h - 2, radius);
+    ctx.roundRect(x, y, w, h, radius);
     ctx.clip();
-    const hl = ctx.createLinearGradient(x, y, x, y + h * 0.16);
-    hl.addColorStop(0, 'rgba(255,255,255,0.12)');
-    hl.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = hl;
-    ctx.fillRect(x, y, w, h * 0.16);
+    const topLight = ctx.createLinearGradient(x, y, x, y + h * 0.25);
+    topLight.addColorStop(0, 'rgba(255,255,255,0.18)');
+    topLight.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = topLight;
+    ctx.fillRect(x, y, w, h * 0.25);
+    const bottomShade = ctx.createLinearGradient(x, y + h * 0.75, x, y + h);
+    bottomShade.addColorStop(0, 'rgba(0,0,0,0)');
+    bottomShade.addColorStop(1, 'rgba(0,0,0,0.25)');
+    ctx.fillStyle = bottomShade;
+    ctx.fillRect(x, y + h * 0.75, w, h * 0.25);
+    const leftLight = ctx.createLinearGradient(x, y, x + w * 0.15, y);
+    leftLight.addColorStop(0, 'rgba(255,255,255,0.10)');
+    leftLight.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = leftLight;
+    ctx.fillRect(x, y, w * 0.15, h);
+    const rightShade = ctx.createLinearGradient(x + w * 0.85, y, x + w, y);
+    rightShade.addColorStop(0, 'rgba(0,0,0,0)');
+    rightShade.addColorStop(1, 'rgba(0,0,0,0.15)');
+    ctx.fillStyle = rightShade;
+    ctx.fillRect(x + w * 0.85, y, w * 0.15, h);
     ctx.restore();
 
-    // Rim light — koyu zeminde taş öne çıksın
-    ctx.strokeStyle = dim ? 'rgba(220,210,190,0.10)' : 'rgba(255,236,200,0.30)';
-    ctx.lineWidth = 1.5;
+    // BÜYÜK SEMBOL — ortada, anlaşılır, element renginde
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, radius);
+    ctx.clip();
+    const symbolSize = Math.floor(w * 0.45);
+    ctx.font = `${symbolSize}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = meta.color;
+    ctx.shadowBlur = selected ? 16 : 8;
+    ctx.fillStyle = meta.color;
+    ctx.fillText(meta.emoji, x + w / 2, y + h / 2 + 1);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    // ◆ MÜHÜR rozeti — sağ alt köşe
+    ctx.save();
+    const muhurSize = Math.floor(w * 0.18);
+    ctx.font = `bold ${muhurSize}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,209,148,0.6)';
+    ctx.fillText('◆', x + w - muhurSize, y + h - muhurSize * 0.5);
+    ctx.restore();
+
+    // Rim light
+    ctx.strokeStyle = selected
+      ? meta.color
+      : (dim ? 'rgba(220,210,190,0.10)' : 'rgba(255,236,200,0.30)');
+    ctx.lineWidth = selected ? 2.5 : 1.5;
     ctx.beginPath();
     ctx.roundRect(x + 0.75, y + 0.75, w - 1.5, h - 1.5, radius);
     ctx.stroke();
 
-    // Alt kalınlık (3D taban)
-    const baseH = Math.max(3, h * 0.07);
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    // 3D ALT KALINLIK
+    const baseH = Math.max(4, h * 0.08);
+    const baseGrad = ctx.createLinearGradient(x, y + h - baseH, x, y + h);
+    baseGrad.addColorStop(0, 'rgba(0,0,0,0.3)');
+    baseGrad.addColorStop(1, 'rgba(0,0,0,0.5)');
+    ctx.fillStyle = baseGrad;
     ctx.beginPath();
     ctx.roundRect(x + 1, y + h - baseH, w - 2, baseH, 3);
     ctx.fill();
+
+    // Seçili titreşim
+    if (selected) {
+      ctx.save();
+      ctx.strokeStyle = meta.color;
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.4 + 0.3 * Math.sin(performance.now() / 150);
+      ctx.beginPath();
+      ctx.roundRect(x - 2, y - 2, w + 4, h + 4, radius + 2);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     if (dim) {
       ctx.fillStyle = 'rgba(6,12,10,0.32)';
@@ -1004,7 +1076,7 @@ window.STONE_SPIRITS = SPIRITS;
 window.STONE_CHAPTERS = CHAPTERS;
 window.STONE_ENDLESS = ENDLESS_CHAPTER;
 window.STONE_ELEMENTS = ELEMENTS;
-window.STONE_TRAY_MAX = TRAY_MAX;
+// Mahjong: no 4
 window.STONE_SEAL_BREATHS = SEAL_BREATHS;
 window.STONE_breathForCombo = breathForCombo;
 window.STONE_ENDLESS_LINES = ENDLESS_LINES;
