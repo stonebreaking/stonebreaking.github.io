@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>STONEBREAKING — Universe</title>
-  <link rel="stylesheet" href="css/animasyon.css?v=84" />
+  <link rel="stylesheet" href="css/animasyon.css?v=85" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
@@ -744,11 +744,10 @@
       padding-bottom: 10px;
     }
 
-        /* ========== SPIRIT PICK v6.7 — 4 ruh anime düzeni ========== */
+        /* ========== SPIRIT PICK v9.0 — STONEBREAKING EVRENİ 4 RUH SİNEMATİK ========== */
     #screen-spirit {
-      background: #0d0d1a;
+      background: #050510;
       display: flex;
-      flex-direction: column;
       flex-direction: column;
       padding: 0;
       overflow: hidden;
@@ -761,31 +760,50 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse at 50% 30%, rgba(78,205,196,0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 30% 60%, rgba(196,163,90,0.08) 0%, transparent 50%),
-        linear-gradient(180deg, #0f0a18 0%, #0d0816 30%, #0a0a14 100%);
+        radial-gradient(ellipse at 25% 30%, rgba(255,107,53,0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 75% 30%, rgba(78,205,196,0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 25% 70%, rgba(196,163,90,0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 75% 70%, rgba(168,216,234,0.08) 0%, transparent 40%),
+        linear-gradient(180deg, #08060f 0%, #050510 40%, #0a0a14 100%);
       z-index: 0;
     }
     #screen-spirit::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: url('06_GRAFIK/secim_ekrani_4_ruh_new.png') center/cover no-repeat;
-      opacity: 0.35;
       z-index: 0;
+      pointer-events: none;
     }
     #screen-spirit > * { position: relative; z-index: 1; }
 
     #screen-spirit .screen-header {
-      padding: max(8px, env(safe-area-inset-top)) 14px 2px;
+      padding: max(10px, env(safe-area-inset-top)) 16px 4px;
       flex-shrink: 0;
+      text-align: center;
     }
     #screen-spirit .screen-header h1 {
-      font-size: clamp(0.88rem, 3.5vw, 1.2rem);
+      font-size: clamp(0.95rem, 4vw, 1.3rem);
+      letter-spacing: 6px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffd194;
+      text-shadow: 0 0 30px rgba(255,107,53,0.3), 0 0 30px rgba(78,205,196,0.3), 0 2px 8px rgba(0,0,0,0.8);
+    }
+    #screen-spirit .screen-header h1::after {
+      content: '◆';
+      display: block;
+      font-size: 0.5rem;
+      color: #c4a35a;
+      margin-top: 3px;
+      letter-spacing: 4px;
+      text-shadow: 0 0 12px rgba(196,163,90,0.5);
     }
     #screen-spirit .screen-header p {
-      font-size: 0.68rem;
+      font-size: 0.6rem;
       margin-top: 2px;
+      color: rgba(255,209,148,0.4);
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
     .spirit-grid {
@@ -794,14 +812,13 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: 4px;
-      max-width: 500px;
+      gap: 6px;
+      max-width: 520px;
       width: 96%;
       margin: 0 auto;
       min-height: 0;
-      padding: 0;
+      padding: 4px 0;
     }
-    /* Ruh kartları — tam yükseklik, anime portre */
     .spirit-grid .spirit-card {
       position: relative;
       border-radius: 14px;
@@ -821,52 +838,94 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 15%;
+      object-position: center top;
       display: block;
       transition: transform 0.5s ease, filter 0.4s ease;
       min-height: 120px;
-      /* Görsel yüklenmese bile gradient fallback var */
       background: linear-gradient(180deg, #1a0a18 0%, #0d0816 50%, #0a0a14 100%);
     }
-    .spirit-card:hover img { transform: scale(1.06); }
+    .spirit-card:hover img { transform: scale(1.05); }
     .spirit-card .spirit-info {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      padding: 6px 4px 5px;
-      background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 65%, transparent 100%);
+      padding: 8px 6px 6px;
+      background: linear-gradient(0deg, rgba(5,5,16,0.92) 0%, rgba(5,5,16,0.5) 65%, transparent 100%);
       text-align: center;
+      z-index: 2;
     }
     .spirit-card .spirit-info .name {
-      font-size: clamp(0.78rem, 3vw, 1rem);
+      font-size: clamp(0.85rem, 3.5vw, 1.1rem);
       font-weight: 900;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       text-transform: uppercase;
+      text-shadow: 0 0 15px currentColor;
     }
     .spirit-card .spirit-info .role {
-      font-size: 0.55rem;
-      color: #9a9ab0;
-      margin-top: 1px;
-      letter-spacing: 0.5px;
+      font-size: 0.52rem;
+      color: rgba(255,209,148,0.5);
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+    .spirit-card .spirit-info .spirit-quote-inline {
+      font-size: 0.48rem;
+      color: rgba(255,255,255,0.3);
+      font-style: italic;
+      margin-top: 3px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.5s ease;
+    }
+    .spirit-card.selected .spirit-quote-inline {
+      opacity: 1;
+      max-height: 40px;
     }
     .spirit-card .spirit-badge {
       position: absolute;
-      top: 4px;
-      left: 4px;
-      width: 24px;
-      height: 24px;
+      top: 6px;
+      left: 6px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      background: rgba(0,0,0,0.5);
-      border: 1.5px solid rgba(255,255,255,0.15);
-      font-size: 0.75rem;
-      backdrop-filter: blur(6px);
+      font-size: 0.8rem;
+      backdrop-filter: blur(10px);
+      z-index: 3;
     }
-    /* Seçim efektleri */
+    .pick-kor .spirit-badge {
+      background: radial-gradient(circle, rgba(255,107,53,0.3), rgba(255,107,53,0.05));
+      border: 1.5px solid rgba(255,107,53,0.6);
+      box-shadow: 0 0 12px rgba(255,107,53,0.3);
+      color: #ff6b35;
+    }
+    .pick-baam .spirit-badge {
+      background: radial-gradient(circle, rgba(78,205,196,0.3), rgba(78,205,196,0.05));
+      border: 1.5px solid rgba(78,205,196,0.6);
+      box-shadow: 0 0 12px rgba(78,205,196,0.3);
+      color: #4ecdc4;
+    }
+    .pick-mand .spirit-badge {
+      background: radial-gradient(circle, rgba(196,163,90,0.3), rgba(196,163,90,0.05));
+      border: 1.5px solid rgba(196,163,90,0.6);
+      box-shadow: 0 0 12px rgba(196,163,90,0.3);
+      color: #c4a35a;
+    }
+    .pick-zepy .spirit-badge {
+      background: radial-gradient(circle, rgba(168,216,234,0.3), rgba(168,216,234,0.05));
+      border: 1.5px solid rgba(168,216,234,0.6);
+      box-shadow: 0 0 12px rgba(168,216,234,0.3);
+      color: #a8d8ea;
+    }
+    .pick-kor { --accent: #ff6b35; }
+    .pick-baam { --accent: #4ecdc4; }
+    .pick-mand { --accent: #c4a35a; }
+    .pick-zepy { --accent: #a8d8ea; }
+
     .spirit-card.selected {
       transform: scale(1.03);
       border-color: var(--accent, #ff6b35);
-      box-shadow: 0 0 0 2px var(--accent, #ff6b35), 0 0 28px rgba(255,107,53,0.3), inset 0 0 30px rgba(255,107,53,0.15);
+      box-shadow: 0 0 0 2px var(--accent, #ff6b35), 0 0 30px color-mix(in srgb, var(--accent, #ff6b35) 30%, transparent), inset 0 0 30px color-mix(in srgb, var(--accent, #ff6b35) 15%, transparent);
       z-index: 3;
     }
     .spirit-card.selected img { filter: brightness(1.1) saturate(1.2); }
@@ -878,6 +937,7 @@
       border-radius: 12px;
       animation: selectionPulse 2s ease-in-out infinite;
       pointer-events: none;
+      z-index: 4;
     }
     .spirit-card.dimmed {
       transform: scale(0.95);
@@ -885,30 +945,12 @@
     }
     .spirit-card.dimmed img { filter: brightness(0.4) saturate(0.3); }
 
-    .pick-mand { --accent: #c4a35a; }
-    .pick-zepy { --accent: #a8d8ea; }
-
-    .spirit-quote {
-      text-align: center;
-      min-height: 22px;
-      color: #c8c8d8;
-      font-style: italic;
-      font-size: 0.72rem;
-      padding: 2px 12px;
-      max-width: 320px;
-      margin: 0 auto;
-      opacity: 0;
-      transition: opacity 0.35s;
-      flex-shrink: 0;
-    }
-    .spirit-quote.show { opacity: 1; }
-
     .spirit-footer {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      padding: 6px 14px max(8px, env(safe-area-inset-bottom));
-      background: linear-gradient(0deg, rgba(7,7,15,0.95) 0%, rgba(7,7,15,0.6) 100%);
+      gap: 12px;
+      padding: 8px 16px max(12px, env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, rgba(5,5,16,0.98) 0%, rgba(5,5,16,0.7) 70%, transparent 100%);
       z-index: 3;
       flex-shrink: 0;
     }
@@ -1350,60 +1392,62 @@
 
   <!-- ========== 3. RUH SEÇİMİ
 
-  <!-- ========== 3. RUH SEÇİMİ v6.7 — 4 ruh anime düzeni ========== -->
+  <!-- ========== 3. RUH SEÇİMİ v9.0 — STONEBREAKING EVRENİ 4 RUH SİNEMATİK ========== -->
   <section id="screen-spirit" class="screen" aria-label="Ruh Seçimi">
     <div class="screen-header">
       <h1>Element Ruhunu Seç</h1>
-      <p>4 ruh · 12 bölüm · Sonsuz mühür</p>
+      <p>4 ruh · 12 bölüm · Sonsuz mühür · ◆</p>
     </div>
 
     <div class="spirit-grid" id="spirit-grid">
       <!-- KOR — Ateş Ruhu · ERKEK -->
       <div class="spirit-card pick-kor" data-spirit="kor" role="button" tabindex="0">
-        <span class="spirit-badge">🔥</span>
-        <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Kor - Ateş Ruhu" />
+        <span class="spirit-badge">◆</span>
+        <img src="06_GRAFIK/ruh_kor_ates_sinematik.png" alt="Kor - Ateş Ruhu" />
         <div class="spirit-info">
           <div class="name" style="color:#ff6b35">KOR</div>
           <div class="role">Ateş · Erkek · Bölüm 1-3</div>
+          <div class="spirit-quote-inline">"Ateşten doğarım, küllerden dirilirim."</div>
         </div>
       </div>
 
       <!-- BAAM — Su Ruhu · KADIN -->
       <div class="spirit-card pick-baam" data-spirit="baam" role="button" tabindex="0">
-        <span class="spirit-badge">💧</span>
-        <img src="06_GRAFIK/baam_su_ruhu.png" alt="Baam - Su Ruhu" />
+        <span class="spirit-badge">◆</span>
+        <img src="06_GRAFIK/ruh_baam_su_sinematik.png" alt="Baam - Su Ruhu" />
         <div class="spirit-info">
           <div class="name" style="color:#4ecdc4">BAAM</div>
           <div class="role">Su · Kadın · Bölüm 4-6</div>
+          <div class="spirit-quote-inline">"Derinliklerin sesi, dalgaların gücü."</div>
         </div>
       </div>
 
       <!-- MAND — Toprak Ruhu · ERKEK -->
       <div class="spirit-card pick-mand" data-spirit="mand" role="button" tabindex="0">
-        <span class="spirit-badge">🗿</span>
-        <img src="06_GRAFIK/mand_toprak_ruhu_erkek.png" alt="Mand - Toprak Ruhu" />
+        <span class="spirit-badge">◆</span>
+        <img src="06_GRAFIK/ruh_mand_toprak_sinematik.png" alt="Mand - Toprak Ruhu" />
         <div class="spirit-info">
           <div class="name" style="color:#c4a35a">MAND</div>
           <div class="role">Toprak · Erkek · Bölüm 7-9</div>
+          <div class="spirit-quote-inline">"Taşın kalbi, toprağın hafızası."</div>
         </div>
       </div>
 
       <!-- ZEPY — Hava Ruhu · KADIN -->
       <div class="spirit-card pick-zepy" data-spirit="zepy" role="button" tabindex="0">
-        <span class="spirit-badge">💨</span>
-        <img src="06_GRAFIK/zepy_hava_ruhu.png" alt="Zepy - Hava Ruhu" />
+        <span class="spirit-badge">◆</span>
+        <img src="06_GRAFIK/ruh_zepy_hava_sinematik.png" alt="Zepy - Hava Ruhu" />
         <div class="spirit-info">
           <div class="name" style="color:#a8d8ea">ZEPY</div>
           <div class="role">Hava · Kadın · Bölüm 10-12</div>
+          <div class="spirit-quote-inline">"Rüzgarın nefesi, gökyüzünün özgürlüğü."</div>
         </div>
       </div>
     </div>
 
-    <p class="spirit-quote" id="spirit-quote"></p>
-
     <div class="spirit-footer">
-      <button class="btn-ui" type="button" id="btn-spirit-back">Geri</button>
-      <button class="btn-ui primary" type="button" id="btn-spirit-next" disabled>Maceraya Gir</button>
+      <button class="btn-seal" type="button" id="btn-spirit-back"><span class="bs-rune">◆</span><span class="bs-label">Geri</span><span class="bs-rune">◆</span></button>
+      <button class="btn-seal primary" type="button" id="btn-spirit-next" disabled><span class="bs-rune">◈</span><span class="bs-label">Maceraya Gir</span><span class="bs-rune">◈</span></button>
     </div>
     <div class="spirit-sig">by BATUPIA Studios</div>
   </section>
