@@ -1,8 +1,8 @@
-# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v8.13)
+# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v9.0)
 
-**Tarih:** 03.08.2026 · **Sürüm:** v8.13 (`de44af5`) · **Patron:** Batuhan / BATUPIA Studios
+**Tarih:** 03.08.2026 · **Sürüm:** v9.0 (`9d10cdd`) · **Patron:** Batuhan / BATUPIA Studios
 **Canlı:** https://stonebreaking.github.io/ · **Repo:** https://github.com/stonebreaking/stonebreaking.github.io
-**Son Push:** `de44af5` — GitHub'da ✅
+**Son Push:** `9d10cdd` — GitHub'da ✅
 
 ---
 
@@ -24,7 +24,7 @@ Bu tarz evrenin resmi çizim tarzıdır. Tüm karakter ve sahne görselleri bu t
 ### Black Screen (SİYAH EKRAN) — 3 Aşamalı Çözüm
 1. `visibility: hidden`/`visible` → CSS transition'dan kaldırıldı
 2. `display: none`/`flex` → CSS transition ile çalışmıyor, kaldırıldı
-3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=83`
+3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=84`
 
 ### Inline `.screen` kuralları (index.html `<style>` bloğunda):
 ```css
