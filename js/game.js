@@ -1,5 +1,8 @@
 // =========================================================
-// STONEBREAKING — Mahjong Solitaire v9.9
+// STONEBREAKING — Mahjong Solitaire v9.11.0
+// M-014/M-015: varyantlar (9 tip/element), Bölüm 11 Kara Taşlar, Sonsuz ELITE bonus
+// YENİ: ensureMoves — hamle yoksa ücretsiz evren karıştırması (kilitlenme imkânsız)
+// FIX: undo iki taşı geri getiriyor (tile1Id/tile2Id) — önce sadece sayaçlar dönüyordu
 // Klasik Mahjong: aynı serbest karolar8 eşleşir · üstteki kilitler · sol/sağ açar · mühürle patron BT
 // =========================================================
 
@@ -149,6 +152,9 @@ class StonebreakingGame {
         { key: 'ates_4',    color: '#ff6b35', emoji: '◆',  img: '06_GRAFIK/tas_ates_4.png' },
         { key: 'ates_5',    color: '#ff6b35', emoji: '🌀', img: '06_GRAFIK/tas_ates_5.png' },
         { key: 'ates_6',    color: '#ff6b35', emoji: '🌟', img: '06_GRAFIK/tas_ates_6.png' },
+        { key: 'ates_alev',  color: '#ff8c1a', emoji: '🕯️', img: '06_GRAFIK/tas_ates_alev.png' },
+        { key: 'ates_koz',   color: '#ff5722', emoji: '💥', img: '06_GRAFIK/tas_ates_koz.png' },
+        { key: 'ates_volkan', color: '#ffb300', emoji: '🌋', img: '06_GRAFIK/tas_ates_volkan.png' },
       ],
       su: [
         { key: 'su_core', color: '#4ecdc4', emoji: '💧', img: '06_GRAFIK/tas_su_core.png' },
@@ -157,6 +163,9 @@ class StonebreakingGame {
         { key: 'su_4',    color: '#4ecdc4', emoji: '🌊', img: '06_GRAFIK/tas_su_4.png' },
         { key: 'su_5',    color: '#4ecdc4', emoji: '🌧️', img: '06_GRAFIK/tas_su_5.png' },
         { key: 'su_6',    color: '#4ecdc4', emoji: '❄️', img: '06_GRAFIK/tas_su_6.png' },
+        { key: 'su_damla', color: '#3fd4ff', emoji: '💦', img: '06_GRAFIK/tas_su_damla.png' },
+        { key: 'su_buz',   color: '#a8e6ff', emoji: '🧊', img: '06_GRAFIK/tas_su_buz.png' },
+        { key: 'su_sis',   color: '#7fd1c8', emoji: '🌫️', img: '06_GRAFIK/tas_su_sis.png' },
       ],
       toprak: [
         { key: 'toprak_core', color: '#c4a35a', emoji: '🗿', img: '06_GRAFIK/tas_toprak_core.png' },
@@ -165,6 +174,9 @@ class StonebreakingGame {
         { key: 'toprak_4',    color: '#c4a35a', emoji: '⛰️', img: '06_GRAFIK/tas_toprak_4.png' },
         { key: 'toprak_5',    color: '#c4a35a', emoji: '🌱', img: '06_GRAFIK/tas_toprak_5.png' },
         { key: 'toprak_6',    color: '#c4a35a', emoji: '🛡️', img: '06_GRAFIK/tas_toprak_6.png' },
+        { key: 'toprak_run',     color: '#2ecc71', emoji: '🪨', img: '06_GRAFIK/tas_toprak_run.png' },
+        { key: 'toprak_kristal', color: '#50c878', emoji: '🔮', img: '06_GRAFIK/tas_toprak_kristal.png' },
+        { key: 'toprak_kaya',    color: '#7fdb6a', emoji: '🏔️', img: '06_GRAFIK/tas_toprak_kaya.png' },
       ],
       hava: [
         { key: 'hava_core', color: '#a8d8ea', emoji: '💨', img: '06_GRAFIK/tas_hava_core.png' },
@@ -173,9 +185,22 @@ class StonebreakingGame {
         { key: 'hava_4',    color: '#a8d8ea', emoji: '☁️', img: '06_GRAFIK/tas_hava_4.png' },
         { key: 'hava_5',    color: '#a8d8ea', emoji: '⚡', img: '06_GRAFIK/tas_hava_5.png' },
         { key: 'hava_6',    color: '#a8d8ea', emoji: '🌬️', img: '06_GRAFIK/tas_hava_6.png' },
+        { key: 'hava_spiral', color: '#e8f4ff', emoji: '🌪️', img: '06_GRAFIK/tas_hava_spiral.png' },
+        { key: 'hava_simsek', color: '#b3e5fc', emoji: '🌩️', img: '06_GRAFIK/tas_hava_simsek.png' },
+        { key: 'hava_bulut',  color: '#f5f9ff', emoji: '🌥️', img: '06_GRAFIK/tas_hava_bulut.png' },
       ],
     };
     this.currentElement = 'ates';
+
+    // v9.11.0 · M-014/M-015: Bölüm 11 "Kara Taşlar" seti — 4 element mühürlü (kararmış) hâlde
+    this.karaSet = [
+      { key: 'kara_ates',   color: '#8a4a1e', emoji: '🔥', img: '06_GRAFIK/tas_kara_ates.png' },
+      { key: 'kara_su',     color: '#2e6f8f', emoji: '💧', img: '06_GRAFIK/tas_kara_su.png' },
+      { key: 'kara_toprak', color: '#3f7a40', emoji: '🗿', img: '06_GRAFIK/tas_kara_toprak.png' },
+      { key: 'kara_hava',   color: '#8d9aa8', emoji: '💨', img: '06_GRAFIK/tas_kara_hava.png' },
+    ];
+    // M-014: ELITE mühür taşı — Sonsuz Mod'da bonus tip olarak karışır
+    this.eliteTile = { key: 'muhur_elite', color: '#ffd194', emoji: '💠', img: '06_GRAFIK/tas_muhur_elite.png' };
     this.types = Object.values(this.elementSets).flat();
 
     this.onWin = null;
@@ -195,7 +220,7 @@ class StonebreakingGame {
     // → Oyun tahtası anında yüklenir ve emoji/taş rün fallbacks ile hemen oynanabilir.
     // → Görseller arka planda indikçe tık tık tahtada belirir ve otomatik redraw tetiklenir.
     // → Siyah ekranda kalma veya yükleme donmaları kesin olarak çözülmüştür!
-    const allTypes = Object.values(this.elementSets).flat();
+    const allTypes = [...Object.values(this.elementSets).flat(), ...this.karaSet, this.eliteTile]; // v9.11.0
     allTypes.forEach((t) => {
       const img = new Image();
       img.onload = () => {
@@ -334,8 +359,14 @@ class StonebreakingGame {
       ? ELEM_ORDER[Math.floor(Math.random() * 4)]
       : ELEM_ORDER[(level - 1) % 4];
     this.currentElement = elementKey;
-    const elementTypes = this.elementSets[elementKey];
-    this.types = elementTypes; // SADECE bu elementin taşları
+    // v9.11.0 · Bölüm 11 "Kara Taşlar": izolasyon BİLEREK bozulur (mühürlü 4 element karışık)
+    // Sonsuz Mod: ELITE mühür taşı bonus tip olarak karışır
+    const elementTypes = level === 11 && !this.endless
+      ? this.karaSet
+      : (this.endless
+          ? [...this.elementSets[elementKey], this.eliteTile]
+          : this.elementSets[elementKey]);
+    this.types = elementTypes; // SADECE bu setin taşları
 
     // v9.9: 2'li DAĞITIM — her tip 2 adet (çift), Vita Mahjong garantili çözülebilir
     const groups = layout.length / 2;
@@ -545,6 +576,7 @@ class StonebreakingGame {
       this.onMatch(first.type);
       this.emitAll();
       this.checkWin();
+      this.ensureMoves(); // v9.10.4: hamle kalmazsa evren karıştırır
       if (typeof this.onPick === 'function') this.onPick(t);
     } else {
       // Farklı tip → ilk seçimi kaldır, yeni seç
@@ -664,9 +696,11 @@ class StonebreakingGame {
     if (this.undosLeft <= 0) { this.toast('Geri al yok'); return false; }
     if (!this.history.length) { this.toast('Geri alınacak hamle yok'); return false; }
     const snap = this.history.pop();
-    const tile = this.tiles.find((t) => t.id === snap.tileId);
-    if (tile) tile.active = true;
-    // Mahjong: no tray
+    // v9.10.4 fix: geçmişe tile1Id/tile2Id yazılıyor — İKİ taş da geri gelmeli
+    const t1 = this.tiles.find((t) => t.id === snap.tile1Id);
+    const t2 = this.tiles.find((t) => t.id === snap.tile2Id);
+    if (t1) t1.active = true;
+    if (t2) t2.active = true;
     this.iq = snap.iq;
     this.combo = snap.combo;
     this.matches = snap.matches;
@@ -674,6 +708,7 @@ class StonebreakingGame {
     this.maxCombo = snap.maxCombo;
     this.undosLeft--;
     this.updateFree();
+    this.ensureMoves(); // v9.10.4: undo sonrası hamle garantisi
     this.emitAll();
     this.toast('↩ Geri alındı');
     return true;
@@ -718,6 +753,46 @@ class StonebreakingGame {
     this.emitAll();
     this.toast('🔄 Karıştırıldı');
     return true;
+  }
+
+  // v9.10.4: Hamle kalmadı mı? — evren ÜCRETSİZ karıştırır (Vita garantisi: kilitlenme yok)
+  hasMoves() {
+    const free = this.tiles.filter((t) => t.active && t.free);
+    const seen = new Set();
+    for (const t of free) {
+      if (seen.has(t.type)) return true;
+      seen.add(t.type);
+    }
+    return false;
+  }
+
+  ensureMoves() {
+    if (this._ensuring) return;
+    if (!this.tiles.some((t) => t.active)) return; // tahta bitti — zafer akışına dokunma
+    this._ensuring = true;
+    try {
+      this.updateFree();
+      let tries = 0;
+      while (!this.hasMoves() && tries < 20) {
+        const active = this.tiles.filter((t) => t.active);
+        const types = active.map((t) => t.type);
+        for (let i = types.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [types[i], types[j]] = [types[j], types[i]];
+        }
+        active.forEach((t, i) => { t.type = types[i]; });
+        this.updateFree();
+        tries++;
+      }
+      if (tries > 0) {
+        this.selectedTile = null;
+        this.hintIds.clear();
+        this.emitAll();
+        this.toast('🌀 Hamle kalmadı — evren taşları yeniden dizdi');
+      }
+    } finally {
+      this._ensuring = false;
+    }
   }
 
   emitAll() {

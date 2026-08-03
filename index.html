@@ -1603,7 +1603,195 @@
       color: rgba(255,255,255,0.22);
       padding: 8px;
     }
-  </style>
+  
+    /* ═══════ M-009: METİNSİZ SİNEMATİK SPLASH ═══════ */
+    /* FAZ 1 — BATUPIA STUDIOS: tam ekran mühür, dokunma hissi */
+    #screen-splash .studios-phase {
+      position: absolute; inset: 0; z-index: 20;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 42%, #17121f 0%, #060609 78%);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: opacity .5s ease, visibility 0s .55s;
+    }
+    #screen-splash .studios-phase.gone { opacity: 0; pointer-events: none; visibility: hidden; }
+    #screen-splash .studios-seal {
+      width: min(58vw, 300px); height: auto; object-fit: contain;
+      filter: drop-shadow(0 0 26px rgba(199,125,255,0.35));
+      animation: studiosBreathe 3.2s ease-in-out infinite;
+      user-select: none; -webkit-user-drag: none; pointer-events: none;
+    }
+    #screen-splash .studios-phase.sealed .studios-seal { animation: studiosStamp .5s ease-out forwards; }
+    #screen-splash .studios-stamp {
+      position: absolute; width: 44vmin; height: 44vmin; border-radius: 50%;
+      border: 2px solid rgba(255,209,148,0.0); pointer-events: none;
+    }
+    #screen-splash .studios-phase.sealed .studios-stamp { animation: stampRing .55s ease-out forwards; }
+    #screen-splash .studios-touch {
+      position: absolute; bottom: 16vh; width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.28);
+      animation: touchRipple 1.8s ease-out infinite; pointer-events: none;
+    }
+    #screen-splash .studios-phase .byline-mini { position: absolute; bottom: 6vh; opacity: .55; }
+    @keyframes studiosBreathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+    @keyframes studiosStamp { 0% { transform: scale(1); } 35% { transform: scale(0.9); } 100% { transform: scale(1.06); filter: drop-shadow(0 0 60px rgba(255,209,148,0.9)); } }
+    @keyframes stampRing { 0% { box-shadow: 0 0 0 0 rgba(255,209,148,0.55); opacity: 1; } 100% { box-shadow: 0 0 60px 44px rgba(255,209,148,0); opacity: 0; } }
+    @keyframes touchRipple { 0% { transform: scale(0.6); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
+
+    /* FAZ 2 — Macera kapısı: metinsiz rune taşları */
+    #screen-splash .rune-gate {
+      position: relative; z-index: 6; display: flex; gap: 22px;
+      align-items: center; justify-content: center; margin-top: 3.5vh;
+    }
+    .rune-stone {
+      position: relative; width: 84px; height: 84px; border-radius: 24%;
+      background: linear-gradient(145deg, #3a2f28, #191410 62%);
+      border: 2px solid rgba(255,209,148,0.55);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 2px 6px rgba(255,255,255,0.10), inset 0 -4px 8px rgba(0,0,0,0.55);
+      color: #ffd194; font-size: 30px; display: grid; place-items: center;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, box-shadow .18s ease;
+      animation: runeBreath 2.6s ease-in-out infinite;
+    }
+    .rune-stone:active { transform: scale(0.92); }
+    .rune-stone .rune-symbol { position: relative; z-index: 2; text-shadow: 0 0 14px rgba(255,209,148,0.9); }
+    .rune-stone .rune-pulse {
+      position: absolute; inset: -6px; border-radius: 26%;
+      border: 2px solid rgba(255,209,148,0.35); animation: runeRing 2.6s ease-out infinite;
+    }
+    .rune-stone.endless { border-color: rgba(199,125,255,0.6); color: #c77dff; font-size: 32px; }
+    .rune-stone.endless .rune-pulse { border-color: rgba(199,125,255,0.35); }
+    .rune-stone.cracking { animation: stoneCrack .56s ease-in forwards; pointer-events: none; }
+    @keyframes runeBreath { 0%,100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+    @keyframes runeRing { 0% { transform: scale(0.9); opacity: .9; } 100% { transform: scale(1.35); opacity: 0; } }
+    @keyframes stoneCrack {
+      0% { transform: scale(1); filter: brightness(1); }
+      30% { transform: scale(0.94) rotate(-2deg); filter: brightness(1.5); }
+      55% { transform: scale(1.03) rotate(2deg); filter: brightness(2.2); }
+      100% { transform: scale(1.12); filter: brightness(3); opacity: 0.65; }
+    }
+    /* Mühür kırılma parlaması — tam ekran beyaz-altın flaş */
+    #screen-splash .crack-flash {
+      position: absolute; inset: 0; z-index: 15; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at 50% 62%, rgba(255,236,190,0.95) 0%, rgba(255,209,148,0.5) 34%, rgba(0,0,0,0) 68%);
+    }
+    #screen-splash .crack-flash.show { animation: crackFlash .56s ease-out forwards; }
+    @keyframes crackFlash { 0% { opacity: 0; } 30% { opacity: .9; } 100% { opacity: 0; } }
+
+    /* M-009: eski yazılı buton kuşağı kaldırıldı — yazı yok, taş var */
+    #screen-splash .splash-actions { display: none !important; }
+
+
+    /* ═══════ M-010: "BU DAHA BAŞLANGIÇ…" SEKANSI ═══════ */
+    #baslangic-overlay {
+      position: fixed; inset: 0; z-index: 90; display: grid; place-items: center;
+      background: radial-gradient(ellipse at 50% 45%, #141020 0%, #050508 70%);
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .5s ease, visibility 0s .55s;
+    }
+    #baslangic-overlay.show { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity .5s ease; }
+    #baslangic-overlay .bs-stage {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      opacity: 0; transform: scale(.96); pointer-events: none;
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    #baslangic-overlay .bs-stage.on { opacity: 1; transform: scale(1); }
+    /* FAZ 1 — 4 mühür kartı yan yana, mühür titreşimi */
+    #baslangic-overlay .bs-cards { display: flex; gap: clamp(6px, 2vw, 14px); align-items: center; justify-content: center; }
+    #baslangic-overlay .bs-card {
+      width: clamp(64px, 19vw, 128px); border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.65), 0 0 18px rgba(255,209,148,.25);
+      opacity: 0; transform: translateY(26px) scale(.9);
+      animation: bsCardIn .7s ease-out forwards, bsCardTremble 1.1s ease-in-out .75s infinite;
+    }
+    @keyframes bsCardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes bsCardTremble {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-2px) rotate(-.6deg); }
+      75% { transform: translateY(2px) rotate(.6deg); }
+    }
+    /* FAZ 2 — kararır, slogan yankılanır (telifli slogan ©) */
+    #baslangic-overlay .bs-slogan {
+      font-size: clamp(1.25rem, 5.4vw, 2.1rem); color: #ffd194; letter-spacing: .14em;
+      text-shadow: 0 0 18px rgba(255,209,148,.65), 0 2px 8px rgba(0,0,0,.8);
+      min-height: 1.4em; text-align: center; padding: 0 6vw;
+    }
+    #baslangic-overlay .bs-slogan::after { content: '▌'; animation: bsCaret .8s steps(1) infinite; color: rgba(255,209,148,.7); }
+    @keyframes bsCaret { 50% { opacity: 0; } }
+    /* FAZ 3 — Sonsuzluk Kapısı ışıkla açılır */
+    #baslangic-overlay .bs-gate {
+      width: min(74vw, 340px); border-radius: 18px;
+      box-shadow: 0 0 60px rgba(199,125,255,.45), 0 12px 40px rgba(0,0,0,.7);
+      animation: bsGateOpen 1.6s ease-out both;
+    }
+    #baslangic-overlay .bs-inf {
+      position: absolute; bottom: 16vh; font-size: 3rem; color: #c77dff;
+      text-shadow: 0 0 24px rgba(199,125,255,.95); animation: runeBreath 2.2s ease-in-out infinite;
+    }
+    @keyframes bsGateOpen {
+      0% { opacity: 0; transform: scale(.82); filter: brightness(.4); }
+      55% { opacity: 1; transform: scale(1.04); filter: brightness(1.7); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    }
+    /* Sonsuzluğa giriş taşı (metinsiz ∞ rune) */
+    #baslangic-overlay .bs-continue {
+      position: absolute; bottom: 6vh; left: 50%; transform: translateX(-50%) scale(.6);
+      opacity: 0; pointer-events: none; transition: opacity .5s ease .2s, transform .5s ease .2s;
+      z-index: 5;
+    }
+    #baslangic-overlay .bs-continue.on { opacity: 1; transform: translateX(-50%) scale(1); pointer-events: auto; }
+    #baslangic-overlay .bs-skip { position: absolute; top: 3vh; right: 4vw; opacity: .25; font-size: .9rem; color: #ffd194; }
+
+
+    /* ═══════ M-011: IQ TESTİ ═══════ */
+    #iqtest-overlay {
+      position: fixed; inset: 0; z-index: 92; display: grid; place-items: center;
+      background: radial-gradient(ellipse at 50% 40%, rgba(20,16,32,0.94) 0%, rgba(5,5,8,0.98) 75%);
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .45s ease, visibility 0s .5s;
+    }
+    #iqtest-overlay.show { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity .45s ease; }
+    #iqtest-overlay .iq-card { width: min(92vw, 420px); display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+    #iqtest-overlay .iq-head { display: flex; align-items: center; gap: 14px; width: 100%; justify-content: center; position: relative; }
+    #iqtest-overlay .iq-name { font-size: .72rem; letter-spacing: .3em; color: #c77dff; opacity: .85; text-shadow: 0 0 12px rgba(199,125,255,.6); }
+    #iqtest-overlay .iq-dots { display: flex; gap: 8px; }
+    #iqtest-overlay .iq-dot { width: 10px; height: 10px; border-radius: 50%; background: #3a3138; transition: all .3s; }
+    #iqtest-overlay .iq-dot.on { background: #ffd194; box-shadow: 0 0 10px rgba(255,209,148,.9); }
+    #iqtest-overlay .iq-skip { position: absolute; right: 0; font-size: 1rem; color: #8a8090; cursor: pointer; padding: 6px; }
+    #iqtest-overlay .iq-stage-title { font-size: 1.05rem; color: #ffd194; letter-spacing: .08em; text-shadow: 0 0 14px rgba(255,209,148,.5); }
+    #iqtest-overlay .iq-hint { font-size: .8rem; color: #b9aec4; text-align: center; min-height: 1.2em; }
+    #iqtest-overlay .iq-target-wrap { display: none; margin-top: 2px; }
+    #iqtest-overlay .iq-target-wrap img { width: 64px; height: 64px; border-radius: 14px; box-shadow: 0 0 18px rgba(255,209,148,.65), 0 6px 16px rgba(0,0,0,.6); animation: runeBreath 1.8s ease-in-out infinite; }
+    #iqtest-overlay .iq-arena { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; min-height: 190px; width: 100%; padding: 8px 0; }
+    #iqtest-overlay .iq-arena.seqmode { flex-direction: column; }
+    #iqtest-overlay .iq-pad {
+      width: 76px; height: 76px; border-radius: 20%; border: 2px solid rgba(255,209,148,0.4);
+      box-shadow: 0 5px 14px rgba(0,0,0,.55), inset 0 2px 5px rgba(255,255,255,.08), inset 0 -4px 7px rgba(0,0,0,.5);
+      display: grid; place-items: center; cursor: pointer; padding: 5px;
+      -webkit-tap-highlight-color: transparent; transition: transform .15s ease, box-shadow .2s ease;
+    }
+    #iqtest-overlay .iq-pad.small { width: 62px; height: 62px; }
+    #iqtest-overlay .iq-pad img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; border-radius: 14%; }
+    #iqtest-overlay .iq-pad:active { transform: scale(.92); }
+    #iqtest-overlay .iq-pad.lit { box-shadow: 0 0 26px rgba(255,209,148,1), 0 0 44px rgba(255,209,148,.5); border-color: #ffd194; transform: scale(1.07); }
+    #iqtest-overlay .iq-pad.hit { box-shadow: 0 0 26px rgba(124,255,178,.95); border-color: #7CFFB2; opacity: .55; }
+    #iqtest-overlay .iq-pad.shake { animation: iqShake .38s ease; }
+    @keyframes iqShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    #iqtest-overlay .iq-seqrow { display: flex; gap: 8px; justify-content: center; }
+    #iqtest-overlay .iq-cell { width: 54px; height: 54px; border-radius: 14%; background: #17131e; border: 1px solid rgba(255,209,148,.25); display: grid; place-items: center; overflow: hidden; }
+    #iqtest-overlay .iq-cell img { width: 100%; height: 100%; object-fit: contain; }
+    #iqtest-overlay .iq-cell.mystery { border: 2px dashed rgba(199,125,255,.75); color: #c77dff; font-size: 1.3rem; text-shadow: 0 0 12px rgba(199,125,255,.8); animation: runeBreath 2s infinite; }
+    #iqtest-overlay .iq-optrow { display: flex; gap: 14px; justify-content: center; margin-top: 14px; }
+    #iqtest-overlay .iq-barwrap { width: 100%; height: 4px; background: #221a2b; border-radius: 2px; overflow: hidden; }
+    #iqtest-overlay .iq-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #ffd194, #c77dff); border-radius: 2px; }
+    #iqtest-overlay .iq-result { display: none; flex-direction: column; align-items: center; gap: 8px; padding: 18px 0 4px; text-align: center; }
+    #iqtest-overlay .iq-result.on { display: flex; animation: bsCardIn .6s ease-out; }
+    #iqtest-overlay .iq-bonus-eye { font-size: .7rem; letter-spacing: .34em; color: #b9aec4; }
+    #iqtest-overlay .iq-bonus { font-size: 3rem; color: #ffd194; text-shadow: 0 0 26px rgba(255,209,148,.85); }
+    #iqtest-overlay .iq-tier { font-size: 1rem; letter-spacing: .22em; color: #c77dff; text-shadow: 0 0 14px rgba(199,125,255,.7); }
+    #iqtest-overlay .iq-avg { font-size: .85rem; color: #8fd8c9; }
+    #iqtest-overlay .iq-result .btn-ui { margin-top: 10px; }
+
+</style>
 </head>
 <body>
 
@@ -1631,8 +1819,9 @@
   <!-- ========== 1. AÇILIŞ — STONEBREAKING EVRENİ SİNEMATİK ========== -->
   <section id="screen-splash" class="screen" aria-label="Açılış">
     <div class="particles" id="splash-particles"></div>
+
+    <!-- M-009 FAZ 2: STONEBREAKING SAHNE — mühürlü logo + metinsiz macera kapısı -->
     <div class="splash-stage" id="splash-stage">
-      <!-- Mühür madalyonu: STONEBREAKING evren logosu -->
       <div class="seal-aura" aria-hidden="true"></div>
       <div class="seal-orbit" aria-hidden="true">
         <i class="r ates"></i><i class="r su"></i><i class="r toprak"></i><i class="r hava"></i>
@@ -1644,28 +1833,37 @@
         <div class="cin-orb su" id="orb-su"></div>
         <div class="cin-orb toprak" id="orb-toprak"></div>
         <div class="cin-orb hava" id="orb-hava"></div>
-        <!-- v9.9: STONEBREAKING logo görseli + CSS ◆ mühür -->
-        <img src="06_GRAFIK/logo_stonebreaking_evren.png" alt="STONEBREAKING" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0.85;filter:drop-shadow(0 0 30px rgba(255,209,148,0.4))" />
+        <img src="06_GRAFIK/logo_stonebreaking_muhur_new.png" alt="STONEBREAKING" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0.9;filter:drop-shadow(0 0 30px rgba(255,209,148,0.45))" />
         <div class="splash-logo-text" id="muhur-logo">
           <div class="splash-logo-muhur">◆</div>
           <div class="splash-logo-crack ates"></div>
           <div class="splash-logo-crack su"></div>
           <div class="splash-logo-crack toprak"></div>
           <div class="splash-logo-crack hava"></div>
-          <div class="splash-logo-title">STONErREAKING</div>
-          <div class="splash-logo-sub">Tüm Elementlerin Kırıcısı</div>
         </div>
       </div>
     </div>
-    <div class="splash-actions" id="splash-actions">
-      <button class="btn-seal primary" id="btn-start" type="button">
-        <span class="bs-rune">◆</span><span class="bs-label">Maceraya Başla</span><span class="bs-rune">◆</span>
+
+    <!-- M-009: Macera kapısı — metinsiz rune taşları (dokun → mühür kırılır) -->
+    <div class="rune-gate" id="rune-gate">
+      <button class="rune-stone primary" id="btn-start" type="button" aria-label="Maceraya başla" title="◆">
+        <span class="rune-symbol">◆</span>
+        <span class="rune-pulse" aria-hidden="true"></span>
       </button>
-      <button class="btn-seal" id="btn-endless" style="display:none" type="button">
-        <span class="bs-rune">∞</span><span class="bs-label">Sonsuz Moda Gir</span><span class="bs-rune">∞</span>
+      <button class="rune-stone endless" id="btn-endless" style="display:none" type="button" aria-label="Sonsuz mod" title="∞">
+        <span class="rune-symbol">∞</span>
+        <span class="rune-pulse" aria-hidden="true"></span>
       </button>
     </div>
-    <div class="byline-mini">by BATUPIA Studios</div>
+    <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
+
+    <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
+    <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
+      <div class="studios-stamp" aria-hidden="true"></div>
+      <img class="studios-seal" src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" />
+      <div class="studios-touch" aria-hidden="true"></div>
+      <div class="byline-mini" id="byline-mini">by BATUPIA Studios</div>
+    </div>
   </section>
 
   <!-- ========== 2. KARAKTER SEÇİMİ v6.7 — YAN YANA Anime Portre ========== -->
@@ -2040,6 +2238,54 @@
     <button class="btn-ui" type="button" id="btn-victory-menu" style="margin-top:10px">Ana Menü</button>
   </div>
 
+  <!-- M-010: "BU DAHA BAŞLANGIÇ…" — 12. bölüm sonrası sinematik sekans -->
+  <div id="baslangic-overlay" aria-live="polite">
+    <div class="bs-stage bs-stage-1" id="bs-stage-1">
+      <div class="bs-cards">
+        <img src="06_GRAFIK/kart_ates_tamam.png"   alt="Ateş Mührü kartı"   class="bs-card" style="animation-delay:.05s" />
+        <img src="06_GRAFIK/kart_su_tamam.png"     alt="Su Mührü kartı"     class="bs-card" style="animation-delay:.2s" />
+        <img src="06_GRAFIK/kart_toprak_tamam.png" alt="Toprak Mührü kartı" class="bs-card" style="animation-delay:.35s" />
+        <img src="06_GRAFIK/kart_hava_tamam.png"   alt="Hava Mührü kartı"   class="bs-card" style="animation-delay:.5s" />
+      </div>
+      <div class="bs-tremble-hint" aria-hidden="true"></div>
+    </div>
+    <div class="bs-stage bs-stage-2" id="bs-stage-2">
+      <div class="bs-slogan" id="bs-slogan"></div>
+    </div>
+    <div class="bs-stage bs-stage-3" id="bs-stage-3">
+      <img src="sprite_sonsuz_mod_stonebreaking.png" alt="Sonsuzluk Kapısı" class="bs-gate" />
+      <div class="bs-inf" aria-hidden="true">∞</div>
+    </div>
+    <button class="rune-stone endless bs-continue" id="bs-continue" type="button" aria-label="Sonsuzluğa gir">
+      <span class="rune-symbol">∞</span>
+      <span class="rune-pulse" aria-hidden="true"></span>
+    </button>
+    <div class="bs-skip" id="bs-skip" aria-hidden="true">◆</div>
+  </div>
+
+  <!-- M-011: BÖLÜM SONU IQ TESTİ — B3/B6/B9/B12 -->
+  <div id="iqtest-overlay" aria-live="polite">
+    <div class="iq-card">
+      <div class="iq-head">
+        <div class="iq-name">ZİHİN SINAVI</div>
+        <div class="iq-dots"><i class="iq-dot" id="iq-dot-0"></i><i class="iq-dot" id="iq-dot-1"></i><i class="iq-dot" id="iq-dot-2"></i></div>
+        <div class="iq-skip" id="iq-skip" role="button" tabindex="0" aria-label="Sınavı atla">◆</div>
+      </div>
+      <div class="iq-stage-title" id="iq-title"></div>
+      <div class="iq-hint" id="iq-hint"></div>
+      <div class="iq-target-wrap" id="iq-target-wrap"><img id="iq-target" alt="Hedef taş" /></div>
+      <div class="iq-arena" id="iq-arena"></div>
+      <div class="iq-barwrap"><div class="iq-bar" id="iq-bar"></div></div>
+      <div class="iq-result" id="iq-result">
+        <div class="iq-bonus-eye">IQ BONUS</div>
+        <div class="iq-bonus" id="iq-bonus">+0</div>
+        <div class="iq-tier" id="iq-tier">KIVILCIM</div>
+        <div class="iq-avg" id="iq-avg">%0</div>
+        <button class="btn-ui primary" type="button" id="btn-iq-continue">Devam ➜</button>
+      </div>
+    </div>
+  </div>
+
   <!-- v9.9: SİNEMATİK ELEMENT KARTI — Pokemon tarzı nadir kart -->
   <div id="card-overlay" aria-live="polite">
     <div class="card-wrapper">
@@ -2230,7 +2476,7 @@
         if (stone) stone.style.display = 'none';
         if (muhur) muhur.classList.add('show');
         if (actions) { actions.classList.add('show'); }
-        if (btn) { btn.style.animation = 'btnSealPulse 2.6s ease-in-out infinite'; }
+        if (btn) { /* M-009: rune-stone kendi nefes animasyonunu taşır */ }
         const ebtn = $('#btn-endless');
         if (ebtn && state.profile.endlessUnlocked) ebtn.style.display = 'block';
         return;
@@ -2270,7 +2516,7 @@
         actions.style.animation = 'fadeUp 0.8s ease-out both';
       }
       if (btn) {
-        btn.style.animation = 'btnSealPulse 2.6s ease-in-out infinite, fadeUp 0.8s ease-out both';
+        // M-009: rune-stone kendi nefes animasyonunu taşır
       }
 
       // Sonsuz Mod butonu (kilit açıksa)
@@ -2513,6 +2759,274 @@
       state._lastCardDesc = VIRAL_CARD.desc;
 
       $('#card-overlay')?.classList.add('show');
+    }
+
+
+
+    // ═══════ M-011: BÖLÜM SONU IQ TESTİ — MÜHÜR-008 §G ═══════
+    // 3 aşama (desen hafızası · refleks avcısı · sıra tahmini) · ~60-75 sn · taş görselleriyle
+    const IQ_PADS = [
+      { k: 'ates',   img: '06_GRAFIK/tas_ates_core.png',   bg: '#3a1408' },
+      { k: 'su',     img: '06_GRAFIK/tas_su_core.png',     bg: '#08283a' },
+      { k: 'toprak', img: '06_GRAFIK/tas_toprak_core.png', bg: '#1c2a12' },
+      { k: 'hava',   img: '06_GRAFIK/tas_hava_core.png',   bg: '#232a34' },
+    ];
+
+    function playIqTest(stats, done) {
+      const ov = $('#iqtest-overlay');
+      if (!ov) { done(); return; }
+      done = typeof done === 'function' ? done : () => {};
+      const arena = $('#iq-arena'), title = $('#iq-title'), hint = $('#iq-hint');
+      const dots = [$('#iq-dot-0'), $('#iq-dot-1'), $('#iq-dot-2')];
+      const result = $('#iq-result'), bar = $('#iq-bar');
+      const targetWrap = $('#iq-target-wrap'), targetImg = $('#iq-target');
+      const timers = []; let iv = null; let alive = true;
+      const later = (fn, ms) => { const t = setTimeout(() => { if (alive) fn(); }, ms); timers.push(t); };
+      const scores = [];
+      const rnd = (n) => Math.floor(Math.random() * n);
+
+      const cleanup = () => {
+        alive = false;
+        timers.forEach(clearTimeout);
+        if (iv) clearInterval(iv);
+        ov.classList.remove('show');
+      };
+      const tap = () => { StoneSound.tap && StoneSound.tap(); if (StoneSound.vibrate) StoneSound.vibrate(14); };
+
+      ov.classList.add('show');
+      arena.style.display = 'flex';
+      arena.innerHTML = '';
+      result.classList.remove('on');
+      dots.forEach((d) => d && d.classList.remove('on'));
+      targetWrap.style.display = 'none';
+      if (bar) bar.style.width = '0%';
+
+      const mkPad = (padIdx, onTap, small) => {
+        const p = IQ_PADS[padIdx];
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'iq-pad' + (small ? ' small' : '');
+        b.style.background = p.bg;
+        b.setAttribute('aria-label', p.k + ' taşı');
+        const im = document.createElement('img');
+        im.src = p.img; im.alt = p.k; im.draggable = false;
+        b.appendChild(im);
+        b.addEventListener('click', () => onTap(b, padIdx));
+        arena.appendChild(b);
+        return b;
+      };
+      const glow = (b, ms) => { b.classList.add('lit'); later(() => b.classList.remove('lit'), ms || 430); };
+      const shake = (b) => { b.classList.add('shake'); later(() => b.classList.remove('shake'), 380); };
+      const setDot = (i) => { if (dots[i]) dots[i].classList.add('on'); };
+      const barTo = (pct, ms) => {
+        if (!bar) return;
+        bar.style.transition = 'none'; bar.style.width = '0%';
+        requestAnimationFrame(() => { bar.style.transition = `width ${ms}ms linear`; bar.style.width = pct + '%'; });
+      };
+
+      // ── AŞAMA 1: DESEN HAFIZASI (Simon) ──
+      function stageMemory() {
+        setDot(0);
+        title.textContent = '1/3 · Desen Hafızası';
+        hint.textContent = 'Işıyan taşları izle, aynı sırayla vur';
+        arena.innerHTML = '';
+        arena.className = 'iq-arena grid4';
+        const seqs = [ [rnd(4), rnd(4), rnd(4)], [rnd(4), rnd(4), rnd(4), rnd(4)] ];
+        let locked = true, inputs = [], round = 0, completed = 0;
+        const pads = IQ_PADS.map((_, i) => mkPad(i, (b, pi) => {
+          if (locked) return; tap(); glow(b, 300);
+          const seq = seqs[round];
+          const step = inputs.length;
+          if (pi !== seq[step]) { shake(b); next(false); return; }
+          inputs.push(pi);
+          if (inputs.length === seq.length) { completed++; next(true); }
+        }));
+        function playSeq(seq, cb) {
+          seq.forEach((pi, i) => later(() => glow(pads[pi], 430), 500 + i * 800));
+          later(cb, 500 + seq.length * 800 + 200);
+        }
+        function next(ok) {
+          locked = true; inputs = [];
+          if (ok && round < seqs.length - 1) { round++; later(() => playSeq(seqs[round], () => { locked = false; }), 700); }
+          else { scores.push(completed === 2 ? 100 : completed === 1 ? 60 : 25); later(stageReflex, 650); }
+        }
+        later(() => playSeq(seqs[0], () => { locked = false; }), 900);
+      }
+
+      // ── AŞAMA 2: REFLEKS AVCISI (hedef yakala, 15 sn / 5 tur) ──
+      function stageReflex() {
+        setDot(1);
+        title.textContent = '2/3 · Refleks Avcısı';
+        hint.textContent = 'Üstteki hedef taşın eşlerini yakala!';
+        targetWrap.style.display = 'block';
+        let hits = 0, round = 0, need = 0, got = 0, over = false;
+        const TOTAL_T = 15000, MAXROUNDS = 5, PER = 2;
+        barTo(100, TOTAL_T);
+        later(() => endStage(), TOTAL_T);
+        function endStage() {
+          if (over) return; over = true;
+          targetWrap.style.display = 'none';
+          scores.push(Math.round((hits / (MAXROUNDS * PER)) * 100));
+          later(stageSequence, 500);
+        }
+        function renderRound() {
+          if (over) return;
+          arena.innerHTML = '';
+          const target = rnd(4);
+          targetImg.src = IQ_PADS[target].img;
+          // 6 pad: 2 hedef + 4 çeldirici
+          const pool = [target, target];
+          while (pool.length < 6) { const c = rnd(4); if (c !== target) pool.push(c); }
+          for (let i = pool.length - 1; i > 0; i--) { const j = rnd(i + 1); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+          need = PER; got = 0;
+          pool.forEach((pi) => mkPad(pi, (b) => {
+            if (over) return;
+            if (pi === target) { tap(); got++; hits++; b.classList.add('hit'); b.disabled = true;
+              if (got >= need) { round++; if (round >= MAXROUNDS) endStage(); else later(renderRound, 500); }
+            } else { shake(b); }
+          }));
+        }
+        renderRound();
+      }
+
+      // ── AŞAMA 3: SIRA TAHMİNİ (2 desen) ──
+      function stageSequence() {
+        setDot(2);
+        title.textContent = '3/3 · Sıra Tahmini';
+        hint.textContent = 'Desendeki eksik taşı mühürle';
+        const K = { ates: 0, su: 1, toprak: 2, hava: 3 };
+        const QUESTIONS = [
+          { row: ['ates', 'su', 'toprak', 'ates', '?'], opts: ['hava', 'su', 'ates'], ans: 'su' },
+          { row: ['hava', 'toprak', 'hava', '?'], opts: ['ates', 'su', 'toprak'], ans: 'toprak' },
+        ];
+        let q = 0, correct = 0;
+        function renderQ() {
+          if (q >= QUESTIONS.length) { scores.push(Math.round((correct / QUESTIONS.length) * 100)); later(finish, 450); return; }
+          const qu = QUESTIONS[q];
+          arena.innerHTML = '';
+          arena.className = 'iq-arena seqmode';
+          const rowWrap = document.createElement('div');
+          rowWrap.className = 'iq-seqrow';
+          qu.row.forEach((k) => {
+            const cell = document.createElement('div');
+            cell.className = 'iq-cell' + (k === '?' ? ' mystery' : '');
+            if (k === '?') { cell.textContent = '◆'; }
+            else { const im = document.createElement('img'); im.src = IQ_PADS[K[k]].img; im.alt = k; cell.appendChild(im); }
+            rowWrap.appendChild(cell);
+          });
+          arena.appendChild(rowWrap);
+          const optWrap = document.createElement('div');
+          optWrap.className = 'iq-optrow';
+          qu.opts.forEach((k) => {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'iq-pad small'; b.style.background = IQ_PADS[K[k]].bg;
+            const im = document.createElement('img'); im.src = IQ_PADS[K[k]].img; im.alt = k; im.draggable = false;
+            b.appendChild(im);
+            b.addEventListener('click', () => {
+              tap();
+              if (k === qu.ans) { correct++; b.classList.add('hit'); } else { shake(b); }
+              q++; later(renderQ, 550);
+            });
+            optWrap.appendChild(b);
+          });
+          arena.appendChild(optWrap);
+        }
+        renderQ();
+      }
+
+      // ── SONUÇ: IQ bonusu mühürle ──
+      function finish() {
+        if (!alive) return;
+        const avg = Math.round((scores[0] + scores[1] + scores[2]) / 3);
+        const bonus = 5 + Math.round((avg / 100) * 35); // 5-40 mühür bonusu
+        const tier = avg >= 85 ? 'EFSANE MÜHÜR' : avg >= 70 ? 'MÜHÜR' : avg >= 50 ? 'UYANIŞ' : avg >= 30 ? 'NEFES' : 'KIVILCIM';
+        try {
+          const p = state.profile;
+          const yeniIq = Math.round((stats?.iq || 0) + bonus);
+          p.bestIq = Math.max(p.bestIq || 0, yeniIq);
+          p.lastIqBonus = bonus;
+          saveProfile();
+        } catch (_) {}
+        $('#iq-bonus').textContent = '+' + bonus;
+        $('#iq-tier').textContent = tier;
+        $('#iq-avg').textContent = '%' + avg + ' senkron';
+        title.textContent = 'Sınav mühürlendi';
+        arena.style.display = 'none';
+        result.classList.add('on');
+        try { const el = (window.STONE_SPIRITS[state.spirit || 'kor'] || {}).element || 'ates'; StoneSound.win && StoneSound.win(el); } catch (_) {}
+        if (StoneSound.vibrate) StoneSound.vibrate([24, 40, 60]);
+      }
+
+      // Çıkış yolları
+      $('#btn-iq-continue')?.addEventListener('click', () => { cleanup(); done(); }, { once: true });
+      const skip = () => { cleanup(); done(); };
+      $('#iq-skip')?.addEventListener('click', skip);
+      $('#iq-skip')?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); skip(); } });
+
+      stageMemory();
+    }
+
+    // ═══════ M-010: "BU DAHA BAŞLANGIÇ…" SİNEMATİK SEKANSI ═══════
+    // 4 mühür kartı titreşir → kararır + slogan daktilo → Sonsuzluk Kapısı → ∞ taş
+    const BASLANGIC_SLOGAN = 'Bu daha başlangıç…';
+    function playBaslangicSequence(stats) {
+      const ov = $('#baslangic-overlay');
+      if (!ov) { showViralCard(stats); return; }
+      let dead = false; // atlama koruması
+      const timers = [];
+      const later = (fn, ms) => { const t = setTimeout(() => { if (!dead) fn(); }, ms); timers.push(t); };
+
+      ov.classList.add('show');
+      const stages = [ $('#bs-stage-1'), $('#bs-stage-2'), $('#bs-stage-3') ];
+      stages.forEach((s) => s && s.classList.remove('on'));
+      $('#bs-continue')?.classList.remove('on');
+      const sloganEl = $('#bs-slogan');
+      if (sloganEl) sloganEl.textContent = '';
+
+      // FAZ 1: 4 mühür kartı (CSS staggered) — evren titreşir
+      stages[0]?.classList.add('on');
+      StoneSound.tap && StoneSound.tap();
+      if (StoneSound.vibrate) StoneSound.vibrate([24, 40, 24, 40]);
+
+      later(() => {
+        // FAZ 2: kararır, slogan harf harf yankılanır
+        stages[0]?.classList.remove('on');
+        stages[1]?.classList.add('on');
+        let i = 0;
+        const type = () => {
+          if (dead || !sloganEl) return;
+          sloganEl.textContent = BASLANGIC_SLOGAN.slice(0, ++i);
+          if (i < BASLANGIC_SLOGAN.length) setTimeout(type, 85);
+        };
+        type();
+        if (StoneSound.vibrate) StoneSound.vibrate(20);
+      }, 2300);
+
+      later(() => {
+        // FAZ 3: Sonsuzluk Kapısı ışıkla açılır
+        stages[1]?.classList.remove('on');
+        stages[2]?.classList.add('on');
+        StoneSound.win && StoneSound.win('hava');
+        if (StoneSound.vibrate) StoneSound.vibrate([30, 50, 90]);
+        $('#bs-continue')?.classList.add('on');
+      }, 4700);
+
+      // Giriş taşı: sonsuzluğa adım
+      const gir = () => {
+        if (dead) return;
+        dead = true;
+        timers.forEach(clearTimeout);
+        const btn = $('#bs-continue');
+        if (btn) btn.classList.add('cracking');
+        StoneSound.tap && StoneSound.tap();
+        if (StoneSound.vibrate) StoneSound.vibrate([18, 26, 40]);
+        setTimeout(() => {
+          ov.classList.remove('show');
+          btn?.classList.remove('cracking');
+          showViralCard(stats); // mevcut viral kart kancası korunur
+        }, 480);
+      };
+      $('#bs-continue')?.addEventListener('click', gir, { once: true });
     }
 
     function hideCard() {
@@ -2886,19 +3400,41 @@
     function initUI() {
       // Ses: kullanıcı etkileşimiyle AudioContext açılır (mobil kuralı)
       StoneSound.unlock();
-      $('#btn-start')?.addEventListener('click', () => {
-        state.endlessRequested = false;
+      // M-009 FAZ 1: studios dokun → mühür vur → evren sahnesi açılır (metinsiz)
+      (function initStudiosPhase() {
+        const studios = $('#studios-phase');
+        if (!studios) return;
+        const seal = () => {
+          if (studios.classList.contains('sealed')) return;
+          studios.classList.add('sealed');
+          state.splashPlayed = true;
+          StoneSound.unlock();
+          StoneSound.tap && StoneSound.tap();
+          if (StoneSound.vibrate) StoneSound.vibrate(25);
+          setTimeout(() => studios.classList.add('gone'), 480);
+        };
+        studios.addEventListener('click', seal);
+        studios.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); seal(); } });
+      })();
+
+      // M-009: rune taşa dokun → mühür kırılma parlaması → karakter seçimi
+      function runeGateEnter(btnSel, endless) {
+        const btn = $(btnSel);
+        if (!btn || btn.classList.contains('cracking')) return;
+        state.endlessRequested = !!endless;
         StoneSound.unlock();
-        StoneSound.tap();
-        goScreen('screen-character');
-      });
-      $('#btn-endless')?.addEventListener('click', () => {
-        // v6.1.1: Sonsuz Moda doğrudan giriş (kilit açıksa)
-        state.endlessRequested = true;
-        StoneSound.unlock();
-        StoneSound.tap();
-        goScreen('screen-character');
-      });
+        StoneSound.tap && StoneSound.tap();
+        if (StoneSound.vibrate) StoneSound.vibrate([18, 26, 40]);
+        btn.classList.add('cracking');
+        $('#crack-flash')?.classList.add('show');
+        setTimeout(() => {
+          btn.classList.remove('cracking');
+          $('#crack-flash')?.classList.remove('show');
+          goScreen('screen-character');
+        }, 560);
+      }
+      $('#btn-start')?.addEventListener('click', () => runeGateEnter('#btn-start', false));
+      $('#btn-endless')?.addEventListener('click', () => runeGateEnter('#btn-endless', true));
 
       // Ses aç/kapat düğmesi (tercih localStorage'da)
       (function initSoundToggle() {
@@ -3174,9 +3710,12 @@
         hideVictory();
         const stats = state.lastStats;
         const lv = stats?.level || 0;
-        // 4 element tamamlandı = viral kart
-        if (lv === 12) {
-          showViralCard(stats);
+        // M-011: IQ sınav noktaları (B3/B6/B9/B12) → sınav → kart/sekans akışı sürer
+        if ([3, 6, 9, 12].includes(lv)) {
+          playIqTest(stats, () => {
+            if (lv === 12) playBaslangicSequence(stats);
+            else showCard(stats);
+          });
         } else if (CARD_MAP[lv]) {
           showCard(stats);
         } else {
