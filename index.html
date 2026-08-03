@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>STONEBREAKING — Universe</title>
-  <link rel="stylesheet" href="css/animasyon.css?v=82" />
+  <link rel="stylesheet" href="css/animasyon.css?v=83" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
@@ -430,35 +430,34 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
-      animation: charBgReveal 1.5s ease-out both;
-      filter: brightness(0.7);
+      object-position: center top;
+      filter: brightness(0.85);
       transition: opacity 0.6s ease, filter 0.5s ease;
     }
-    /* Varsayılan: her iki sahne yarı yarıya görünür */
-    .bg-erkek-img {
-      clip-path: inset(0 50% 0 0);
-      object-position: center;
-    }
-    .bg-kadin-img {
-      clip-path: inset(0 0 0 50%);
-      object-position: center;
-    }
-    /* Hover erkek → tam sahne erkek */
-    .char-cinema.hover-erkek .bg-erkek-img { clip-path: inset(0 0 0 0); filter: brightness(0.85); }
-    .char-cinema.hover-erkek .bg-kadin-img { opacity: 0.15; }
-    /* Hover kadın → tam sahne kadın */
-    .char-cinema.hover-kadin .bg-kadin-img { clip-path: inset(0 0 0 0); filter: brightness(0.85); }
-    .char-cinema.hover-kadin .bg-erkek-img { opacity: 0.15; }
-    /* Seçilmiş erkek */
-    .char-cinema.bg-erkek .bg-erkek-img { clip-path: inset(0 0 0 0); filter: brightness(0.9); }
+    /* 3 SAHNE SİSTEMİ: default (ikili) + erkek + kadın */
+    .bg-default-img { opacity: 1; z-index: 1; animation: charBgReveal 1.5s ease-out both; }
+    .bg-erkek-img { opacity: 0; z-index: 2; }
+    .bg-kadin-img { opacity: 0; z-index: 2; }
+
+    /* Hover erkek → erkek sahnesi görünür, default solar */
+    .char-cinema.hover-erkek .bg-default-img { opacity: 0.15; }
+    .char-cinema.hover-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.85); }
+    .char-cinema.hover-erkek .bg-kadin-img { opacity: 0; }
+    /* Hover kadın → kadın sahnesi görünür, default solar */
+    .char-cinema.hover-kadin .bg-default-img { opacity: 0.15; }
+    .char-cinema.hover-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.85); }
+    .char-cinema.hover-kadin .bg-erkek-img { opacity: 0; }
+    /* Seçilmiş erkek → sadece erkek sahnesi */
+    .char-cinema.bg-erkek .bg-default-img { opacity: 0; }
+    .char-cinema.bg-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.9); }
     .char-cinema.bg-erkek .bg-kadin-img { opacity: 0; }
-    /* Seçilmiş kadın */
-    .char-cinema.bg-kadin .bg-kadin-img { clip-path: inset(0 0 0 0); filter: brightness(0.9); }
+    /* Seçilmiş kadın → sadece kadın sahnesi */
+    .char-cinema.bg-kadin .bg-default-img { opacity: 0; }
+    .char-cinema.bg-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.9); }
     .char-cinema.bg-kadin .bg-erkek-img { opacity: 0; }
     @keyframes charBgReveal {
-      0% { opacity: 0; transform: scale(1.1); filter: brightness(0.3); }
-      100% { opacity: 1; transform: scale(1); filter: brightness(0.7); }
+      0% { opacity: 0; transform: scale(1.08); filter: brightness(0.3); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(0.85); }
     }
 
     /* Seçim bölgesi — sol ve yarı */
@@ -1220,10 +1219,11 @@
       <div class="char-subtitle">Tüm Elementlerin Kırıcısı · Aynı Kader · İki Yol</div>
     </div>
 
-    <!-- SİNEMATİK İKİLİ SAHNE — Her karakterin kendi sahnesi -->
+    <!-- SİNEMATİK 3 SAHNE SİSTEMİ — İkili / Erkek / Kadın -->
     <div class="char-cinema" id="char-cinema">
-      <img class="char-cinema-bg bg-erkek-img" src="06_GRAFIK/erkek_stonebreaker_volkanik.png" alt="Erkek Stonebreaker — Volkanik Sahne" />
-      <img class="char-cinema-bg bg-kadin-img" src="06_GRAFIK/kadin_stonebreaker_okyanus.png" alt="Kadın Stonebreaker — Okyanus Sahne" />
+      <img class="char-cinema-bg bg-default-img" src="06_GRAFIK/sinematik_01_ikili_tapinak.png" alt="Stonebreaker Kardeşler — Kadim Tapınak" />
+      <img class="char-cinema-bg bg-erkek-img" src="06_GRAFIK/sinematik_02_erkek_volkanik.png" alt="Erkek Stonebreaker — Volkanik Zirve" />
+      <img class="char-cinema-bg bg-kadin-img" src="06_GRAFIK/sinematik_03_kadin_okyanus.png" alt="Kadın Stonebreaker — Okyanus Derinlikler" />
       
       <!-- Taş tozu parçacıkları -->
       <div class="char-particles" aria-hidden="true">
