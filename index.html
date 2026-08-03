@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>STONEBREAKING — Universe</title>
-  <link rel="stylesheet" href="css/animasyon.css?v=85" />
+  <link rel="stylesheet" href="css/animasyon.css?v=86" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
@@ -744,7 +744,7 @@
       padding-bottom: 10px;
     }
 
-        /* ========== SPIRIT PICK v9.0 — STONEBREAKING EVRENİ 4 RUH SİNEMATİK ========== */
+        /* ========== SPIRIT PICK v9.2 — STONEBREAKING EVRENİ SİNEMATİK RUH SEÇİMİ ========== */
     #screen-spirit {
       background: #050510;
       display: flex;
@@ -759,18 +759,6 @@
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse at 25% 30%, rgba(255,107,53,0.08) 0%, transparent 40%),
-        radial-gradient(ellipse at 75% 30%, rgba(78,205,196,0.08) 0%, transparent 40%),
-        radial-gradient(ellipse at 25% 70%, rgba(196,163,90,0.08) 0%, transparent 40%),
-        radial-gradient(ellipse at 75% 70%, rgba(168,216,234,0.08) 0%, transparent 40%),
-        linear-gradient(180deg, #08060f 0%, #050510 40%, #0a0a14 100%);
-      z-index: 0;
-    }
-    #screen-spirit::after {
-      content: '';
-      position: absolute;
-      inset: 0;
       z-index: 0;
       pointer-events: none;
     }
@@ -780,6 +768,7 @@
       padding: max(10px, env(safe-area-inset-top)) 16px 4px;
       flex-shrink: 0;
       text-align: center;
+      z-index: 10;
     }
     #screen-spirit .screen-header h1 {
       font-size: clamp(0.95rem, 4vw, 1.3rem);
@@ -806,69 +795,137 @@
       text-transform: uppercase;
     }
 
-    .spirit-grid {
+    /* — SİNEMATİK SAHNE — */
+    .spirit-cinema {
       flex: 1;
-      height: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 6px;
-      max-width: 520px;
-      width: 96%;
-      margin: 0 auto;
-      min-height: 0;
-      padding: 4px 0;
-    }
-    .spirit-grid .spirit-card {
       position: relative;
-      border-radius: 14px;
+      min-height: 0;
       overflow: hidden;
-      cursor: pointer;
-      border: 2px solid transparent;
-      background: rgba(0,0,0,0.3);
-      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .spirit-card:nth-child(1) { animation: spiritSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
-    .spirit-card:nth-child(2) { animation: spiritSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
-    .spirit-card:nth-child(3) { animation: spiritSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both; }
-    .spirit-card:nth-child(4) { animation: spiritSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both; }
-    .spirit-card img {
+    .spirit-cinema-bg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center top;
-      display: block;
-      transition: transform 0.5s ease, filter 0.4s ease;
-      min-height: 120px;
-      background: linear-gradient(180deg, #1a0a18 0%, #0d0816 50%, #0a0a14 100%);
+      filter: brightness(0.85);
+      transition: opacity 0.6s ease, filter 0.5s ease;
     }
-    .spirit-card:hover img { transform: scale(1.05); }
-    .spirit-card .spirit-info {
+    /* 5 SAHNE: default (4lü) + 4 ruh */
+    .bg-default-img { opacity: 1; z-index: 1; animation: spiritBgReveal 1.5s ease-out both; }
+    .bg-kor-img { opacity: 0; z-index: 2; }
+    .bg-baam-img { opacity: 0; z-index: 2; }
+    .bg-mand-img { opacity: 0; z-index: 2; }
+    .bg-zepy-img { opacity: 0; z-index: 2; }
+    @keyframes spiritBgReveal {
+      0% { opacity: 0; transform: scale(1.08); filter: brightness(0.3); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(0.85); }
+    }
+
+    /* Hover/Seçim sahne geçişleri */
+    .spirit-cinema.hover-kor .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-kor .bg-kor-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.hover-baam .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-baam .bg-baam-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.hover-mand .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-mand .bg-mand-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.hover-zepy .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-zepy .bg-zepy-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.bg-kor .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-kor .bg-kor-img { opacity: 1; filter: brightness(0.95); }
+    .spirit-cinema.bg-baam .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-baam .bg-baam-img { opacity: 1; filter: brightness(0.95); }
+    .spirit-cinema.bg-mand .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-mand .bg-mand-img { opacity: 1; filter: brightness(0.95); }
+    .spirit-cinema.bg-zepy .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-zepy .bg-zepy-img { opacity: 1; filter: brightness(0.95); }
+
+    /* — ELEMENT PARÇACIKLARI — */
+    .spirit-particles {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 8px 6px 6px;
-      background: linear-gradient(0deg, rgba(5,5,16,0.92) 0%, rgba(5,5,16,0.5) 65%, transparent 100%);
-      text-align: center;
-      z-index: 2;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
     }
+    .spirit-particles span {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: spiritParticle 4s ease-in-out infinite;
+      background: radial-gradient(circle, #ffd194, #c4a35a);
+      box-shadow: 0 0 6px rgba(255,209,148,0.5);
+    }
+    @keyframes spiritParticle {
+      0% { opacity: 0; transform: translateY(0) scale(0.5); }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.15; }
+      100% { opacity: 0; transform: translateY(-120px) scale(0); }
+    }
+
+    /* — RUH KARTLARI — Alt kısımda yatay sıralı, kadim taş plaket */
+    .spirit-cards-row {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 8px 10px;
+      background: linear-gradient(0deg, rgba(5,5,16,0.95) 0%, rgba(5,5,16,0.6) 60%, transparent 100%);
+      z-index: 8;
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .spirit-cards-row .spirit-card {
+      position: relative;
+      flex: 1;
+      max-width: 100px;
+      padding: 10px 4px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px solid rgba(255,209,148,0.12);
+      background: rgba(5,5,16,0.6);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+      overflow: visible;
+    }
+    .spirit-card .spirit-card-glow {
+      position: absolute;
+      inset: -2px;
+      border-radius: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .pick-kor .spirit-card-glow { box-shadow: 0 0 25px rgba(255,107,53,0.4); }
+    .pick-baam .spirit-card-glow { box-shadow: 0 0 25px rgba(78,205,196,0.4); }
+    .pick-mand .spirit-card-glow { box-shadow: 0 0 25px rgba(196,163,90,0.4); }
+    .pick-zepy .spirit-card-glow { box-shadow: 0 0 25px rgba(168,216,234,0.4); }
+    .spirit-card:hover .spirit-card-glow { opacity: 1; }
+
     .spirit-card .spirit-info .name {
-      font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+      font-size: clamp(0.72rem, 3vw, 0.95rem);
       font-weight: 900;
       letter-spacing: 3px;
       text-transform: uppercase;
       text-shadow: 0 0 15px currentColor;
     }
     .spirit-card .spirit-info .role {
-      font-size: 0.52rem;
-      color: rgba(255,209,148,0.5);
+      font-size: 0.45rem;
+      color: rgba(255,209,148,0.45);
       margin-top: 2px;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
     .spirit-card .spirit-info .spirit-quote-inline {
-      font-size: 0.48rem;
-      color: rgba(255,255,255,0.3);
+      font-size: 0.42rem;
+      color: rgba(255,255,255,0.25);
       font-style: italic;
       margin-top: 3px;
       max-height: 0;
@@ -880,41 +937,44 @@
       opacity: 1;
       max-height: 40px;
     }
+
+    /* Mühür rozeti — ◆ element renkli */
     .spirit-card .spirit-badge {
       position: absolute;
-      top: 6px;
-      left: 6px;
-      width: 28px;
-      height: 28px;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      font-size: 0.8rem;
+      font-size: 0.65rem;
       backdrop-filter: blur(10px);
       z-index: 3;
     }
     .pick-kor .spirit-badge {
-      background: radial-gradient(circle, rgba(255,107,53,0.3), rgba(255,107,53,0.05));
-      border: 1.5px solid rgba(255,107,53,0.6);
-      box-shadow: 0 0 12px rgba(255,107,53,0.3);
+      background: radial-gradient(circle, rgba(255,107,53,0.35), rgba(255,107,53,0.05));
+      border: 1.5px solid rgba(255,107,53,0.7);
+      box-shadow: 0 0 10px rgba(255,107,53,0.4);
       color: #ff6b35;
     }
     .pick-baam .spirit-badge {
-      background: radial-gradient(circle, rgba(78,205,196,0.3), rgba(78,205,196,0.05));
-      border: 1.5px solid rgba(78,205,196,0.6);
-      box-shadow: 0 0 12px rgba(78,205,196,0.3);
+      background: radial-gradient(circle, rgba(78,205,196,0.35), rgba(78,205,196,0.05));
+      border: 1.5px solid rgba(78,205,196,0.7);
+      box-shadow: 0 0 10px rgba(78,205,196,0.4);
       color: #4ecdc4;
     }
     .pick-mand .spirit-badge {
-      background: radial-gradient(circle, rgba(196,163,90,0.3), rgba(196,163,90,0.05));
-      border: 1.5px solid rgba(196,163,90,0.6);
-      box-shadow: 0 0 12px rgba(196,163,90,0.3);
+      background: radial-gradient(circle, rgba(196,163,90,0.35), rgba(196,163,90,0.05));
+      border: 1.5px solid rgba(196,163,90,0.7);
+      box-shadow: 0 0 10px rgba(196,163,90,0.4);
       color: #c4a35a;
     }
     .pick-zepy .spirit-badge {
-      background: radial-gradient(circle, rgba(168,216,234,0.3), rgba(168,216,234,0.05));
-      border: 1.5px solid rgba(168,216,234,0.6);
-      box-shadow: 0 0 12px rgba(168,216,234,0.3);
+      background: radial-gradient(circle, rgba(168,216,234,0.35), rgba(168,216,234,0.05));
+      border: 1.5px solid rgba(168,216,234,0.7);
+      box-shadow: 0 0 10px rgba(168,216,234,0.4);
       color: #a8d8ea;
     }
     .pick-kor { --accent: #ff6b35; }
@@ -922,36 +982,27 @@
     .pick-mand { --accent: #c4a35a; }
     .pick-zepy { --accent: #a8d8ea; }
 
+    /* Seçim — element kenarlık + glow */
     .spirit-card.selected {
-      transform: scale(1.03);
-      border-color: var(--accent, #ff6b35);
-      box-shadow: 0 0 0 2px var(--accent, #ff6b35), 0 0 30px color-mix(in srgb, var(--accent, #ff6b35) 30%, transparent), inset 0 0 30px color-mix(in srgb, var(--accent, #ff6b35) 15%, transparent);
-      z-index: 3;
+      transform: scale(1.08);
+      border-color: var(--accent);
+      background: rgba(5,5,16,0.8);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent), inset 0 0 15px color-mix(in srgb, var(--accent) 10%, transparent);
     }
-    .spirit-card.selected img { filter: brightness(1.1) saturate(1.2); }
-    .spirit-card.selected::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border: 2px solid var(--accent, #ff6b35);
-      border-radius: 12px;
-      animation: selectionPulse 2s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 4;
-    }
+    .spirit-card.selected .spirit-card-glow { opacity: 1; }
     .spirit-card.dimmed {
-      transform: scale(0.95);
-      filter: brightness(0.4) saturate(0.3);
+      transform: scale(0.92);
+      opacity: 0.35;
+      filter: brightness(0.5);
     }
-    .spirit-card.dimmed img { filter: brightness(0.4) saturate(0.3); }
 
     .spirit-footer {
       display: flex;
       justify-content: center;
       gap: 12px;
-      padding: 8px 16px max(12px, env(safe-area-inset-bottom));
+      padding: 6px 16px max(10px, env(safe-area-inset-bottom));
       background: linear-gradient(0deg, rgba(5,5,16,0.98) 0%, rgba(5,5,16,0.7) 70%, transparent 100%);
-      z-index: 3;
+      z-index: 10;
       flex-shrink: 0;
     }
     .spirit-sig {
@@ -1390,57 +1441,70 @@
     <div class="char-sig">by BATUPIA Studios</div>
   </section>
 
-  <!-- ========== 3. RUH SEÇİMİ
-
-  <!-- ========== 3. RUH SEÇİMİ v9.0 — STONEBREAKING EVRENİ 4 RUH SİNEMATİK ========== -->
+  <!-- ========== 3. RUH SEÇİMİ v9.2 — STONEBREAKING EVRENİ SİNEMATİK RUH SEÇİMİ ========== -->
   <section id="screen-spirit" class="screen" aria-label="Ruh Seçimi">
     <div class="screen-header">
       <h1>Element Ruhunu Seç</h1>
       <p>4 ruh · 12 bölüm · Sonsuz mühür · ◆</p>
     </div>
 
-    <div class="spirit-grid" id="spirit-grid">
-      <!-- KOR — Ateş Ruhu · ERKEK -->
-      <div class="spirit-card pick-kor" data-spirit="kor" role="button" tabindex="0">
-        <span class="spirit-badge">◆</span>
-        <img src="06_GRAFIK/ruh_kor_ates_sinematik.png" alt="Kor - Ateş Ruhu" />
-        <div class="spirit-info">
-          <div class="name" style="color:#ff6b35">KOR</div>
-          <div class="role">Ateş · Erkek · Bölüm 1-3</div>
-          <div class="spirit-quote-inline">"Ateşten doğarım, küllerden dirilirim."</div>
-        </div>
+    <!-- SİNEMATİK 5 SAHNE SİSTEMİ — 4lü varsayılan + 4 ruh -->
+    <div class="spirit-cinema" id="spirit-cinema">
+      <img class="spirit-cinema-bg bg-default-img" src="06_GRAFIK/ruh_4lu_sinematik.png" alt="4 Element Ruhu — Kadim Tapınak" />
+      <img class="spirit-cinema-bg bg-kor-img" src="06_GRAFIK/ruh_kor_ates_sinematik.png" alt="Kor — Ateş Ruhu" />
+      <img class="spirit-cinema-bg bg-baam-img" src="06_GRAFIK/ruh_baam_su_sinematik.png" alt="Baam — Su Ruhu" />
+      <img class="spirit-cinema-bg bg-mand-img" src="06_GRAFIK/ruh_mand_toprak_sinematik.png" alt="Mand — Toprak Ruhu" />
+      <img class="spirit-cinema-bg bg-zepy-img" src="06_GRAFIK/ruh_zepy_hava_sinematik.png" alt="Zepy — Hava Ruhu" />
+
+      <!-- Element parçacıkları -->
+      <div class="spirit-particles" aria-hidden="true">
+        <span style="left:15%;bottom:25%;width:4px;height:4px;animation-delay:0s;animation-duration:3.5s"></span>
+        <span style="left:35%;bottom:15%;width:3px;height:3px;animation-delay:0.8s;animation-duration:4s"></span>
+        <span style="left:55%;bottom:30%;width:5px;height:5px;animation-delay:1.6s;animation-duration:3s"></span>
+        <span style="left:75%;bottom:10%;width:3px;height:3px;animation-delay:2.4s;animation-duration:4.5s"></span>
+        <span style="left:85%;bottom:35%;width:4px;height:4px;animation-delay:1.2s;animation-duration:3.8s"></span>
+        <span style="left:25%;bottom:45%;width:3px;height:3px;animation-delay:0.4s;animation-duration:4.2s"></span>
+        <span style="left:65%;bottom:40%;width:4px;height:4px;animation-delay:1.8s;animation-duration:3.5s"></span>
+        <span style="left:45%;bottom:50%;width:3px;height:3px;animation-delay:2.8s;animation-duration:4.8s"></span>
       </div>
 
-      <!-- BAAM — Su Ruhu · KADIN -->
-      <div class="spirit-card pick-baam" data-spirit="baam" role="button" tabindex="0">
-        <span class="spirit-badge">◆</span>
-        <img src="06_GRAFIK/ruh_baam_su_sinematik.png" alt="Baam - Su Ruhu" />
-        <div class="spirit-info">
-          <div class="name" style="color:#4ecdc4">BAAM</div>
-          <div class="role">Su · Kadın · Bölüm 4-6</div>
-          <div class="spirit-quote-inline">"Derinliklerin sesi, dalgaların gücü."</div>
+      <!-- 4 Ruh kartı — üstte sıralı -->
+      <div class="spirit-cards-row" id="spirit-grid">
+        <div class="spirit-card pick-kor" data-spirit="kor" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#ff6b35">KOR</div>
+            <div class="role">Ateş · Erkek · Bölüm 1-3</div>
+            <div class="spirit-quote-inline">"Ateşten doğarım, küllerden dirilirim."</div>
+          </div>
         </div>
-      </div>
-
-      <!-- MAND — Toprak Ruhu · ERKEK -->
-      <div class="spirit-card pick-mand" data-spirit="mand" role="button" tabindex="0">
-        <span class="spirit-badge">◆</span>
-        <img src="06_GRAFIK/ruh_mand_toprak_sinematik.png" alt="Mand - Toprak Ruhu" />
-        <div class="spirit-info">
-          <div class="name" style="color:#c4a35a">MAND</div>
-          <div class="role">Toprak · Erkek · Bölüm 7-9</div>
-          <div class="spirit-quote-inline">"Taşın kalbi, toprağın hafızası."</div>
+        <div class="spirit-card pick-baam" data-spirit="baam" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#4ecdc4">BAAM</div>
+            <div class="role">Su · Kadın · Bölüm 4-6</div>
+            <div class="spirit-quote-inline">"Derinliklerin sesi, dalgaların gücü."</div>
+          </div>
         </div>
-      </div>
-
-      <!-- ZEPY — Hava Ruhu · KADIN -->
-      <div class="spirit-card pick-zepy" data-spirit="zepy" role="button" tabindex="0">
-        <span class="spirit-badge">◆</span>
-        <img src="06_GRAFIK/ruh_zepy_hava_sinematik.png" alt="Zepy - Hava Ruhu" />
-        <div class="spirit-info">
-          <div class="name" style="color:#a8d8ea">ZEPY</div>
-          <div class="role">Hava · Kadın · Bölüm 10-12</div>
-          <div class="spirit-quote-inline">"Rüzgarın nefesi, gökyüzünün özgürlüğü."</div>
+        <div class="spirit-card pick-mand" data-spirit="mand" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#c4a35a">MAND</div>
+            <div class="role">Toprak · Erkek · Bölüm 7-9</div>
+            <div class="spirit-quote-inline">"Taşın kalbi, toprağın hafızası."</div>
+          </div>
+        </div>
+        <div class="spirit-card pick-zepy" data-spirit="zepy" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#a8d8ea">ZEPY</div>
+            <div class="role">Hava · Kadın · Bölüm 10-12</div>
+            <div class="spirit-quote-inline">"Rüzgarın nefesi, gökyüzünün özgürlüğü."</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2417,12 +2481,6 @@
       setupPick('#screen-spirit', 'data-spirit', (v, card) => {
         state.spirit = v;
         $('#btn-spirit-next').disabled = false;
-        const sp = window.STONE_SPIRITS[v];
-        const q = $('#spirit-quote');
-        if (sp) {
-          q.textContent = `"${sp.quote}"`;
-          q.classList.add('show');
-        }
         // Dimming: seçilmeyen ruh kartları solar
         $$('#screen-spirit .spirit-card').forEach((c) => {
           if (c === card) {
@@ -2432,6 +2490,27 @@
             c.classList.add('dimmed');
             c.classList.remove('selected');
           }
+        });
+        // Sinematik sahne geçişi
+        const cinema = $('#spirit-cinema');
+        if (cinema) {
+          cinema.classList.remove('bg-kor', 'bg-baam', 'bg-mand', 'bg-zepy', 'hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+          cinema.classList.add('bg-' + v);
+        }
+      });
+
+      // Ruh kartları hover efektleri — sinematik sahne geçişi
+      $$('#screen-spirit .spirit-card').forEach((card) => {
+        const cinema = $('#spirit-cinema');
+        if (!cinema) return;
+        const spirit = card.dataset.spirit;
+        card.addEventListener('mouseenter', () => {
+          if (cinema.classList.contains('bg-kor') || cinema.classList.contains('bg-baam') || cinema.classList.contains('bg-mand') || cinema.classList.contains('bg-zepy')) return;
+          cinema.classList.add('hover-' + spirit);
+        });
+        card.addEventListener('mouseleave', () => {
+          if (cinema.classList.contains('bg-kor') || cinema.classList.contains('bg-baam') || cinema.classList.contains('bg-mand') || cinema.classList.contains('bg-zepy')) return;
+          cinema.classList.remove('hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
         });
       });
       $('#btn-spirit-back').addEventListener('click', () => goScreen('screen-character'));
