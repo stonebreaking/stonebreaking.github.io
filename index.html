@@ -1651,6 +1651,32 @@
     @keyframes stampRing { 0% { box-shadow: 0 0 0 0 rgba(255,209,148,0.55); opacity: 1; } 100% { box-shadow: 0 0 60px 44px rgba(255,209,148,0); opacity: 0; } }
     @keyframes touchRipple { 0% { transform: scale(0.6); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
 
+    /* M-012 kademe-1: Sonsuz Zihin Haritası */
+    #zihin-overlay { position: fixed; inset: 0; z-index: 1200; display: none; align-items: flex-end; justify-content: center; background: rgba(3,3,10,0.88); backdrop-filter: blur(6px); }
+    #zihin-overlay.show { display: flex; animation: fadeIn .3s ease-out; }
+    .zh-card { width: min(420px, 100%); max-height: 92vh; display: flex; flex-direction: column; background: linear-gradient(165deg, rgba(22,17,30,0.98), rgba(10,8,18,0.99)); border: 1.5px solid rgba(255,209,148,0.35); border-radius: 24px 24px 0 0; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 60px rgba(0,0,0,0.7); animation: fadeUp .35s ease both; }
+    .zh-head { display: flex; align-items: center; gap: 10px; }
+    .zh-title { font-weight: 900; letter-spacing: 1.5px; color: #ffd194; font-size: 1.05rem; text-shadow: 0 0 14px rgba(255,209,148,0.35); }
+    .zh-tas { margin-left: auto; display: flex; align-items: center; gap: 6px; color: #ffd194; font-weight: 800; font-size: 1.05rem; text-shadow: 0 0 10px rgba(255,209,148,0.5); }
+    .zh-kapa { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,209,148,0.3); color: #ffd194; width: 34px; height: 34px; border-radius: 50%; font-size: 1rem; cursor: pointer; }
+    .zh-stage { position: relative; width: 100%; aspect-ratio: 1/1.05; margin-top: 6px; }
+    .zh-line { position: absolute; height: 2px; transform-origin: 0 50%; background: linear-gradient(90deg, rgba(255,209,148,0.35), rgba(255,209,148,0.06)); }
+    .zh-line.on { background: linear-gradient(90deg, rgba(255,209,148,0.9), rgba(255,209,148,0.4)); filter: drop-shadow(0 0 4px rgba(255,209,148,0.5)); }
+    .zh-node { position: absolute; transform: translate(-50%, -50%); width: 58px; height: 58px; border-radius: 26%;
+      background: linear-gradient(145deg, #3a2f28, #191410 62%); border: 2px solid rgba(255,209,148,0.35);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.08), inset 0 -4px 8px rgba(0,0,0,0.5);
+      display: grid; place-items: center; transition: transform .18s ease, box-shadow .25s ease; cursor: pointer; }
+    .zh-node .zn-rune { font-size: 1.5rem; }
+    .zh-node .zn-ad { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); font-size: .55rem; letter-spacing: .5px; color: rgba(245,237,217,0.75); white-space: nowrap; }
+    .zh-node .zn-cost { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffe3b3, #c98f3d); color: #241505; font-size: .68rem; font-weight: 900; display: grid; place-items: center; box-shadow: 0 0 10px rgba(255,209,148,0.55); }
+    .zh-node.acik { border-color: #ffd194; box-shadow: 0 0 18px rgba(255,209,148,0.45), 0 6px 14px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(0,0,0,0.5); }
+    .zh-node.acik .zn-rune { filter: drop-shadow(0 0 8px rgba(255,209,148,0.8)); }
+    .zh-node.uygun { border-color: rgba(255,209,148,0.75); animation: muhurPulse 2.4s ease-in-out infinite; }
+    .zh-node.uygun:active { transform: translate(-50%,-50%) scale(0.94); }
+    .zh-node.kilit { opacity: .45; filter: grayscale(0.65); }
+    .zh-foot { margin-top: 8px; text-align: center; font-size: .62rem; letter-spacing: 1px; color: rgba(255,209,148,0.55); }
+    @media (prefers-reduced-motion: reduce) { .zh-node.uygun { animation: none; } }
+
     /* M-013 kademe-1: ruh geri-dönüş mesajı (toast) */
     #ruh-toast {
       position: fixed; left: 50%; bottom: 6vh; transform: translateX(-50%) translateY(24px);
@@ -2191,6 +2217,7 @@
 
     </div>
     <div class="footer-actions">
+      <button class="btn-ui" type="button" id="btn-prof-zihin">🧠 Zihin</button>
       <button class="btn-ui" type="button" id="btn-prof-back">Geri</button>
       <button class="btn-ui primary" type="button" id="btn-prof-save">Kaydet</button>
     </div>
@@ -2267,6 +2294,7 @@
     </div>
     <p class="v-msg" id="v-msg">Taşları doğru okudun. Evren mühürü titreşti.</p>
     <button class="btn-ui primary" type="button" id="btn-next-level">Sonraki Bölüm</button>
+    <button class="btn-ui" type="button" id="btn-zihin" style="margin-top:10px">🧠 Zihin Haritası <span id="v-zihin-tas" style="opacity:.85"></span></button>
     <button class="btn-ui" type="button" id="btn-victory-menu" style="margin-top:10px">Ana Menü</button>
   </div>
 
@@ -2342,6 +2370,7 @@
   <script src="js/ses.js?v=72"></script>
   <script src="js/game.js?v=72"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
+  <script src="js/zihin_haritasi.js?v=72"></script>
   <script>
     // =========================================================
     // STONEBREAKING App Controller v6.3 — Sonsuz mod + 12 bölüm sinematik + ses
@@ -2741,6 +2770,15 @@
       if (lv === 12) nxt.textContent = 'Sonsuz Moda Gir';
       else if (endless) nxt.textContent = `Devam · Sonsuz ${lv + 1 - 12}`;
       else nxt.textContent = `Bölüm ${lv + 1}`;
+      // M-012: zihin taşı ödülü (bölüm/sonsuz dedup kurallı)
+      try {
+        if (window.ZIHIN && stats && stats.level) {
+          const kazanc = ZIHIN.odul(stats.level > 12 ? 'sonsuz' : 'bolum', stats.level);
+          if (kazanc && $('#v-msg')) $('#v-msg').textContent += ' 🧠 +1 Zihin Taşı kazandın!';
+          const zt = $('#v-zihin-tas');
+          if (zt) zt.textContent = '· ' + ZIHIN.durum().tas + ' taş';
+        }
+      } catch (_) {}
       $('#victory-overlay').classList.add('show');
     }
 
@@ -2980,6 +3018,7 @@
           p.lastIqBonus = bonus;
           saveProfile();
         } catch (_) {}
+        try { if (window.ZIHIN && stats && stats.level) ZIHIN.odul('iq', stats.level); } catch (_) {} // M-012
         $('#iq-bonus').textContent = '+' + bonus;
         $('#iq-tier').textContent = tier;
         $('#iq-avg').textContent = '%' + avg + ' senkron';
@@ -3373,6 +3412,16 @@
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       game.resize();
       game.newGame(startCh);
+      // M-012: Zihin Haritası perkleri — mühürlü düğümler güç verir
+      try {
+        const pk = window.ZIHIN && ZIHIN.perkleri();
+        if (pk) {
+          game.hintsLeft = (game.hintsLeft || 0) + (pk.ipucu || 0);
+          game.undosLeft = (game.undosLeft || 0) + (pk.geri || 0);
+          game.shufflesLeft = (game.shufflesLeft || 0) + (pk.karis || 0);
+        }
+        game.emitAll && game.emitAll();
+      } catch (_) {}
       game.resize();
       game.startLoop();
       await playChapterTransition(startCh);
@@ -3435,6 +3484,13 @@
       StoneSound.unlock();
       // M-013 kademe-1: ruh geri-dönüş mesajı hazırlığı (son görüş + seri)
       try { window.RUH_CAGRI && RUH_CAGRI.init(Date.now(), () => state.spirit); } catch (_) {}
+      // M-012: Zihin Haritası hazırlık + açılış düğmeleri
+      try {
+        window.ZIHIN && ZIHIN.init({ taslama: showToast });
+        const zhAc = () => { try { StoneSound.tap && StoneSound.tap(); } catch (_) {} window.ZIHIN && ZIHIN.ac(); };
+        $('#btn-zihin')?.addEventListener('click', zhAc);
+        $('#btn-prof-zihin')?.addEventListener('click', zhAc);
+      } catch (_) {}
       // M-009 FAZ 1: studios dokun → mühür vur → evren sahnesi açılır (metinsiz)
       (function initStudiosPhase() {
         const studios = $('#studios-phase');
