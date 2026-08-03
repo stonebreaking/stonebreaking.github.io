@@ -1,151 +1,111 @@
-# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v7.3)
+# 🔥 PATRON BT — YENİ OTURUM DEVİR MESAJI (v8.10)
 
-**Tarih:** 02.08.2026 · **Sürüm:** v7.3 (`4a1b440`) · **Patron:** Batuhan / BATUPIA Studios
+**Tarih:** 03.08.2026 · **Sürüm:** v8.10 (`f3706cd`) · **Patron:** Batuhan / BATUPIA Studios
 **Canlı:** https://stonebreaking.github.io/ · **Repo:** https://github.com/stonebreaking/stonebreaking.github.io
-**Son Push:** `4a1b440` — GitHub'da ✅
+**Son Push:** `f3706cd` — GitHub'da ✅
 
 ---
 
-## 🚨 İLK OKU — KRİTİK KURALLAR
+## 🎨 EVREN ÇİZİM TARZI (KRİTİK — DEĞİŞTİRME)
 
-### Yedek Protokolü (Mühürlü)
-1. Workspace `.git` klasörü oturumlar arası SİLİNİYOR
-2. Kurtarma: `git init -b main && git remote add origin https://github.com/stonebreaking/stonebreaking.github.io.git && git fetch origin main && git reset --mixed origin/main && git checkout origin/main -- .`
-3. TÜM YEDEKLER SADECE GITHUB'DA — workspace'de kalıcı değil
-4. Her iş bitince: Patron'dan GITHUB_TOKEN iste → push → token sil
-5. `01_GIZLI/.env` asla commit edilmez
+**STONEBREAKING evreninin çizim tarzı:** `uploads/sss.png` referans görselindeki gibi —
+temiz anime çizgiler, canlı renkler, cel-shaded, çocuk animasyonu tarzı değil ama premium anime.
+Bu tarz evrenin resmi çizim tarzıdır. Tüm karakter ve sahne görselleri bu tarza uygun olmalıdır.
+
+### Karakter Onayları
+- **Kadın Stonebreaker:** ✅ ONAYLANDI — `stonebreaker_ikili_sinematik.png` içindeki kadın karakter mükemmel
+- **Erkek Stonebreaker:** ✅ ONAYLANDI — kısa military saç, kumral, bal köpüğü göz, 5 o'clock shadow
+- **Kolye Madalyon:** ✅ ONAYLANDI — `kolye_stonebreaker_muhur.png` — volkanik taş, ◆ mühür, 4 element renkli çatlak
+
+---
+
+## 📌 KRİTİK BİLGİLER
+
+### Black Screen (SİYAH EKRAN) — 3 Aşamalı Çözüm
+1. `visibility: hidden`/`visible` → CSS transition'dan kaldırıldı
+2. `display: none`/`flex` → CSS transition ile çalışmıyor, kaldırıldı
+3. Browser cache → `!important` inline `<style>` kuralları + CSS cache buster `?v=80`
+
+### Inline `.screen` kuralları (index.html `<style>` bloğunda):
+```css
+.screen { position: fixed !important; inset: 0 !important; width: 100% !important; height: 100% !important; overflow: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: 0 !important; visibility: visible !important; display: flex !important; transition: none !important; }
+.screen.active { opacity: 1 !important; pointer-events: auto !important; z-index: 20 !important; visibility: visible !important; display: flex !important; }
+.screen.exit { opacity: 0 !important; pointer-events: none !important; z-index: 10 !important; visibility: visible !important; display: flex !important; }
+```
 
 ### Marka Kuralları
-- Oyun: **STONEBREAKING** · Şirket: **BATUPIA Studios** (küçük imza)
-- Element renkleri: Ateş #ff6b35 · Su #4ecdc4 · Toprak #c4a35a · Hava #a8d8ea
-- Taş anayasası: Kare taş, şeffaf PNG, master `ates_06_lava_core.png`
+- **Oyun:** STONEBREAKING (tekil, çoğul DEĞİL)
+- **Şirket:** BATUPIA Studios (küçük imza sadece)
+- **Element renkleri:** Ateş #ff6b35, Su #4ecdc4, Toprak #c4a35a, Hava #a8d8ea
+- **Taş anayasa:** Kare taş, transparent PNG, master `ates_06_lava_core.png`
+- **Mühür sembolü:** ◆ (elmas/diamond)
 
 ---
 
-## 📋 OTURUM #6 ÖZETİ — YAPILANLAR
-
-### 1. BATUPIA Intro (SAHNE -1) Sinema Sahnesi
-- Logo 80px → 220px büyütüldü
-- Arka plan güçlü radial gradient + çift katmanlı glow
-- Studio adı ve alt yazı büyütüldü
-
-### 2. Splash (SAHNE 0) STONEBREAKING Yazı-Buton Çakışması
-- Floating redundant STONEBREAKING yazısı kaldırıldı (`display:none !important`)
-- Logo görselinde zaten yazıyor — butonu kapatıyordu
-- Buton küçültüldü: 14px/32px padding, 0.92rem font
-- Logo 220px, buton net aşağıda
-
-### 3. SİYAH EKRAN KÖKTEN ÇÖZÜM (3 aşamada bulundu)
-
-**Sorunun gerçek kaynağı sırayla:**
-
-| Aşama | Sorun | Çözüm |
-|-------|-------|-------|
-| 1 | `visibility: hidden` → `visible` transition 0.7s bekletiyordu | `visibility` kaldırıldı |
-| 2 | `display: none` → `display: flex` geçişinde CSS transition çalışmıyor, opacity 0'da kalıyordu | `display: none`/`flex` kaldırıldı |
-| 3 | CSS dosyası tarayıcı cache'inden eski sürümü sunuyordu | `.screen` kuralları inline `<style>` bloğuna eklendi |
-
-**Mevcut .screen sistemi (KESİN ÇÖZÜM):**
-```css
-/* INLINE — index.html <style> içinde, CSS dosyasından ÖNCELİKLİ */
-.screen { position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0; pointer-events: none; z-index: 0; }
-.screen.active { opacity: 1; pointer-events: auto; z-index: 20; }
-.screen.exit { opacity: 0; pointer-events: none; z-index: 10; }
-```
-- **display: none YOK** — tüm screen'ler her zaman DOM'da, `display: flex` ID bazlı
-- **visibility YOK** — opacity + z-index + pointer-events ile yönetim
-- **transition YOK** — anında görünür/kaybolur, siyah ekran riski %0
-
-### 4. startGame() Sıralama Düzeltmesi
-```javascript
-// ESKİ (bozuk): game.startLoop() → goScreen() → playChapterTransition() → game.newGame()
-// Tahta boşken canvas çiziliyordu = siyah/koyu ekran
-
-// YENİ (düzeltildi): goScreen() → 2 frame bekle → resize() → newGame() → resize() → startLoop()
-// DOM yerleşince canvas boyutlanır, sonra oyun başlar
-```
-
-### 5. Element Temalı Ses Sistemi v2
-- Her elementin (Ateş/Su/Toprak/Hava) kendi frekans haritası
-- `StoneSound.breath(combo, element)` — elemente göre nefes sesi
-- `StoneSound.win(element)` — elemente göre zafer fanfarı
-- `StoneSound.chapterReveal(element)` — bölüm geçiş sinematik sesi
-
-### 6. Sonsuz Mod Zorluk Eğrisi
-- Dalga arttıkça tahta büyür (wave faktörü)
-- Güçler dengeli artar (her 3 dalga'da ekstra ipucu/geri al)
-- maxTiles 72'ye kadar çıkar
-
-### 7. Smart Solver v2
-- Yığın bazlı eşleştirme, 2-tepsi-öncelik stratejisi
-- 44/44 test, 1.8 saniyede sıfır hata
-
-### 8. playStudioIntro() Düzeltmesi
-- `intro.style.display = 'none'` kaldırıldı
-- `goScreen('screen-splash')` kullanılıyor — tutarlı geçiş
-
-### 9. Bölüm Geçiş Sinematiği Güçlendirildi
-- Portre 128px, çift katmanlı glow (40px+80px)
-- Element gradyan arka plan
-
----
-
-## 📁 DOSYA YAPISI (ÖNEMLİ)
+## 🎮 OYUN AKIŞI
 
 ```
-index.html        ← TÜM inline CSS + JS controller (2280+ satır)
-css/animasyon.css ← Animasyonlar + @keyframes (sinematik, partikül, vb.)
-js/game.js        ← Motor: StonebreakingGame class, layout, tahta, draw
-js/ses.js         ← Element temalı ses sistemi v2
-test/motor_smoke_test.js ← Smart solver smoke test (44/44)
-```
-
----
-
-## ⚠️ BİLİNEN SORUNLAR / DİKKAT
-
-1. **GitHub Pages deploy 1-3 dakika sürebilir** — push sonrası hemen test etme
-2. **Tarayıcı cache** — test için gizli sekme (incognito) kullan
-3. **CSS dosyası cache riski** — `.screen` kuralları inline olduğundan bypass edildi
-4. **Splash sinematik**: `splashPlayed` flag ile sadece ilk girişte oynar, geri dönüşte direkt logo+buton
-
----
-
-## 📋 SIRADAKİ İŞLER (PATRON BT ÖNCELİĞİ)
-
-1. **Google OAuth gerçek bağlantı** — Client ID verilince aktif
-2. **Storyboard entegrasyonu** — Çizgi film sinematikleri
-3. **Ses genişletme** — Bölüm diyalogları seslendirme
-4. **mahjong_evren_taslari.jpg referans** — Oyun içi görsellere uygula
-5. **Kart revizyon turu 2** — Maskot K/E net referans
-6. **Ana menü büyük BATUPIA temizliği**
-
----
-
-## 🎮 OYUN AKIŞI (MÜHÜRLENMİŞ)
-
-```
-BATUPIA Intro (SAHNE -1) → 3s bekle → goScreen('screen-splash')
+BATUPIA Intro (SAHNE -1) → 3s wait → goScreen('screen-splash') → playSplashCinematic()
   ↓
 Splash (SAHNE 0) → sinematik → Maceraya Başla butonu
   ↓
-Karakter Seçimi (SAHNE 2) → Kor erkek / Baam kadın, slide-in
+Karakter Seçimi (SAHNE 2) → İKİLİ SİNEMATİK SAHNE — Erkek / Kadın Stonebreaker
   ↓
-Ruh Seçimi (SAHNE 3) → 4 ruh kartı, element renkleri
+Ruh Seçimi (SAHNE 3) → 4 ruh kartı (Kor, Baam, Mand, Zepy)
   ↓
 Oyun (SAHNE 4) → goScreen → resize → newGame → startLoop
-  ↓
-Zafer → Sonraki Bölüm / Sonsuz Mod
 ```
 
----
-
-## 🔐 GÜVENLİK
-
-- Token push sonrası SİLİNİR — remote URL'den temizlenir
-- `.env` asla commit edilmez — `.gitignore` koruyor
-- Repo'da token yok — grep ile denetlendi
+### ÖNEMLİ: Karakter vs Ruh Ayrımı
+- **Karakterler = STONEBREAKER** — Erkek ve Kadın, tüm elementlerin kırıcısı
+- **Ruhlar = Kor, Baam, Mand, Zepy** — element ruhları, SADECE ruh seçiminde
+- Karakter seçiminde Kor/Baam isimleri YOK — sadece "ERKEK" ve "KADIN" Stonebreaker
 
 ---
 
-*PATRON BT v7.3 — 02.08.2026 Devir Mesajı Mühürlendi. GITHUB TEK YEDEK.* ✅
+## 📁 ÖNEMLİ DOSYALAR
+
+- `index.html` — Ana oyun dosyası (2300+ satır), inline CSS, tüm ekranlar, JS controller
+- `06_GRAFIK/stonebreaker_ikili_sinematik.png` — Karakter seçim sinematik sahnesi (v8.10)
+- `06_GRAFIK/kolye_stonebreaker_muhur.png` — Kolye madalyon tasarımı
+- `06_GRAFIK/stonebreaking_3D_muhur.png` — 3D logo (element renkleri evrene uyarlanmış, ◆ mühür merkeze)
+- `css/animasyon.css` — Animasyon keyframes, `.screen !important` kuralları
+- `js/game.js` — Oyun motoru: StonebreakingGame class
+- `js/ses.js` — Element temalı ses sistemi v2
+- `uploads/sss.png` — **EVREN ÇİZİM TARZI REFERANSI** (değiştirme!)
+- `uploads/stonebreaker_male.png` — Erkek saç referansı
+
+---
+
+## ✅ TAMAMLANAN (v8.0-v8.10)
+
+- Karakter seçim ekranı: İKİLİ SİNEMATİK SAHNE (yan yana bölünmüş DEĞIL)
+- Erkek Stonebreaker: kısa military saç, bal köpüğü göz, kolyeli
+- Kadın Stonebreaker: omuz hizası kumral saç, bal köpüğü göz, kolyeli
+- STONEBREAKING evren çizim tarzı belirlendi (sss.png referansı)
+- Kolye madalyon tasarımı (volkanik taş, ◆ mühür, 4 element renkli çatlak)
+- 3D logo: element renkleri evrene uyarlandı, ◆ mühür merkeze eklendi
+- Canlı ruh evreni: element enerji akımları, yüzen runalar, parçacık efektleri
+- Sinematik CSS: charReveal, charSelectionPulse, badgeReveal animasyonları
+- `.char-pick-zone` sol/sağ tıklama alanı
+- `.char-label-item` alt bilgi paneli (isim, unvan, söz)
+- Kadim taş plaket butonları (btn-seal stili)
+- CSS cache buster `?v=80`
+- `css/animasyon.css` .screen !important kuralları
+
+## ❌ ÇÖZÜLMEMİŞ
+
+- Black screen after BATUPIA intro hala raporlanıyor — cache sorunu olabilir
+- Splash butonu (Maceraya Başla) kadim taş plaket stilinde görünmüyor olabilir
+- Ruh seçimi ekranı henüz yeni anime tarzına uyarlanmadı
+
+---
+
+## 🔄 PATRON BT SİSTEMİ
+
+- Batuhan = CEO, PATRON BT = teknik partner
+- GitHub TEK yedek — workspace `.git` siliniyor oturumlar arası
+- Kurtarma: `git init -b main && git remote add origin https://github.com/stonebreaking/stonebreaking.github.io.git && git fetch origin main && git reset --mixed origin/main && git checkout origin/main -- .`
+- Push sonrası: GITHUB_TOKEN remote URL'den sil, .env commit etme
+- Kullanıcı Türkçe konuşur, Türkçe yanıt ver
+- "patron bt" = otonom kontrol
