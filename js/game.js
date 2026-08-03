@@ -826,28 +826,33 @@ class StonebreakingGame {
     const r = this.tileRect(t);
     const blocked = !t.free;
     const ctx = this.ctx;
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.beginPath();
-    ctx.roundRect(r.x + 3, r.y + 5, r.w, r.h, 10);
-    ctx.fill();
+    const isSelected = (this.selectedTile === t.id);
 
-    if (t.glow > 0 || this.hintIds.has(t.id)) {
+    // 3D DEPTH — alt gölge
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath();
+    ctx.roundRect(r.x + 4, r.y + 6, r.w, r.h, 10);
+    ctx.fill();
+    ctx.restore();
+
+    if (isSelected || t.glow > 0 || this.hintIds.has(t.id)) {
       ctx.shadowColor = this.types[t.type].color;
-      ctx.shadowBlur = 18 * (t.glow || 1.5);
+      ctx.shadowBlur = isSelected ? 24 : 18 * (t.glow || 1.5);
     } else ctx.shadowBlur = 0;
 
-    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false);
+    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false, isSelected);
     ctx.shadowBlur = 0;
 
     if (blocked) {
-      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
       ctx.beginPath();
       ctx.roundRect(r.x, r.y, r.w, r.h, 10);
       ctx.fill();
     }
   }
 
-  drawTileFace(type, x, y, w, h, alpha = 1, dim = false, lift = false) {
+  drawTileFace(type, x, y, w, h, alpha = 1, dim = false, lift = false, selected = false) {
     const ctx = this.ctx;
     const meta = this.types[type] || this.types[0];
     const radius = Math.max(4, Math.min(9, w * 0.16));
@@ -860,13 +865,12 @@ class StonebreakingGame {
       ctx.shadowOffsetY = 5;
     }
 
-    // v6.2: TAŞ GÖVDESİ — şeffaf kenarlı PNG taşın kendisi (balon plaka YOK)
+    // TAŞ GÖVDESİ — PNG veya fallback
     const img = this.tileImages[meta.key];
     ctx.beginPath();
     ctx.roundRect(x, y, w, h, radius);
     ctx.clip();
     if (img) {
-      // cover-fit: kare taş yüzeye tam oturur (PNG kare, yüzey kare)
       const ir = img.width / img.height;
       const tr = w / h;
       let dw = w, dh = h, dx = x, dy = y;
@@ -879,37 +883,92 @@ class StonebreakingGame {
       g.addColorStop(1, '#101018');
       ctx.fillStyle = g;
       ctx.fillRect(x, y, w, h);
-      ctx.font = `bold ${Math.floor(w * 0.4)}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(meta.emoji, x + w / 2, y + h / 2);
     }
     ctx.restore();
-    // İnce üst çerçeve ışıltısı — sembolü kapatmaz, kenarı vurgular
+
+    // 3D KENAR EFEKTI — üst/sol aydınlık, alt/sağ karanlık
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(x + 1, y + 1, w - 2, h - 2, radius);
+    ctx.roundRect(x, y, w, h, radius);
     ctx.clip();
-    const hl = ctx.createLinearGradient(x, y, x, y + h * 0.16);
-    hl.addColorStop(0, 'rgba(255,255,255,0.12)');
-    hl.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = hl;
-    ctx.fillRect(x, y, w, h * 0.16);
+    const topLight = ctx.createLinearGradient(x, y, x, y + h * 0.25);
+    topLight.addColorStop(0, 'rgba(255,255,255,0.18)');
+    topLight.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = topLight;
+    ctx.fillRect(x, y, w, h * 0.25);
+    const bottomShade = ctx.createLinearGradient(x, y + h * 0.75, x, y + h);
+    bottomShade.addColorStop(0, 'rgba(0,0,0,0)');
+    bottomShade.addColorStop(1, 'rgba(0,0,0,0.25)');
+    ctx.fillStyle = bottomShade;
+    ctx.fillRect(x, y + h * 0.75, w, h * 0.25);
+    const leftLight = ctx.createLinearGradient(x, y, x + w * 0.15, y);
+    leftLight.addColorStop(0, 'rgba(255,255,255,0.10)');
+    leftLight.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = leftLight;
+    ctx.fillRect(x, y, w * 0.15, h);
+    const rightShade = ctx.createLinearGradient(x + w * 0.85, y, x + w, y);
+    rightShade.addColorStop(0, 'rgba(0,0,0,0)');
+    rightShade.addColorStop(1, 'rgba(0,0,0,0.15)');
+    ctx.fillStyle = rightShade;
+    ctx.fillRect(x + w * 0.85, y, w * 0.15, h);
     ctx.restore();
 
-    // Rim light — koyu zeminde taş öne çıksın
-    ctx.strokeStyle = dim ? 'rgba(220,210,190,0.10)' : 'rgba(255,236,200,0.30)';
-    ctx.lineWidth = 1.5;
+    // BÜYÜK SEMBOL — ortada, anlaşılır, element renginde
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, radius);
+    ctx.clip();
+    const symbolSize = Math.floor(w * 0.45);
+    ctx.font = `${symbolSize}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = meta.color;
+    ctx.shadowBlur = selected ? 16 : 8;
+    ctx.fillStyle = meta.color;
+    ctx.fillText(meta.emoji, x + w / 2, y + h / 2 + 1);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    // ◆ MÜHÜR rozeti — sağ alt köşe
+    ctx.save();
+    const muhurSize = Math.floor(w * 0.18);
+    ctx.font = `bold ${muhurSize}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,209,148,0.6)';
+    ctx.fillText('◆', x + w - muhurSize, y + h - muhurSize * 0.5);
+    ctx.restore();
+
+    // Rim light
+    ctx.strokeStyle = selected
+      ? meta.color
+      : (dim ? 'rgba(220,210,190,0.10)' : 'rgba(255,236,200,0.30)');
+    ctx.lineWidth = selected ? 2.5 : 1.5;
     ctx.beginPath();
     ctx.roundRect(x + 0.75, y + 0.75, w - 1.5, h - 1.5, radius);
     ctx.stroke();
 
-    // Alt kalınlık (3D taban)
-    const baseH = Math.max(3, h * 0.07);
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    // 3D ALT KALINLIK
+    const baseH = Math.max(4, h * 0.08);
+    const baseGrad = ctx.createLinearGradient(x, y + h - baseH, x, y + h);
+    baseGrad.addColorStop(0, 'rgba(0,0,0,0.3)');
+    baseGrad.addColorStop(1, 'rgba(0,0,0,0.5)');
+    ctx.fillStyle = baseGrad;
     ctx.beginPath();
     ctx.roundRect(x + 1, y + h - baseH, w - 2, baseH, 3);
     ctx.fill();
+
+    // Seçili titreşim
+    if (selected) {
+      ctx.save();
+      ctx.strokeStyle = meta.color;
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.4 + 0.3 * Math.sin(performance.now() / 150);
+      ctx.beginPath();
+      ctx.roundRect(x - 2, y - 2, w + 4, h + 4, radius + 2);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     if (dim) {
       ctx.fillStyle = 'rgba(6,12,10,0.32)';
