@@ -205,13 +205,20 @@
 
     #screen-splash .splash-stage {
       position: relative;
-      width: min(220px, 55vw);
-      height: min(220px, 55vw);
+      width: min(400px, 86vw);
+      height: min(400px, 86vw);
       display: grid;
       place-items: center;
       margin-top: 2vh;
       flex-shrink: 0;
     }
+    /* v9.11.1 Patron 03.08: logo sahneyle bütünleşik — nebula katmanı tüm açılışı sarar */
+    #screen-splash .seal-backdrop {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: url('06_GRAFIK/sahne_kozmos_stonebreaking.jpg') center 42%/cover no-repeat;
+      filter: blur(26px) brightness(.55); opacity: .5;
+    }
+
     /* ---- TEK PARÇA SİNEMATİK SAHNE: logo + orbit + elementler BİRLEŞİK ---- */
     .seal-frame {
       position: relative;
@@ -404,7 +411,7 @@
       z-index: 3;
     }
     @media (max-height: 680px) {
-      #screen-splash .splash-stage { width: min(180px, 48vw); height: min(180px, 48vw); }
+      #screen-splash .splash-stage { width: min(320px, 80vw); height: min(320px, 80vw); }
       .btn-seal { padding: 10px 22px; font-size: 0.78rem; letter-spacing: 3px; }
     }
 
@@ -1614,9 +1621,16 @@
       transition: opacity .5s ease, visibility 0s .55s;
     }
     #screen-splash .studios-phase.gone { opacity: 0; pointer-events: none; visibility: hidden; }
+    #screen-splash .studios-phase::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: url('06_GRAFIK/sahne_kozmos_batupia.jpg') center/cover no-repeat;
+      filter: blur(30px) brightness(.55); opacity: .4;
+    }
     #screen-splash .studios-seal {
-      width: min(58vw, 300px); height: auto; object-fit: contain;
-      filter: drop-shadow(0 0 26px rgba(199,125,255,0.35));
+      position: relative; z-index: 1;
+      width: min(86vw, 540px); height: auto; object-fit: contain;
+      /* v9.11.1r2: şeffaf PNG (oyulmuş) — blend/maske hilesi kaldırıldı */
+      filter: drop-shadow(0 0 44px rgba(255,150,64,0.55));
       animation: studiosBreathe 3.2s ease-in-out infinite;
       user-select: none; -webkit-user-drag: none; pointer-events: none;
     }
@@ -1636,6 +1650,24 @@
     @keyframes studiosStamp { 0% { transform: scale(1); } 35% { transform: scale(0.9); } 100% { transform: scale(1.06); filter: drop-shadow(0 0 60px rgba(255,209,148,0.9)); } }
     @keyframes stampRing { 0% { box-shadow: 0 0 0 0 rgba(255,209,148,0.55); opacity: 1; } 100% { box-shadow: 0 0 60px 44px rgba(255,209,148,0); opacity: 0; } }
     @keyframes touchRipple { 0% { transform: scale(0.6); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
+
+    /* M-013 kademe-1: ruh geri-dönüş mesajı (toast) */
+    #ruh-toast {
+      position: fixed; left: 50%; bottom: 6vh; transform: translateX(-50%) translateY(24px);
+      z-index: 90; min-width: 240px; max-width: 86vw;
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; border-radius: 16px;
+      background: linear-gradient(160deg, rgba(20,16,26,0.94), rgba(8,8,16,0.96));
+      border: 1.5px solid var(--rc, #ffd194);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.55), 0 0 24px var(--rc, rgba(255,209,148,0.25));
+      opacity: 0; pointer-events: none; cursor: pointer;
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    #ruh-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    #ruh-toast .rc-emoji { font-size: 1.8rem; filter: drop-shadow(0 0 10px var(--rc, #ffd194)); }
+    #ruh-toast .rc-text { font-size: .85rem; line-height: 1.45; color: #f5edd9; letter-spacing: .3px; }
+    #ruh-toast .rc-sub { display: block; margin-top: 4px; font-size: .68rem; color: var(--rc, #ffd194); opacity: .85; letter-spacing: 1px; }
+    @media (prefers-reduced-motion: reduce) { #ruh-toast { transition: none; } }
 
     /* FAZ 2 — Macera kapısı: metinsiz rune taşları */
     #screen-splash .rune-gate {
@@ -1802,15 +1834,14 @@
       <div class="studio-line-top"></div>
       <!-- v9.9: BATUPIA logo görseli + CSS ◆ mühür -->
       <div class="studio-logo-wrap" id="studio-logo">
-        <img src="06_GRAFIK/logo_batupia_evren.png" alt="BATUPIA Studios" style="max-width:220px;filter:drop-shadow(0 0 20px rgba(255,209,148,0.5))" />
+        <img src="06_GRAFIK/logo_batupia_evren.png" alt="BATUPIA Studios" style="max-width:min(92vw,620px);transform:translateY(-17%);position:relative;z-index:1;filter:drop-shadow(0 0 34px rgba(255,209,148,0.6)) drop-shadow(0 0 90px rgba(255,107,53,0.28))" />
         <div class="studio-muhur">◆</div>
         <div class="studio-muhur-crack ates"></div>
         <div class="studio-muhur-crack su"></div>
         <div class="studio-muhur-crack toprak"></div>
         <div class="studio-muhur-crack hava"></div>
       </div>
-      <div class="studio-name">BATUPIA</div>
-      <div class="studio-sub">S T U D I O S</div>
+      <!-- v9.11.1 Patron 03.08: isim yazıları KALDIRILDI — logo görselinde zaten BATUPIA STUDIOS yazıyor (yineleme yok) -->
       <div class="studio-line-bottom"></div>
     </div>
     <div class="studio-particles" id="studio-particles"></div>
@@ -1818,6 +1849,7 @@
 
   <!-- ========== 1. AÇILIŞ — STONEBREAKING EVRENİ SİNEMATİK ========== -->
   <section id="screen-splash" class="screen" aria-label="Açılış">
+    <div class="seal-backdrop" aria-hidden="true"></div>
     <div class="particles" id="splash-particles"></div>
 
     <!-- M-009 FAZ 2: STONEBREAKING SAHNE — mühürlü logo + metinsiz macera kapısı -->
@@ -1833,7 +1865,7 @@
         <div class="cin-orb su" id="orb-su"></div>
         <div class="cin-orb toprak" id="orb-toprak"></div>
         <div class="cin-orb hava" id="orb-hava"></div>
-        <img src="06_GRAFIK/logo_stonebreaking_muhur_new.png" alt="STONEBREAKING" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0.9;filter:drop-shadow(0 0 30px rgba(255,209,148,0.45))" />
+        <img src="06_GRAFIK/logo_stonebreaking_muhur_new.png" alt="STONEBREAKING" style="position:absolute;inset:-4%;width:108%;height:108%;object-fit:contain;opacity:1;filter:drop-shadow(0 0 34px rgba(255,209,148,0.5))" />
         <div class="splash-logo-text" id="muhur-logo">
           <div class="splash-logo-muhur">◆</div>
           <div class="splash-logo-crack ates"></div>
@@ -1862,7 +1894,7 @@
       <div class="studios-stamp" aria-hidden="true"></div>
       <img class="studios-seal" src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" />
       <div class="studios-touch" aria-hidden="true"></div>
-      <div class="byline-mini" id="byline-mini">by BATUPIA Studios</div>
+      <!-- v9.11.1 Patron 03.08: byline KALDIRILDI — mühürlü logoda isim yazıyor -->
     </div>
   </section>
 
@@ -2309,6 +2341,7 @@
 
   <script src="js/ses.js?v=72"></script>
   <script src="js/game.js?v=72"></script>
+  <script src="js/ruh_cagri.js?v=72"></script>
   <script>
     // =========================================================
     // STONEBREAKING App Controller v6.3 — Sonsuz mod + 12 bölüm sinematik + ses
@@ -2722,7 +2755,7 @@
       9: { img: '06_GRAFIK/kart_toprak_tamam.png', badge: '★ ULTRA NADİR', desc: '🗿 Toprak bölümleri tamamlandı! Rüzgara geçiliyor… 💨' },
       12: { img: '06_GRAFIK/kart_hava_tamam.png', badge: '★★ LEGENDARY', desc: '💨 Hava tamamlandı! Sonsuz Mühür yolu açık… ∞' },
     };
-    const VIRAL_CARD = { img: '06_GRAFIK/kart_viral_stonebreaking.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONErREAKING' };
+    const VIRAL_CARD = { img: '06_GRAFIK/kart_viral_stonebreaking.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONEBREAKING' };
 
     function showCard(stats) {
       const lv = stats?.level || state.lastStats?.level || 0;
@@ -3034,13 +3067,13 @@
     }
 
     async function shareCard() {
-      const desc = state._lastCardDesc || 'STONErREAKING — Element Taş Oyunu';
+      const desc = state._lastCardDesc || 'STONEBREAKING — Element Taş Oyunu';
       const text = `${desc}\n\n◆ stonebreaking.github.io\n#STONEBREAKING #BATUPIA #ElementOyunu`;
       
       // Try Web Share API first (mobile)
       if (navigator.share && navigator.canShare) {
         try {
-          await navigator.share({ title: 'STONErREAKING', text, url: 'https://stonebreaking.github.io/' });
+          await navigator.share({ title: 'STONEBREAKING', text, url: 'https://stonebreaking.github.io/' });
           return;
         } catch (e) { /* user cancelled */ }
       }
@@ -3400,6 +3433,8 @@
     function initUI() {
       // Ses: kullanıcı etkileşimiyle AudioContext açılır (mobil kuralı)
       StoneSound.unlock();
+      // M-013 kademe-1: ruh geri-dönüş mesajı hazırlığı (son görüş + seri)
+      try { window.RUH_CAGRI && RUH_CAGRI.init(Date.now(), () => state.spirit); } catch (_) {}
       // M-009 FAZ 1: studios dokun → mühür vur → evren sahnesi açılır (metinsiz)
       (function initStudiosPhase() {
         const studios = $('#studios-phase');
@@ -3431,6 +3466,7 @@
           btn.classList.remove('cracking');
           $('#crack-flash')?.classList.remove('show');
           goScreen('screen-character');
+          try { window.RUH_CAGRI && RUH_CAGRI.maybeShow(); } catch (_) {}
         }, 560);
       }
       $('#btn-start')?.addEventListener('click', () => runeGateEnter('#btn-start', false));
@@ -3637,9 +3673,9 @@
       });
       // Paylaş
       $('#btn-set-share')?.addEventListener('click', () => {
-        const text = `🔥 STONErREAKING — Element Taş Oyunu!\n💧 4 ruh · 12 bölüm · Sonsuz mod\n◆ Ben de oynuyorum: stonebreaking.github.io`;
+        const text = `🔥 STONEBREAKING — Element Taş Oyunu!\n💧 4 ruh · 12 bölüm · Sonsuz mod\n◆ Ben de oynuyorum: stonebreaking.github.io`;
         if (navigator.share) {
-          navigator.share({ title: 'STONErREAKING', text, url: 'https://stonebreaking.github.io/' });
+          navigator.share({ title: 'STONEBREAKING', text, url: 'https://stonebreaking.github.io/' });
         } else {
           navigator.clipboard?.writeText(text);
           showToast('📱 Kopyalandı! Arkadaşına gönder.');
