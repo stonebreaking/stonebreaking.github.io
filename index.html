@@ -37,6 +37,7 @@
     #screen-studio-intro .studio-bg {
       position: absolute;
       inset: 0;
+      pointer-events: none;
       background:
         radial-gradient(ellipse at 50% 45%, rgba(255,107,53,0.12) 0%, transparent 55%),
         radial-gradient(ellipse at 50% 45%, rgba(255,209,148,0.06) 0%, transparent 60%),
@@ -2885,13 +2886,13 @@
     function initUI() {
       // Ses: kullanıcı etkileşimiyle AudioContext açılır (mobil kuralı)
       StoneSound.unlock();
-      $('#btn-start').addEventListener('click', () => {
+      $('#btn-start')?.addEventListener('click', () => {
         state.endlessRequested = false;
         StoneSound.unlock();
         StoneSound.tap();
         goScreen('screen-character');
       });
-      $('#btn-endless').addEventListener('click', () => {
+      $('#btn-endless')?.addEventListener('click', () => {
         // v6.1.1: Sonsuz Moda doğrudan giriş (kilit açıksa)
         state.endlessRequested = true;
         StoneSound.unlock();
@@ -2975,8 +2976,8 @@
           cinema.classList.remove('hover-erkek', 'hover-kadin');
         });
       });
-      $('#btn-char-back').addEventListener('click', () => goScreen('screen-splash'));
-      $('#btn-char-next').addEventListener('click', () => {
+      $('#btn-char-back')?.addEventListener('click', () => goScreen('screen-splash'));
+      $('#btn-char-next')?.addEventListener('click', () => {
         if (!state.mascot) return;
         StoneSound.unlock();
         StoneSound.tap();
@@ -3042,8 +3043,8 @@
           cinema.classList.remove('hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
         });
       });
-      $('#btn-spirit-back').addEventListener('click', () => goScreen('screen-character'));
-      $('#btn-spirit-next').addEventListener('click', () => {
+      $('#btn-spirit-back')?.addEventListener('click', () => goScreen('screen-character'));
+      $('#btn-spirit-next')?.addEventListener('click', () => {
         if (!state.spirit) return;
         StoneSound.unlock();
         StoneSound.tap();
@@ -3052,9 +3053,9 @@
         startGame(endless ? { endless: true } : {});
       });
 
-      $('#btn-shuffle').addEventListener('click', () => { StoneSound.unlock(); StoneSound.shuffle(); game && game.shuffle(); });
-      $('#btn-hint').addEventListener('click', () => { StoneSound.unlock(); StoneSound.hint(); game && game.hint(); });
-      $('#btn-undo').addEventListener('click', () => { StoneSound.unlock(); StoneSound.undo(); game && game.undo(); });
+      $('#btn-shuffle')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.shuffle(); game && game.shuffle(); });
+      $('#btn-hint')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.hint(); game && game.hint(); });
+      $('#btn-undo')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.undo(); game && game.undo(); });
       // v9.9: Ayarlar butonu
       $('#btn-settings')?.addEventListener('click', () => {
         $('#settings-overlay')?.classList.add('show');
@@ -3163,13 +3164,13 @@
         reader.readAsDataURL(file);
       });
 
-      $('#btn-menu').addEventListener('click', () => {
+      $('#btn-menu')?.addEventListener('click', () => {
         hideVictory();
         if (game) game.stopLoop();
         goScreen('screen-splash');
       });
       // v9.9: Sonraki bölüm → kart göster (element tamamlandıysa)
-      $('#btn-next-level').addEventListener('click', () => {
+      $('#btn-next-level')?.addEventListener('click', () => {
         hideVictory();
         const stats = state.lastStats;
         const lv = stats?.level || 0;
@@ -3182,7 +3183,7 @@
           continueNextLevel();
         }
       });
-      $('#btn-victory-menu').addEventListener('click', () => {
+      $('#btn-victory-menu')?.addEventListener('click', () => {
         hideVictory();
         if (game) game.stopLoop();
         goScreen('screen-splash');
@@ -3212,20 +3213,20 @@
 
       // Profile
       const openProf = () => openProfile(document.querySelector('.screen.active')?.id || 'screen-game');
-      $('#spirit-chip').addEventListener('click', openProf);
-      $('#spirit-chip').addEventListener('keydown', (e) => {
+      $('#spirit-chip')?.addEventListener('click', openProf);
+      $('#spirit-chip')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProf(); }
       });
-      $('#btn-prof-back').addEventListener('click', () => {
+      $('#btn-prof-back')?.addEventListener('click', () => {
         goScreen(state.returnScreen || 'screen-splash');
         if (state.returnScreen === 'screen-game' && game) {
           game.startLoop();
           requestAnimationFrame(() => game.resize());
         }
       });
-      $('#btn-prof-save').addEventListener('click', saveProfileFromUI);
-      $('#prof-name-input').addEventListener('change', saveProfileFromUI);
-      $('#btn-google-login').addEventListener('click', () => {
+      $('#btn-prof-save')?.addEventListener('click', saveProfileFromUI);
+      $('#prof-name-input')?.addEventListener('change', saveProfileFromUI);
+      $('#btn-google-login')?.addEventListener('click', () => {
         // PATRON BT: Google Identity Services (GIS) OAuth entegrasyonu
         // NOT: Gerçek Client ID verilince aşağıdaki GIS kodu aktif olacak
         // const GIS_CLIENT_ID = 'TUA_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
