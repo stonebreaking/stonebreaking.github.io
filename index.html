@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>STONEBREAKING — Universe</title>
-  <link rel="stylesheet" href="css/animasyon.css?v=83" />
+  <link rel="stylesheet" href="css/animasyon.css?v=84" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
@@ -357,7 +357,7 @@
       .btn-seal { padding: 10px 22px; font-size: 0.78rem; letter-spacing: 3px; }
     }
 
-    /* ========== CHARACTER PICK v8.1 — SİNEMATİK ANIME STONEBREAKER (İKİLİ SAHNE) ========== */
+    /* ========== CHARACTER PICK v9.0 — STONEBREAKING EVRENİ SİNEMATİK KARAKTER SEÇİMİ ========== */
     #screen-character {
       background: #050510;
       display: flex;
@@ -372,49 +372,51 @@
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 45%, rgba(255,209,148,0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(196,163,90,0.06) 0%, transparent 40%),
-        linear-gradient(180deg, #08060f 0%, #050510 40%, #0a0a14 100%);
-      z-index: 0;
-    }
-    #screen-character::after {
-      content: '';
-      position: absolute;
-      inset: 0;
       z-index: 0;
       pointer-events: none;
     }
     #screen-character > * { position: relative; z-index: 1; }
 
+    /* — BAŞLIK — Kadim taş plaket */
     .char-header {
       text-align: center;
-      padding: max(10px, env(safe-area-inset-top)) 16px 2px;
-      z-index: 2;
+      padding: max(14px, env(safe-area-inset-top)) 16px 6px;
+      z-index: 10;
+      position: relative;
     }
     .char-header h1 {
-      font-size: clamp(1rem, 4vw, 1.4rem);
-      letter-spacing: 6px;
+      font-size: clamp(1.1rem, 4.5vw, 1.6rem);
+      letter-spacing: 8px;
       font-weight: 900;
       text-transform: uppercase;
       color: #ffd194;
-      text-shadow: 0 0 20px rgba(255,209,148,0.3), 0 2px 8px rgba(0,0,0,0.8);
-      animation: charTitleReveal 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+      text-shadow: 0 0 30px rgba(255,107,53,0.4), 0 0 60px rgba(78,205,196,0.3), 0 2px 8px rgba(0,0,0,0.9);
+      animation: charTitleReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+      position: relative;
+    }
+    .char-header h1::after {
+      content: '◆';
+      display: block;
+      font-size: 0.6rem;
+      color: #c4a35a;
+      margin-top: 4px;
+      letter-spacing: 4px;
+      text-shadow: 0 0 12px rgba(196,163,90,0.5);
     }
     .char-header .char-subtitle {
-      color: rgba(255,209,148,0.45);
-      font-size: 0.68rem;
-      margin-top: 4px;
-      letter-spacing: 3px;
+      color: rgba(255,209,148,0.4);
+      font-size: 0.6rem;
+      margin-top: 2px;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      animation: fadeUp 0.6s ease-out 0.2s both;
+      animation: fadeUp 0.6s ease-out 0.3s both;
     }
     @keyframes charTitleReveal {
-      0% { opacity: 0; transform: translateY(-20px); letter-spacing: 12px; }
-      100% { opacity: 1; transform: translateY(0); letter-spacing: 6px; }
+      0% { opacity: 0; transform: translateY(-20px) scale(0.9); letter-spacing: 16px; }
+      100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 8px; }
     }
 
-    /* İKİLİ SAHNE — tek sinematik görsel */
+    /* — SİNEMATİK SAHNE — */
     .char-cinema {
       flex: 1;
       position: relative;
@@ -439,39 +441,87 @@
     .bg-erkek-img { opacity: 0; z-index: 2; }
     .bg-kadin-img { opacity: 0; z-index: 2; }
 
-    /* Hover erkek → erkek sahnesi görünür, default solar */
-    .char-cinema.hover-erkek .bg-default-img { opacity: 0.15; }
-    .char-cinema.hover-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.85); }
+    /* Hover erkek */
+    .char-cinema.hover-erkek .bg-default-img { opacity: 0; }
+    .char-cinema.hover-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.9); }
     .char-cinema.hover-erkek .bg-kadin-img { opacity: 0; }
-    /* Hover kadın → kadın sahnesi görünür, default solar */
-    .char-cinema.hover-kadin .bg-default-img { opacity: 0.15; }
-    .char-cinema.hover-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.85); }
+    /* Hover kadın */
+    .char-cinema.hover-kadin .bg-default-img { opacity: 0; }
+    .char-cinema.hover-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.9); }
     .char-cinema.hover-kadin .bg-erkek-img { opacity: 0; }
-    /* Seçilmiş erkek → sadece erkek sahnesi */
+    /* Seçilmiş erkek */
     .char-cinema.bg-erkek .bg-default-img { opacity: 0; }
-    .char-cinema.bg-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.9); }
+    .char-cinema.bg-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.95); }
     .char-cinema.bg-erkek .bg-kadin-img { opacity: 0; }
-    /* Seçilmiş kadın → sadece kadın sahnesi */
+    /* Seçilmiş kadın */
     .char-cinema.bg-kadin .bg-default-img { opacity: 0; }
-    .char-cinema.bg-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.9); }
+    .char-cinema.bg-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.95); }
     .char-cinema.bg-kadin .bg-erkek-img { opacity: 0; }
     @keyframes charBgReveal {
       0% { opacity: 0; transform: scale(1.08); filter: brightness(0.3); }
       100% { opacity: 1; transform: scale(1); filter: brightness(0.85); }
     }
 
-    /* Seçim bölgesi — sol ve yarı */
+    /* — ORTA ÇİZGİ — Element ayrımı */
+    .char-divider {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      z-index: 6;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(255,209,148,0.1) 15%,
+        rgba(255,107,53,0.5) 35%,
+        rgba(255,209,148,0.8) 50%,
+        rgba(78,205,196,0.5) 65%,
+        rgba(255,209,148,0.1) 85%,
+        transparent 100%
+      );
+      box-shadow: 0 0 20px rgba(255,209,148,0.3), 0 0 40px rgba(255,107,53,0.15), 0 0 40px rgba(78,205,196,0.15);
+      animation: dividerReveal 1s ease-out 0.8s both;
+    }
+    .char-divider::before {
+      content: '◆';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      color: #ffd194;
+      text-shadow: 0 0 15px rgba(255,209,148,0.6), 0 0 30px rgba(255,107,53,0.3), 0 0 30px rgba(78,205,196,0.3);
+      background: #050510;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,209,148,0.3);
+      animation: dividerPulse 3s ease-in-out infinite;
+    }
+    @keyframes dividerReveal {
+      0% { opacity: 0; transform: translateX(-50%) scaleY(0); }
+      100% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+    }
+    @keyframes dividerPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,209,148,0.3); border-color: rgba(255,209,148,0.3); }
+      50% { box-shadow: 0 0 25px rgba(255,209,148,0.5); border-color: rgba(255,209,148,0.5); }
+    }
+
+    /* — SEÇİM BÖLGESİ — Sol ve sağ yarı */
     .char-pick-zone {
       position: absolute;
       top: 0;
       height: 100%;
       width: 50%;
-      z-index: 3;
+      z-index: 5;
       cursor: pointer;
       transition: background 0.3s ease;
     }
     .char-pick-zone:hover {
-      background: rgba(255,209,148,0.05);
+      background: rgba(255,209,148,0.04);
     }
     .char-pick-zone.zone-erkek {
       left: 0;
@@ -480,133 +530,73 @@
       right: 0;
     }
 
-    /* Seçilince glow overlay */
+    /* Seçilince — element kenarlık glow */
     .char-pick-zone.selected {
-      background: rgba(255,209,148,0.08);
+      background: transparent;
     }
     .char-pick-zone.selected::after {
       content: '';
       position: absolute;
       inset: 0;
-      border: 2px solid #ffd194;
-      box-shadow: inset 0 0 80px rgba(255,209,148,0.15), 0 0 40px rgba(255,209,148,0.2);
       pointer-events: none;
       animation: charSelectionPulse 2.5s ease-in-out infinite;
     }
+    .char-pick-zone.zone-erkek.selected::after {
+      border: 2px solid #ff6b35;
+      box-shadow: inset 0 0 80px rgba(255,107,53,0.15), inset 0 0 30px rgba(255,107,53,0.1), 0 0 40px rgba(255,107,53,0.2);
+    }
+    .char-pick-zone.zone-kadin.selected::after {
+      border: 2px solid #4ecdc4;
+      box-shadow: inset 0 0 80px rgba(78,205,196,0.15), inset 0 0 30px rgba(78,205,196,0.1), 0 0 40px rgba(78,205,196,0.2);
+    }
     @keyframes charSelectionPulse {
-      0%, 100% { box-shadow: inset 0 0 60px rgba(255,209,148,0.15), 0 0 40px rgba(255,209,148,0.2); border-color: #ffd194; }
-      50% { box-shadow: inset 0 0 100px rgba(255,209,148,0.25), 0 0 60px rgba(255,209,148,0.3); border-color: #c4a35a; }
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
     }
 
     /* Karartma — seçilmeyen taraf */
     .char-pick-zone.dimmed {
-      background: rgba(0,0,0,0.5);
+      background: rgba(5,5,16,0.6);
     }
 
-    /* İsim etiketleri — alt kısımda */
-    .char-label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 50px 16px 16px;
-      background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
-      z-index: 4;
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      gap: 8px;
-      animation: fadeUp 0.6s ease-out 0.4s both;
-    }
-    .char-label-item {
-      text-align: center;
-      flex: 1;
-      padding: 0 8px;
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-    .char-label-item .label-name {
-      font-size: clamp(1.1rem, 5vw, 1.5rem);
-      font-weight: 900;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: #ffd194;
-      transition: text-shadow 0.5s ease;
-    }
-    .char-label-item .label-role {
-      font-size: 0.65rem;
-      color: rgba(255,255,255,0.5);
-      margin-top: 2px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-    .char-label-item .label-title {
-      font-size: 0.58rem;
-      color: #c4a35a;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 3px;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
-    }
-    .char-label-item .label-quote {
-      font-size: 0.55rem;
-      color: rgba(255,255,255,0.4);
-      font-style: italic;
-      margin-top: 4px;
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.5s ease 0.3s, opacity 0.5s ease 0.3s;
-    }
-
-    /* Seçili etiket */
-    .char-label-item.selected .label-name {
-      text-shadow: 0 0 20px #ffd194, 0 0 40px #ffd194;
-    }
-    .char-label-item.selected .label-title {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .char-label-item.selected .label-quote {
-      opacity: 1;
-      max-height: 60px;
-    }
-    .char-label-item.dimmed {
-      opacity: 0.35;
-      transform: scale(0.95);
-    }
-
-    /* Mühür rozeti — üstte */
+    /* — MÜHÜR ROZETLERİ — Üstte */
     .char-badge {
       position: absolute;
-      top: max(50px, env(safe-area-inset-top));
-      width: 44px;
-      height: 44px;
+      top: max(45px, env(safe-area-inset-top));
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       backdrop-filter: blur(12px);
-      z-index: 5;
-      background: radial-gradient(circle, rgba(255,209,148,0.3), rgba(196,163,90,0.06));
-      border: 2px solid rgba(255,209,148,0.5);
-      box-shadow: 0 0 18px rgba(255,209,148,0.35), inset 0 0 8px rgba(255,209,148,0.15);
-      color: #ffd194;
+      z-index: 7;
       animation: badgeReveal 0.8s ease-out 0.6s both;
     }
-    .char-badge.badge-erkek { left: 20%; }
-    .char-badge.badge-kadin { right: 20%; }
+    .char-badge.badge-erkek {
+      left: 20%;
+      background: radial-gradient(circle, rgba(255,107,53,0.25), rgba(255,107,53,0.05));
+      border: 2px solid rgba(255,107,53,0.6);
+      box-shadow: 0 0 18px rgba(255,107,53,0.4), inset 0 0 8px rgba(255,107,53,0.15);
+      color: #ff6b35;
+    }
+    .char-badge.badge-kadin {
+      right: 20%;
+      background: radial-gradient(circle, rgba(78,205,196,0.25), rgba(78,205,196,0.05));
+      border: 2px solid rgba(78,205,196,0.6);
+      box-shadow: 0 0 18px rgba(78,205,196,0.4), inset 0 0 8px rgba(78,205,196,0.15);
+      color: #4ecdc4;
+    }
     @keyframes badgeReveal {
       0% { opacity: 0; transform: scale(0) rotate(-180deg); }
       100% { opacity: 1; transform: scale(1) rotate(0deg); }
     }
 
-    /* Taş tozu parçacıkları */
+    /* — TAŞ TOZU PARÇACIKLARI — */
     .char-particles {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 3;
       pointer-events: none;
       overflow: hidden;
     }
@@ -620,12 +610,94 @@
     }
     @keyframes charParticle {
       0% { opacity: 0; transform: translateY(0) scale(0.5); }
-      20% { opacity: 0.7; }
-      80% { opacity: 0.2; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.15; }
       100% { opacity: 0; transform: translateY(-120px) scale(0); }
     }
 
-    /* Seçim dalgası */
+    /* — İSİM ETİKETLERİ — Kadim taş plaket */
+    .char-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 60px 16px 16px;
+      background: linear-gradient(0deg, rgba(5,5,16,0.95) 0%, rgba(5,5,16,0.6) 50%, transparent 100%);
+      z-index: 8;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      gap: 8px;
+      animation: fadeUp 0.6s ease-out 0.4s both;
+    }
+    .char-label-item {
+      text-align: center;
+      flex: 1;
+      padding: 0 8px;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .char-label-item .label-name {
+      font-size: clamp(1.2rem, 5.5vw, 1.7rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      transition: text-shadow 0.5s ease;
+      animation: fadeUp 0.5s ease-out 0.5s both;
+    }
+    .char-label-item.label-erkek .label-name {
+      color: #ff6b35;
+      text-shadow: 0 0 20px rgba(255,107,53,0.3);
+    }
+    .char-label-item.label-kadin .label-name {
+      color: #4ecdc4;
+      text-shadow: 0 0 20px rgba(78,205,196,0.3);
+    }
+    .char-label-item .label-role {
+      font-size: 0.6rem;
+      color: rgba(255,209,148,0.5);
+      margin-top: 3px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .char-label-item .label-title {
+      font-size: 0.55rem;
+      color: #c4a35a;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+    .char-label-item .label-quote {
+      font-size: 0.52rem;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+      margin-top: 5px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease 0.3s, opacity 0.5s ease 0.3s;
+    }
+
+    /* Seçili etiket — element glow */
+    .char-label-item.selected .label-name {
+      text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+    }
+    .char-label-item.selected .label-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .char-label-item.selected .label-quote {
+      opacity: 1;
+      max-height: 60px;
+    }
+    .char-label-item.dimmed {
+      opacity: 0.3;
+      transform: scale(0.95);
+    }
+
+    /* — SEÇİM DALGASI — */
     .selection-wave {
       position: absolute;
       inset: 0;
@@ -642,14 +714,14 @@
       100% { opacity: 0; transform: scale(2.5); }
     }
 
-    /* Alt butonlar */
+    /* — ALT BUTONLAR — Kadim taş plaket */
     .char-footer {
       display: flex;
       justify-content: center;
       gap: 12px;
       padding: 10px 16px max(14px, env(safe-area-inset-bottom));
       background: linear-gradient(0deg, rgba(5,5,16,0.98) 0%, rgba(5,5,16,0.7) 70%, transparent 100%);
-      z-index: 3;
+      z-index: 10;
       animation: fadeUp 0.6s ease-out 0.6s both;
     }
     .char-sig {
@@ -1236,6 +1308,9 @@
         <span style="left:60%;bottom:35%;width:4px;height:4px;animation-delay:1.8s;animation-duration:3.5s"></span>
         <span style="left:45%;bottom:45%;width:3px;height:3px;animation-delay:2.8s;animation-duration:4.8s"></span>
       </div>
+
+      <!-- Element ayrım çizgisi — Ateş / Su -->
+      <div class="char-divider" aria-hidden="true"></div>
 
       <!-- Sol seçim bölgesi — Erkek -->
       <div class="char-pick-zone zone-erkek" data-mascot="erkek" data-ref="erkek" role="button" tabindex="0" aria-label="Erkek Stonebreaker'ı seç"></div>
