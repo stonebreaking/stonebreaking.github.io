@@ -1,5 +1,7 @@
 // =========================================================
-// STONEBREAKING — Mahjong Solitaire v9.11.0
+// STONEBREAKING — Mahjong Solitaire v9.12.0
+// M-018: 4 dizilim deseni (duvar/piramit/halka/elmas) · Sonsuz = TÜM elementler (37 tip)
+//        Bölüm rampası (B1=4 tip → B6+=9 tip) · açılış hamlesi garantisi (sessiz)
 // M-014/M-015: varyantlar (9 tip/element), Bölüm 11 Kara Taşlar, Sonsuz ELITE bonus
 // YENİ: ensureMoves — hamle yoksa ücretsiz evren karıştırması (kilitlenme imkânsız)
 // FIX: undo iki taşı geri getiriyor (tile1Id/tile2Id) — önce sadece sayaçlar dönüyordu
@@ -353,19 +355,19 @@ class StonebreakingGame {
     // v9.9: Klasik Mahjong Solitaire — tepsi YOK, direkt tahta eşleşme
     while (layout.length % 2 !== 0) layout.pop();
 
-    // v9.9: ELEMENT İZOLASYONU — her level SADECE 1 elementin taşlarını kullanır
+    // v9.9: ELEMENT İZOLASYONU — hikâye bölümlerinde her level SADECE 1 elementin taşlarını kullanır
     const ELEM_ORDER = ['ates', 'su', 'toprak', 'hava'];
-    const elementKey = this.endless
-      ? ELEM_ORDER[Math.floor(Math.random() * 4)]
-      : ELEM_ORDER[(level - 1) % 4];
-    this.currentElement = elementKey;
+    const elementKey = ELEM_ORDER[(level - 1) % 4];
+    // v9.12.0 · M-018 (Patron emri 04.08): SONSUZ MOD = TÜM ELEMENTLER bir arada
+    this.currentElement = this.endless ? 'karma' : elementKey;
     // v9.11.0 · Bölüm 11 "Kara Taşlar": izolasyon BİLEREK bozulur (mühürlü 4 element karışık)
-    // Sonsuz Mod: ELITE mühür taşı bonus tip olarak karışır
+    // v9.12.0 · M-018 RAMPA — IQ mantığı: bölüm ilerledikçe tip havuzu açılır (B1=4 tip · B6+=9 tip)
+    // M-014 ELITE mühür: Sonsuz Mod'da bonus tip olarak karışır (36+1=37 tip)
     const elementTypes = level === 11 && !this.endless
       ? this.karaSet
       : (this.endless
-          ? [...this.elementSets[elementKey], this.eliteTile]
-          : this.elementSets[elementKey]);
+          ? [...this.elementSets.ates, ...this.elementSets.su, ...this.elementSets.toprak, ...this.elementSets.hava, this.eliteTile]
+          : this.elementSets[elementKey].slice(0, Math.min(this.elementSets[elementKey].length, 3 + level)));
     this.types = elementTypes; // SADECE bu setin taşları
 
     // v9.9: 2'li DAĞITIM — her tip 2 adet (çift), Vita Mahjong garantili çözülebilir
@@ -398,44 +400,148 @@ class StonebreakingGame {
     this.updateFree();
     this.fitTilesToView();
     this.emitAll();
+    // v9.12.0 · M-018: açılışta hamle GARANTİSİ — sessiz (evren fısıldamaz, sadece dizer)
+    this.ensureMoves({ sessiz: true });
   }
 
   buildLayout(level) {
-    // v9.10.2: Mahjong Solitaire — 2 katmanlı klasik layout
-    // Alt katman (z=0): dikdörtgen grid
-    // Üst katman (z=1): yarım-offset küçük grid (tam ortada)
-    // Her tip ÇİFT sayıda → eşleşme garantili
-    const out = [];
+    // v9.12.0 · M-018: 4 DİZİLİM DESENİ — bölüm başına rotasyon ((level-1)%4)
+    // 0=duvar (klasik sur) · 1=piramit (zirveye tırmanış) · 2=halka (kalp boşluğu) · 3=elmas (baklava)
+    // Her desen farklı zihin jimnastiği: kenar kesme / katman indirme / merkez açma / köşe çözme
     const endless = level > 12;
     const wave = endless ? Math.min(6, level - 12) : 0;
-    
-    // Alt katman (z=0) — 6x5 grid
+    const desen = (level - 1) % 4;
+    let out;
+    if (desen === 0) out = this._desenDuvar(wave, endless);
+    else if (desen === 1) out = this._desenPiramit(wave, endless);
+    else if (desen === 2) out = this._desenHalka(wave, endless);
+    else out = this._desenElmas(wave, endless);
+
+    // Sonsuz dalga ölçekleme: 3. dalgadan itibaren tahta dış halkayla kalınlaşır
+    if (endless && wave >= 3) out = this._cerceveEkle(out, wave >= 5 ? 2 : 1);
+
+    // ÇİFT sayı garantisi
+    if (out.length % 2 !== 0) out.pop();
+
+    // Max tile limit
+    const maxTiles = endless ? 80 : 54;
+    if (out.length > maxTiles) out.length = Math.floor(maxTiles / 2) * 2;
+
+    // Benzersizlik — aynı hücre asla iki kez yazılmaz
+    const seen = new Set();
+    return out.filter((p) => {
+      const k = `${p.col}|${p.row}|${p.z}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
+
+  // M-018 · DESEN 0 — DUVAR: klasik sur (6×5 gövde) + yarım-ofset iç duvar (z=1)
+  _desenDuvar(wave, endless) {
+    const out = [];
     const baseCols = endless ? 8 + Math.floor(wave * 0.3) : 6;
     const baseRows = endless ? 5 + Math.floor(wave * 0.2) : 5;
     for (let r = 0; r < baseRows; r++) {
-      for (let c = 0; c < baseCols; c++) {
-        out.push({ col: c, row: r, z: 0 });
-      }
+      for (let c = 0; c < baseCols; c++) out.push({ col: c, row: r, z: 0 });
     }
-    
-    // Üst katman (z=1) — yarım-offset, 1 kenar boşluk
     const topCols = Math.max(2, baseCols - 2);
     const topRows = Math.max(2, baseRows - 2);
     for (let r = 0; r < topRows; r++) {
-      for (let c = 0; c < topCols; c++) {
-        out.push({ col: c + 0.5, row: r + 0.5, z: 1 });
-      }
-    }
-    
-    // ÇİFT sayı garantisi
-    if (out.length % 2 !== 0) out.pop();
-    
-    // Max tile limit
-    const maxTiles = endless ? 80 : 54;
-    if (out.length > maxTiles) {
-      out.length = Math.floor(maxTiles / 2) * 2;
+      for (let c = 0; c < topCols; c++) out.push({ col: c + 0.5, row: r + 0.5, z: 1 });
     }
     return out;
+  }
+
+  // M-018 · DESEN 1 — PİRAMİT: geniş tabandan zirveye (8-7-6-5) + mühür tepesi (3+3, z=1)
+  _desenPiramit(wave, endless) {
+    const out = [];
+    const G = endless ? 8 + Math.min(4, wave) : 8; // dalga = daha geniş taban
+    const katman = endless ? 4 + Math.min(2, Math.floor(wave / 2)) : 4; // dalga = daha yüksek piramit
+    for (let i = 0; i < katman; i++) {
+      const w = G - i;
+      if (w < 2) break;
+      const off = (G - w) / 2;
+      for (let c = 0; c < w; c++) out.push({ col: off + c, row: i, z: 0 });
+    }
+    // Tepe mühür katmanı — yarım ofset 2 sıra × 3 taş (z=1)
+    for (let r = 0; r < 2; r++) {
+      for (let c = 0; c < 3; c++) {
+        out.push({ col: G / 2 - 2 + c + 0.5, row: 1.5 + r, z: 1 });
+      }
+    }
+    return out;
+  }
+
+  // M-018 · DESEN 2 — HALKA: dolu sur, kalbinde 2 hücrelik boş mühür + yükselen iç halka (z=1)
+  _desenHalka(wave, endless) {
+    const out = [];
+    const cols = endless ? 8 + Math.min(4, Math.floor(wave / 2) * 2) : 8; // hep ÇİFT — üst halka yarım-ofset kalır
+    const rows = endless ? 5 + Math.min(3, Math.floor(wave / 2)) : 5;
+    const hr = Math.floor(rows / 2);
+    const hc1 = Math.floor(cols / 2) - 1;
+    const hc2 = Math.floor(cols / 2);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (r === hr && (c === hc1 || c === hc2)) continue; // kalp boşluğu — mühür kapısı
+        out.push({ col: c, row: r, z: 0 });
+      }
+    }
+    // İç halka — yarım ofset 6 taş: boşluğun üstünde 3 + altında 3 (z=1)
+    const mid = cols / 2 - 2;
+    for (let c = 0; c < 3; c++) {
+      out.push({ col: mid + c + 0.5, row: hr - 0.5, z: 1 });
+      out.push({ col: mid + c + 0.5, row: hr + 0.5, z: 1 });
+    }
+    return out;
+  }
+
+  // M-018 · DESEN 3 — ELMAS: baklava profili (2-4-6-8-6-4-2) + merkez mühür bloğu (2×2, z=1)
+  _desenElmas(wave, endless) {
+    const out = [];
+    const G = endless ? 8 + Math.min(4, wave) : 8;
+    const yarim = [];
+    for (let w = 2; w <= G; w += 2) yarim.push(w);
+    const profil = [...yarim, ...yarim.slice(0, -1).reverse()];
+    profil.forEach((w, r) => {
+      const off = (G - w) / 2;
+      for (let c = 0; c < w; c++) out.push({ col: off + c, row: r, z: 0 });
+    });
+    // Merkez mühür bloğu — yarım ofset 2×2 (z=1)
+    const mr = (profil.length - 1) / 2;
+    for (let r = 0; r < 2; r++) {
+      for (let c = 0; c < 2; c++) {
+        out.push({ col: G / 2 - 0.5 + c, row: mr - 0.5 + r, z: 1 });
+      }
+    }
+    return out;
+  }
+
+  // M-018 · Sonsuz dalga çerçevesi — z=0 bbox dışına 1 halkalık tam sur (her halka ÇİFT sayıda taş)
+  _cerceveEkle(out, katman = 1) {
+    let minC = 1e9, maxC = -1e9, minR = 1e9, maxR = -1e9;
+    for (const p of out) {
+      if (p.z !== 0) continue;
+      if (p.col < minC) minC = p.col;
+      if (p.col > maxC) maxC = p.col;
+      if (p.row < minR) minR = p.row;
+      if (p.row > maxR) maxR = p.row;
+    }
+    if (minC > maxC) return out;
+    const dL = Math.floor(minC), dR = Math.ceil(maxC);
+    const dT = Math.floor(minR), dB = Math.ceil(maxR);
+    const ekle = [];
+    for (let c = dL; c <= dR; c++) {
+      ekle.push({ col: c, row: dT - 1, z: 0 });
+      ekle.push({ col: c, row: dB + 1, z: 0 });
+    }
+    for (let r = dT; r <= dB; r++) {
+      ekle.push({ col: dL - 1, row: r, z: 0 });
+      ekle.push({ col: dR + 1, row: r, z: 0 });
+    }
+    let res = [...out, ...ekle];
+    if (katman > 1) res = this._cerceveEkle(res, katman - 1);
+    return res;
   }
 
   updateFree() {
@@ -766,7 +872,7 @@ class StonebreakingGame {
     return false;
   }
 
-  ensureMoves() {
+  ensureMoves(secenek = {}) {
     if (this._ensuring) return;
     if (!this.tiles.some((t) => t.active)) return; // tahta bitti — zafer akışına dokunma
     this._ensuring = true;
@@ -788,7 +894,7 @@ class StonebreakingGame {
         this.selectedTile = null;
         this.hintIds.clear();
         this.emitAll();
-        this.toast('🌀 Hamle kalmadı — evren taşları yeniden dizdi');
+        if (!secenek.sessiz) this.toast('🌀 Hamle kalmadı — evren taşları yeniden dizdi');
       }
     } finally {
       this._ensuring = false;

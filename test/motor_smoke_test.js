@@ -90,9 +90,64 @@ function freePairs(g) {
     const capOk = lv <= 12 ? layout.length <= 54 : layout.length <= 80;
     const keys = new Set(layout.map((p) => `${p.col}|${p.row}|${p.z}`));
     const unique = keys.size === layout.length;
-    const zOk = layout.every((p) => p.z === 0 ? (Number.isInteger(p.col) && Number.isInteger(p.row)) : (p.col % 1 !== 0 || p.row % 1 !== 0));
+    // v9.12: z=0 → satır tam sayı, sütun tam veya yarım-ofset (piramit/elmas ortalama) · z=1 → her ikisi de yarım
+    const zOk = layout.every((p) => p.z === 0
+      ? (Number.isInteger(p.row) && (p.col % 1 === 0 || Math.abs(p.col % 1) === 0.5))
+      : (p.col % 1 !== 0 && p.row % 1 !== 0));
     ok(even && capOk && unique && zOk,
       `bölüm ${lv}: ${layout.length} taş (çift=${even}, limit=${capOk}, benzersiz=${unique}, katman=${zOk})`);
+  }
+
+  console.log('\n== 1.5) M-018 · 4 dizilim deseni — rotasyon(4), çift, benzersiz, destek kuralı ==');
+  {
+    const g = makeGame();
+    const imzalar = [];
+    for (let lv = 1; lv <= 20; lv++) {
+      const lay = g.buildLayout(lv);
+      const n = lay.length;
+      const cift = n % 2 === 0;
+      const uniq = new Set(lay.map((p) => `${p.col}|${p.row}|${p.z}`)).size === n;
+      // DESTEK KURALI: her z>0 taşı, |Δcol|≤0.5 & |Δrow|≤0.5 içinde en az 1 z=0 taşına oturur
+      const z0lay = lay.filter((p) => p.z === 0);
+      const destek = lay.filter((p) => p.z > 0).every((p) =>
+        z0lay.some((q) => Math.abs(q.col - p.col) <= 0.5 && Math.abs(q.row - p.row) <= 0.5));
+      const sinir = lay.every((p) => p.row >= -3 && p.col >= -3 && p.row <= 16 && p.col <= 16);
+      ok(cift && uniq && destek && sinir,
+        `desen lv${lv} (${['DUVAR','PİRAMİT','HALKA','ELMAS'][(lv-1)%4]}): ${n} taş çift=${cift} benzersiz=${uniq} destek=${destek}`);
+      imzalar.push(lay.map((p) => `${p.col},${p.row},${p.z}`).join(';'));
+    }
+    // Rotasyon hikâye modunda TAM periyot 4 (lv1-8 ↔ lv5-12) — sonsuz dalga ölçekler, imza değişir (tasarım)
+    let rot = true;
+    for (let i = 0; i < 8; i++) if (imzalar[i] !== imzalar[i + 4]) rot = false;
+    ok(rot, 'desen rotasyonu: hikâyede periyot TAM 4 (lv1=lv5=lv9…, lv2=lv6=lv10…) · sonsuz dalga ölçekler');
+    ok(imzalar.slice(0, 4).every((s, i) => imzalar.slice(0, 4).indexOf(s) === i), 'desen 1-4 birbirinden FARKLI (4 ayrı zihin jimnastiği)');
+    const beklenen = { 1: 42, 2: 32, 3: 44, 4: 36 };
+    const sayiOk = Object.entries(beklenen).every(([lv, n]) => g.buildLayout(Number(lv)).length === n);
+    ok(sayiOk, 'bölüm taş sayıları: B1=42 B2=32 B3=44 B4=36 (kalıp sabitleri)');
+  }
+
+  console.log('\n== 1.6) M-018 · Sonsuz = TÜM elementler (37 tip) + bölüm rampası ==');
+  {
+    const g13 = makeGame(); g13.newGame(13);
+    const keys = g13.types.map((t) => t.key);
+    const tipOk = g13.types.length === 37 && keys.includes('muhur_elite');
+    const dortluk = ['ates', 'su', 'toprak', 'hava'].every((e) => keys.includes(e + '_core'));
+    const karma = g13.currentElement === 'karma';
+    const counts = {};
+    g13.tiles.forEach((t) => { counts[t.type] = (counts[t.type] || 0) + 1; });
+    const adil = Object.values(counts).every((c) => c % 2 === 0);
+    ok(tipOk && dortluk && karma && adil,
+      `sonsuz B13: 37 tip(4 element+elite)=${tipOk} tüm-element=${dortluk} element=karma:${karma} adil-çift=${adil}`);
+    ok(freePairs(g13).length > 0, 'sonsuz B13: açılışta serbest çift GARANTİLİ (sessiz ensureMoves)');
+    const r1 = makeGame(); r1.newGame(1);
+    const r3 = makeGame(); r3.newGame(3);
+    const r6 = makeGame(); r6.newGame(6);
+    const r9 = makeGame(); r9.newGame(9);
+    ok(r1.types.length === 4 && r3.types.length === 6 && r6.types.length === 9 && r9.types.length === 9,
+      `rampa (IQ mantığı): B1=${r1.types.length} → B3=${r3.types.length} → B6=${r6.types.length} → B9=${r9.types.length} tip (4→6→9→9)`);
+    const r11 = makeGame(); r11.newGame(11);
+    ok(r11.types.length === 4 && r11.types.every((t) => t.key.startsWith('kara_')),
+      'B11 Kara Taşlar rampayı BAYPAS eder (mühürlü 4 kara tip)');
   }
 
   console.log('\n== 2) Dağıtım bütünlüğü + element izolasyonu (bölüm 1..13) ==');
@@ -105,15 +160,15 @@ function freePairs(g) {
     g.tiles.forEach((t) => { counts[t.type] = (counts[t.type] || 0) + 1; });
     const pairsOk = Object.values(counts).every((c) => c % 2 === 0) && n % 2 === 0;
     const expectedElem = ELEM[(lv - 1) % 4];
-    const elemOk = g.endless ? ELEM.includes(g.currentElement) : g.currentElement === expectedElem;
+    const elemOk = g.endless ? g.currentElement === 'karma' : g.currentElement === expectedElem;
     const tilesLeft = Object.keys(counts).every((k) => Number.isInteger(Number(k)) && Number(k) >= 0 && Number(k) < g.types.length);
     const freeOk = g.tiles.some((t) => t.active && t.free);
     const pairOk = freePairs(g).length > 0;
-    // v9.11.0 set beklentileri: normal 9 tip · L11 karaSet(4) · sonsuz 9+1 elite
+    // v9.12.0 set beklentileri: rampa min(9, 3+lv) tip · L11 karaSet(4) · sonsuz 36+1 elite = 37
     let setOk, setNot;
-    if (g.endless) { setOk = g.types.length === 10 && g.types[9].key === 'muhur_elite'; setNot = 'set=9+elite'; }
+    if (g.endless) { setOk = g.types.length === 37 && g.types[36].key === 'muhur_elite'; setNot = 'set=37 TÜMÜ+elite'; }
     else if (lv === 11) { setOk = g.types.length === 4 && g.types.every((x) => x.key.startsWith('kara_')); setNot = 'set=KARA TAŞLAR'; }
-    else { setOk = g.types.length === 9; setNot = 'set=9 tip'; }
+    else { setOk = g.types.length === Math.min(9, 3 + lv); setNot = `set=${Math.min(9, 3 + lv)} tip (rampa)`; }
     ok(pairsOk && elemOk && tilesLeft && freeOk && pairOk && setOk,
       `bölüm ${lv}: ${n} taş, element=${g.currentElement}${g.endless ? ' (sonsuz:rastgele)' : ''} [${setNot}], çiftler=${pairsOk}, izolasyon=${elemOk}, açılış çifti=${pairOk}`);
   }
