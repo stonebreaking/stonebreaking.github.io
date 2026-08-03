@@ -756,33 +756,13 @@ class StonebreakingGame {
     }
     // (çizgi deseni kaldırıldı — temiz film zemini)
 
-    // ---- TRAY (on canvas) ----
-    // Mahjong: no tray drawing
+    // v9.9: Mahjong Solitaire — tepsi yok
 
     // ---- BOARD tiles ----
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => a.z - b.z || a.row - b.row || a.col - b.col);
     for (const t of sorted) this.drawTile(t);
 
-    // ---- FLYING toward tray ----
-    const dt = 1 / 60;
-    for (let i = 0 - 1; i >= 0; i--) {
-      const f = this.flying[i];
-      f.t += dt / f.dur;
-      const p = Math.min(1, f.t);
-      // ease out cubic + slight arc
-      const e = 1 - Math.pow(1 - p, 3);
-      const arc = Math.sin(Math.PI * p) * -40;
-      const x = f.x0 + (f.x1 - f.x0) * e;
-      const y = f.y0 + (f.y1 - f.y0) * e + arc;
-      const w = f.w0 + (f.w1 - f.w0) * e;
-      const h = f.h0 + (f.h1 - f.h0) * e;
-      this.drawTileFace(f.type, x, y, w, h, 1, false, true);
-      if (p >= 1 && !f.landed) {
-        f.landed = true;
-        this.flying.splice(i, 1);
-        this.onFlyLanded(f);
-      }
-    }
+    // v9.9: Mahjong — flying animasyon yok
 
     // particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
