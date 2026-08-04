@@ -363,6 +363,8 @@ class StonebreakingGame {
     this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? Math.floor((level - 12) / 4) : 0);
     this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0) : 0;
     this.startedAt = performance.now();
+    setTimeout(() => this.toast('Aynı yüzden 2 serbest taş seç'), 700);
+
     this.comboUntil = 0;
 
     const layout = this.buildLayout(level);
@@ -628,7 +630,7 @@ class StonebreakingGame {
       const r = this.tileRect(t);
       if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
         if (!t.free) {
-          this.toast('🔒 Kilidi açık değil — üstteki veya yan karoları kaldır');
+          this.toast('🔒 Bu taş kapalı — üstü veya iki yanı dolu');
           t.glow = 0.6;
           setTimeout(() => { if (t.active) t.glow = 0; }, 220);
           return;
@@ -703,7 +705,7 @@ class StonebreakingGame {
       this.selectedTile.glow = 0;
       this.selectedTile = t;
       t.glow = 1.5;
-      this.toast('◆ Farklı sembol — aynı karoları eşleştir');
+      this.toast('◆ Aynı sembolü seç — iki serbest taş');
       this.emitAll();
     }
   }
