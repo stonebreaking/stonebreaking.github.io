@@ -191,12 +191,14 @@
       content: '';
       position: absolute;
       inset: -12%;
-      background: url('06_GRAFIK/splash_evren_sinematik.png') center/cover no-repeat;
+      background: url('06_GRAFIK/splash_stonebreaking_madalyon.png') center/cover no-repeat;
       animation: kenBurns 30s ease-in-out infinite alternate;
       z-index: 0;
       will-change: transform;
     }
     /* Vinyet: ortaya odak, kenarları karanlığa yumuşatır */
+    #screen-splash .seal-backdrop { opacity: 0.15 !important; }
+    #screen-splash .seal-orbit, #screen-splash .cin-orb, #screen-splash .cin-stone, #screen-splash .seal-aura, #screen-splash .seal-ring { display: none !important; }
     #screen-splash::after {
       content: '';
       position: absolute;
@@ -212,8 +214,8 @@
 
     #screen-splash .splash-stage {
       position: relative;
-      width: min(400px, 86vw);
-      height: min(400px, 86vw);
+      width: min(560px, 96vw);
+      height: min(340px, 62vh);
       display: grid;
       place-items: center;
       margin-top: 2vh;
@@ -1902,13 +1904,11 @@
         <div class="cin-orb su" id="orb-su"></div>
         <div class="cin-orb toprak" id="orb-toprak"></div>
         <div class="cin-orb hava" id="orb-hava"></div>
-        <img src="06_GRAFIK/logo_stonebreaking_muhur_new.png" alt="STONEBREAKING" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 34px rgba(255,209,148,0.5))" /><!-- v9.12: büyütme hilesi kalktı — kalıp v2 görseli tuvalde gerçek ortalı -->
-        <div class="splash-logo-text" id="muhur-logo">
+        <!-- v1.9 MÜHÜR: kullanıcı madalyon/title referansı — element yazılı STONEBREAKING -->
+        <img src="06_GRAFIK/logo_stonebreaking_title_evren.png" alt="STONEBREAKING" id="splash-title-logo"
+          style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 28px rgba(255,209,148,0.35))" />
+        <div class="splash-logo-text" id="muhur-logo" style="opacity:0;pointer-events:none" aria-hidden="true">
           <div class="splash-logo-muhur">◆</div>
-          <div class="splash-logo-crack ates"></div>
-          <div class="splash-logo-crack su"></div>
-          <div class="splash-logo-crack toprak"></div>
-          <div class="splash-logo-crack hava"></div>
         </div>
       </div>
     </div>
@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.8</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.9</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
