@@ -1899,7 +1899,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.18 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.19 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2768,7 +2768,7 @@
       if (eb) eb.style.display = (lv === 12) ? 'inline-block' : 'none';
 
       const breaths = [
-        'Nefesin taşa değdi. Kolyeye bir mühür daha gömüldü.',
+        'Taş kırıldı. Kolyeye bir mühür daha gömüldü.',
         'Hiçbir mühür kaçmadı — 4 ruh seni duydu.',
         'Taş kırıldı. Ruh bir adım daha uyandı.',
       ];
@@ -2780,6 +2780,8 @@
       } else {
         msg = stats.rank === 'S' ? breaths[1] : breaths[stats.rank === 'A' ? 2 : 0];
       }
+      // v9.19: Ekonomi geri bildirimi — İpucu +1 / Karıştır +1
+      msg += ' · 💡+1  🔄+1';
       $('#v-msg').textContent = msg;
       const nxt = $('#btn-next-level');
       if (lv === 12) nxt.textContent = 'Sonsuz Moda Gir';
