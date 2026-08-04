@@ -23,7 +23,7 @@
 const ELEMENTS = {
   ates:   { id: 'ates',   name: 'Ateş',   color: '#ff6b35', emoji: '🔥', spirit: 'Kor'  },
   su:     { id: 'su',     name: 'Su',     color: '#4ecdc4', emoji: '💧', spirit: 'Baam' },
-  toprak: { id: 'toprak', name: 'Toprak', color: '#c4a35a', emoji: '🗿', spirit: 'Mand' },
+  toprak: { id: 'toprak', name: 'Toprak', color: '#2ecc71', emoji: '🗿', spirit: 'Mand' },
   hava:   { id: 'hava',   name: 'Hava',   color: '#a8d8ea', emoji: '💨', spirit: 'Zepy' },
 };
 
@@ -250,7 +250,7 @@ class StonebreakingGame {
         { key: 'toprak_1',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
         { key: 'toprak_2',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
         { key: 'toprak_3',    color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
-        { key: 'toprak_4',    color: '#c4a35a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
+        { key: 'toprak_4',    color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
         { key: 'toprak_5',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
         { key: 'toprak_6',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
         { key: 'toprak_run',  color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
