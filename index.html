@@ -213,7 +213,7 @@
       position: absolute;
       inset: 0;
       background-color: #05050c;
-      background-image: url('06_GRAFIK/splash_madalyon_muhur.png?v=137');
+      background-image: url('06_GRAFIK/splash_madalyon_muhur.png?v=150');
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
@@ -268,6 +268,18 @@
       #splash-title-logo { max-height: 16vh; }
       #splash-kolye { width: min(66vw, 220px); max-height: 42vh; }
     }
+    /* v1.50 soft invite pulse — buton değil, hafif nefes */
+    @keyframes kolyePulse {
+      0%, 100% { opacity: 0.15; transform: translate(-50%,-50%) scale(1); }
+      50% { opacity: 0.35; transform: translate(-50%,-50%) scale(1.04); }
+    }
+    #kolye-pulse-ring {
+      position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%);
+      width: min(42vw, 220px); height: min(42vw, 220px); border-radius: 50%;
+      border: 1px solid rgba(255,209,148,0.25); pointer-events: none; z-index: 5;
+      animation: kolyePulse 2.8s ease-in-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) { #kolye-pulse-ring { animation: none; opacity: 0.2; } }
     #screen-splash::after {
       content: '';
       position: absolute;
@@ -1956,7 +1968,7 @@
       <div style="height:10px;border-radius:8px;background:rgba(20,16,12,0.5);border:1px solid rgba(200,170,100,0.45);overflow:hidden;">
         <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#8a6a30,#e8c990,#ffd194);border-radius:8px;transition:width 0.07s linear;"></div>
       </div>
-      <div id="loading-pct" style="margin-top:8px;font-size:0.75rem;font-weight:700;letter-spacing:2px;color:rgba(232,201,144,0.8);">0%</div>
+      <div id="loading-pct" style="display:none!important">0%</div>
     </div>
     <div class="studio-particles" id="studio-particles" style="display:none"></div>
   </section>
@@ -2008,11 +2020,12 @@
         <span class="rune-pulse" aria-hidden="true"></span>
       </button>
     </div>
-    <button type="button" id="kolye-start-hit" aria-label="Kolyeye dokun"
-      style="position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:min(48vw,240px);height:min(48vw,240px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
-    <div id="kolye-hint" style="position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font-size:0.72rem;letter-spacing:2.5px;color:rgba(255,209,148,0.85);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
+    <button type="button" id="kolye-start-hit" aria-label="Maceraya başla"
+      style="position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(52vw,280px);height:min(52vw,280px);border-radius:50%;border:0;background:transparent;box-shadow:none;outline:none;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;appearance:none;-webkit-appearance:none;"></button>
+    <!-- v1.50: metinsiz dokunma — yazı yok, buton görünümü yok -->
+    <div id="kolye-hint" aria-hidden="true" style="display:none!important"></div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.49</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.50</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2485,7 +2498,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
-  <script src="js/game.js?v=149"></script>
+  <script src="js/game.js?v=150"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
 
