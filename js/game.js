@@ -173,26 +173,26 @@ class StonebreakingGame {
         { key: 'ates_volkan', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_volkan.png' },
       ],
       su: [
-        { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tile_water_ref.png' },
-        { key: 'su_1',    color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_1.png' },
-        { key: 'su_2',    color: '#3fd4ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_2.png' },
-        { key: 'su_3',    color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_3.png' },
-        { key: 'su_4',    color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_4.png' },
-        { key: 'su_5',    color: '#3fd4ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_5.png' },
-        { key: 'su_6',    color: '#a8e6ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_6.png' },
-        { key: 'su_damla', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_damla.png' },
-        { key: 'su_buz',  color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_buz.png' },
+        { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
+        { F_GRAFIK/tas_sembol_su_core.png' },
       ],
       toprak: [
-        { key: 'toprak_core', color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tile_earth_ref.png' },
-        { key: 'toprak_1',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_1.png' },
-        { key: 'toprak_2',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
-        { key: 'toprak_3',    color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
-        { key: 'toprak_4',    color: '#c4a35a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_4.png' },
-        { key: 'toprak_5',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_5.png' },
-        { key: 'toprak_6',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_6.png' },
-        { key: 'toprak_run',  color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_run.png' },
-        { key: 'toprak_kristal', color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kristal.png' },
+        { key: 'toprak_core', color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
+        { F_GRAFIK/tas_sembol_toprak_core.png' },
       ],
       hava: [
         { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tile_air_ref.png' },
@@ -1251,11 +1251,12 @@ class StonebreakingGame {
     ctx.roundRect(x, y, w, h, radius);
     ctx.clip();
     if (img) {
-      const ir = img.width / img.height;
-      const tr = w / h;
-      let dw = w, dh = h, dx = x, dy = y;
-      if (tr > ir) { dh = w / ir; dy = y + (h - dh) / 2; }
-      else { dw = h * ir; dx = x + (w - dw) / 2; }
+      // v1.25: Kare tablet — sembol büyük, cover doldur (aynı taş tipi)
+      const scale = Math.max(w / img.width, h / img.height);
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      const dx = x + (w - dw) / 2;
+      const dy = y + (h - dh) / 2;
       ctx.drawImage(img, dx, dy, dw, dh);
     } else {
       const g = ctx.createLinearGradient(x, y, x, y + h);
@@ -1315,15 +1316,8 @@ class StonebreakingGame {
       ctx.shadowBlur = 8;
       ctx.fillText(sig, x + w / 2, y + h / 2 + 1);
       ctx.shadowBlur = 0;
-    } else {
-      // Köşe ruh mührü — kolye/tahta bütünlüğü
-      ctx.font = `${Math.max(10, Math.floor(Math.min(w, h) * 0.22))}px system-ui,sans-serif`;
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'bottom';
-      ctx.globalAlpha = dim ? 0.45 : 0.9;
-      ctx.fillText(sig, x + w - 4, y + h - 3);
-      ctx.globalAlpha = 1;
     }
+    // v1.25: PNG tablet zaten büyük sembol — köşe emoji yok
     ctx.restore();
 
     // Rim light
