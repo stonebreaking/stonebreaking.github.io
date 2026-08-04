@@ -1965,7 +1965,7 @@
       style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(58vw,240px);height:min(58vw,240px);border-radius:50%;border:0;background:radial-gradient(circle,rgba(255,209,148,0.08) 0%,transparent 70%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:12vh;transform:translateX(-50%);z-index:6;font-size:0.7rem;letter-spacing:2.5px;color:rgba(255,209,148,0.75);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.16</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.17</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2556,18 +2556,15 @@
     function updateSpiritLocks() {
       const p = state.profile || {};
       const opened = p.sealsOpened || [];
-      const maxCh = Math.max(0, ...(opened.length ? opened : [0]), p.chapter || 1);
-      // Baam 4+ (bölüm 3 tamam), Mand 7+ (bölüm 6), Zepy 10+ (bölüm 9)
+      // v1.17: Sıralı kilit — 3 bitince Baam, 6 Mand, 9 Zepy
+      const highest = opened.length ? Math.max(...opened) : 0;
+      const prog = Math.max(highest, (p.chapter || 1) - 1);
       const unlock = {
         kor: true,
-        baam: maxCh > 3 || opened.includes(3) || opened.includes(4) || opened.includes(5) || opened.includes(6),
-        mand: maxCh > 6 || opened.includes(6) || opened.includes(7) || opened.includes(8) || opened.includes(9),
-        zepy: maxCh > 9 || opened.includes(9) || opened.includes(10) || opened.includes(11) || opened.includes(12),
+        baam: prog >= 3 || opened.includes(3),
+        mand: prog >= 6 || opened.includes(6),
+        zepy: prog >= 9 || opened.includes(9),
       };
-      // chapter progress also counts: if chapter is 4, baam open
-      if ((p.chapter || 1) >= 4) unlock.baam = true;
-      if ((p.chapter || 1) >= 7) unlock.mand = true;
-      if ((p.chapter || 1) >= 10) unlock.zepy = true;
       $$('#screen-spirit .spirit-card').forEach((card) => {
         const s = card.dataset.spirit;
         if (!s || s === 'kor') {
@@ -3001,10 +2998,19 @@
 
     // v9.9: SİNEMATİK KART — bölüm tamamlandıkça Pokemon tarzı nadir kart
     const CARD_MAP = {
-      3: { img: '06_GRAFIK/kart_ates_tamam.png', badge: '★ ULTRA NADİR', desc: '🔥 Ateş bölümleri tamamlandı! Sulara geçiliyor… 💧' },
-      6: { img: '06_GRAFIK/kart_su_tamam.png', badge: '★ ULTRA NADİR', desc: '💧 Su bölümleri tamamlandı! Toprağa geçiliyor… 🗿' },
-      9: { img: '06_GRAFIK/kart_toprak_tamam.png', badge: '★ ULTRA NADİR', desc: '🗿 Toprak bölümleri tamamlandı! Rüzgara geçiliyor… 💨' },
-      12: { img: '06_GRAFIK/kart_hava_tamam.png', badge: '★★ LEGENDARY', desc: '💨 Hava tamamlandı! Sonsuz Mühür yolu açık… ∞' },
+      // v1.17: Her bölüm kartı + element koleksiyon (3/6/9/12)
+      1: { img: '06_GRAFIK/koleksiyon_karti_kor.png', badge: '★ HİKÂYE', desc: '🔥 Alev Uyanışı · Kor seni tanıdı. İlk mühür kolyeye gömüldü.' },
+      2: { img: '06_GRAFIK/koleksiyon_karti_kor.png', badge: '★ HİKÂYE', desc: '🔥 Magma Köprüsü · Cesaret sınandı. Ateş yolu açılıyor.' },
+      3: { img: '06_GRAFIK/kart_ates_tamam.png', badge: '★ ULTRA NADİR · KOR', desc: '🔥 Ateş tamam · Koleksiyon: Kor kartı! Sular çağırıyor… 💧' },
+      4: { img: '06_GRAFIK/koleksiyon_karti_baam.png', badge: '★ HİKÂYE', desc: '💧 Dalga Çağrısı · Baam derinlerde seni bekliyor.' },
+      5: { img: '06_GRAFIK/koleksiyon_karti_baam.png', badge: '★ HİKÂYE', desc: '💧 Mercan Labirent · Akışı dinledin.' },
+      6: { img: '06_GRAFIK/kart_su_tamam.png', badge: '★ ULTRA NADİR · BAAM', desc: '💧 Su tamam · Koleksiyon: Baam kartı! Toprak uyanıyor… 🌿' },
+      7: { img: '06_GRAFIK/koleksiyon_karti_mand.png', badge: '★ HİKÂYE', desc: '🌿 Kristal yol · Mand sabırla izliyor.' },
+      8: { img: '06_GRAFIK/koleksiyon_karti_mand.png', badge: '★ HİKÂYE', desc: '🌿 Mağara yankısı · Toprak mührü güçleniyor.' },
+      9: { img: '06_GRAFIK/kart_toprak_tamam.png', badge: '★ ULTRA NADİR · MAND', desc: '🌿 Toprak tamam · Koleksiyon: Mand kartı! Rüzgar esiyor… 🌬' },
+      10: { img: '06_GRAFIK/koleksiyon_karti_zepy.png', badge: '★ HİKÂYE', desc: '🌬 Gökyüzü Tapınağı · Zepy fısıldıyor.' },
+      11: { img: '06_GRAFIK/koleksiyon_karti_zepy.png', badge: '★ HİKÂYE', desc: '🌬 Kara taşlar · Son nefesten önce.' },
+      12: { img: '06_GRAFIK/kart_hava_tamam.png', badge: '★★ LEGENDARY · ZEPY', desc: '🌬 Hava tamam · Evren Mührü · Sonsuz açık ∞' },
     };
     const VIRAL_CARD = { img: '06_GRAFIK/kart_viral_stonebreaking.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONEBREAKING' };
 
@@ -4020,7 +4026,34 @@
         StoneSound.tap();
         const endless = state.endlessRequested;
         state.endlessRequested = false;
-        startGame(endless ? { endless: true } : {});
+        if (endless) { startGame({ endless: true }); return; }
+        // v1.17: Sıralı bölüm — en yüksek biten+1, ruh aralığına sıkıştır
+        const p = state.profile || {};
+        const opened = Array.isArray(p.sealsOpened) ? p.sealsOpened : [];
+        const highest = opened.length ? Math.max(...opened) : 0;
+        let next = Math.min(12, Math.max(1, highest + 1));
+        // İlerleme chapter de dikkate
+        next = Math.max(next, Math.min(12, p.chapter || 1));
+        const ranges = { kor:[1,3], baam:[4,6], mand:[7,9], zepy:[10,12] };
+        const rg = ranges[state.spirit] || [1,12];
+        // Seçilen ruhun aralığında oynanabilir ilk bölüm
+        let startCh = next;
+        if (startCh < rg[0]) startCh = rg[0];
+        if (startCh > rg[1]) startCh = rg[0]; // ruh tamam, baştan tekrar
+        // Kilit: next henüz açılmadıysa ve ruh aralığı dışındaysa
+        if (startCh > next && next < rg[0]) {
+          showToast('Önce önceki mühürleri kır');
+          return;
+        }
+        startCh = Math.min(startCh, next);
+        if (startCh < rg[0]) startCh = rg[0];
+        if (startCh > rg[1]) startCh = rg[1];
+        // Sadece açılmış veya sıradaki
+        if (startCh > next) {
+          showToast('Bölüm ' + next + ' henüz kilitli değil — sıradaki: ' + next);
+          startCh = next;
+        }
+        startGame({ forceChapter: startCh });
       });
 
       $('#btn-shuffle')?.addEventListener('click', () => {
@@ -4178,6 +4211,7 @@
         const stats = state.lastStats;
         const lv = stats?.level || 0;
         // M-011: IQ sınav noktaları (B3/B6/B9/B12) → sınav → kart/sekans akışı sürer
+        // v1.17: IQ test 3/6/9/12 · diğerlerinde hikâye/koleksiyon kartı
         if ([3, 6, 9, 12].includes(lv)) {
           playIqTest(stats, () => {
             if (lv === 12) playBaslangicSequence(stats);
