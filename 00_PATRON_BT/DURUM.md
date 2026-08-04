@@ -37,3 +37,9 @@ Sanat: uzman/onay sonrası mühür. Red = yeniden çiz.
 2. Taş asset çoğaltma
 3. Zafer MindMap kart UI
 4. Bölüm toast = HIKAYE_MUHUR diyalogları
+
+
+## v1.62 sprint
+- Otomatik mühür: yalnızca kimlik-uyumlu sanat
+- Chibi/yanlış stil RED (mühürlenmez)
+- Sıra: H8 H10 C10 tile pack zafer kartı
