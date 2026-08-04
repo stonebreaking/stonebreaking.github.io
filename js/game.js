@@ -362,6 +362,10 @@ class StonebreakingGame {
     this.undosLeft = 0; // geri al yok
     this.shufflesLeft = 1 + Math.floor((L - 1) / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0);
     this.startedAt = performance.now();
+    // v1.20: Tahta arka plan — karakter seçim anime tapınak (yoksa)
+    if (!this.sceneImg) {
+      this.setScene('06_GRAFIK/sinematik_01_ikili_tapinak.png');
+    }
     try {
       if (localStorage.getItem('sb_intro_toast') !== '1') {
         setTimeout(() => this.toast('Serbest taşı kolyeye al · aynı mühürler kırılır'), 700);
@@ -1064,7 +1068,8 @@ class StonebreakingGame {
       const sw = iw * scale, sh = ih * scale;
       ctx.drawImage(this.sceneImg, (W - sw) / 2, (H - sh) / 2, sw, sh);
       // v6.2: hafif karartma (koyu taşlar öne çıksın, dağınıklık yok)
-      ctx.fillStyle = 'rgba(6, 20, 14, 0.58)';
+      // v1.20 anime tahta — taşlar okunur, sahne görünür
+      ctx.fillStyle = 'rgba(8, 12, 20, 0.42)';
       ctx.fillRect(0, 0, W, H);
     } else {
       const g = ctx.createRadialGradient(W / 2, H * 0.45, 30, W / 2, H * 0.5, H * 0.75);

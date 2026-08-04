@@ -77,9 +77,9 @@
     }
     /* Logo — CSS ◆ MÜHÜR + element çatlakları */
     .studio-logo-wrap {
-      /* v9.12.1 · M-019: mühürlü seal için büyük ORTALI kutu — 180px taşma/kaçış yok */
-      width: min(340px, 86vw);
-      height: min(340px, 86vw);
+      /* v1.20 mobil: kocaman logo yok */
+      width: min(200px, 52vw);
+      height: min(200px, 52vw);
       position: relative;
       opacity: 0;
       animation: studioFadeScale 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
@@ -87,6 +87,9 @@
       place-items: center;
       justify-self: center;
       margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .studio-logo-wrap { width: min(280px, 40vw); height: min(280px, 40vw); }
     }
     .studio-muhur {
       /* v9.12.1 · M-019: CSS mühür+crack KALDIRILDI — seal görselinin içinde zaten var (yineleme yok) */
@@ -197,15 +200,23 @@
       background-image: url('06_GRAFIK/logo_stonebreaking_element_guardians.png?v=115');
       background-repeat: no-repeat;
       background-position: center 18%;
-      background-size: contain;
+      /* v1.20 telefon: logo sahne ekranı taşırmaz */
+      background-size: 92% auto;
+      background-position: center 22%;
       z-index: 0;
       animation: kolyePulse 3.6s ease-in-out infinite;
       transform-origin: center 40%;
     }
+    @media (max-width: 480px) {
+      #screen-splash::before {
+        background-size: 88% auto;
+        background-position: center 18%;
+      }
+    }
     @media (min-width: 768px) {
       #screen-splash::before {
-        background-size: cover;
-        background-position: center center;
+        background-size: contain;
+        background-position: center 28%;
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1974,7 +1985,7 @@
       style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(58vw,240px);height:min(58vw,240px);border-radius:50%;border:0;background:radial-gradient(circle,rgba(255,209,148,0.08) 0%,transparent 70%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:12vh;transform:translateX(-50%);z-index:6;font-size:0.7rem;letter-spacing:2.5px;color:rgba(255,209,148,0.75);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.19</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.20</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
