@@ -1939,10 +1939,18 @@
 
   <!-- ========== 0. BATUPIA STUDIOS INTRO (SAHNE -1) — STONEBREAKING EVRENİ ========== -->
   <section id="screen-studio-intro" class="screen active" aria-label="BATUPIA Yükleniyor">
-    <!-- v1.21: Kullanıcı loading kartı — telefon dikey full -->
-    <img id="loading-batupia-img" src="06_GRAFIK/loading_batupia_acilista.png" alt="BATUPIA Yükleniyor"
-      style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#05050c;z-index:1;" />
-    <div id="loading-pct" style="position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:2;font-size:0.95rem;font-weight:800;letter-spacing:3px;color:#e8c990;text-shadow:0 0 12px rgba(232,201,144,0.5);pointer-events:none;">0%</div>
+    <!-- v1.28: Loading — görsel + gerçek bar (sabit % yok) -->
+    <img id="loading-batupia-img" src="06_GRAFIK/loading_batupia_acilista.png" alt="BATUPIA"
+      style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;background:#05050c;z-index:1;" />
+    <!-- Görseldeki sabit 76%/bar alanını kapat, bizim bar çalışsın -->
+    <div id="loading-cover" style="position:absolute;left:0;right:0;bottom:0;height:28%;z-index:2;background:linear-gradient(180deg,transparent 0%,#05050c 35%,#05050c 100%);pointer-events:none;"></div>
+    <div id="loading-ui" style="position:absolute;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:3;width:min(78vw,320px);text-align:center;">
+      <div id="loading-pct" style="font-size:1.05rem;font-weight:800;letter-spacing:3px;color:#e8c990;text-shadow:0 0 14px rgba(232,201,144,0.55);margin-bottom:10px;">0%</div>
+      <div style="height:12px;border-radius:8px;background:rgba(40,35,28,0.95);border:1px solid rgba(232,201,144,0.35);overflow:hidden;box-shadow:0 0 12px rgba(0,0,0,0.5);">
+        <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#c4a35a,#e8c990,#ffd194);border-radius:8px;transition:width 0.08s linear;"></div>
+      </div>
+      <div style="margin-top:10px;font-size:0.72rem;letter-spacing:4px;color:rgba(232,201,144,0.75);">YÜKLENİYOR</div>
+    </div>
     <div class="studio-particles" id="studio-particles" style="display:none"></div>
   </section>
 
@@ -1997,7 +2005,7 @@
       style="position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(70vw,280px);height:min(70vw,280px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font-size:0.72rem;letter-spacing:2.5px;color:rgba(255,209,148,0.85);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.27</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.28</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2706,25 +2714,28 @@
     async function playStudioIntro() {
       const intro = $('#screen-studio-intro');
       const pctEl = $('#loading-pct');
-      // v1.21: Loading kartı + yüzde animasyonu
-      const total = 2800;
+      const barEl = $('#loading-bar');
+      // v1.28: Gerçek yüzde + bar (görseldeki sabit % kapalı)
+      const total = 2600;
       const t0 = performance.now();
       await new Promise((resolve) => {
         const tick = () => {
           const p = Math.min(100, Math.floor(((performance.now() - t0) / total) * 100));
           if (pctEl) pctEl.textContent = p + '%';
+          if (barEl) barEl.style.width = p + '%';
           if (p >= 100) resolve();
           else requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
       });
       if (pctEl) pctEl.textContent = '100%';
-      await wait(200);
+      if (barEl) barEl.style.width = '100%';
+      await wait(280);
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(400);
+      await wait(380);
       goScreen('screen-splash');
       playSplashCinematic();
     }

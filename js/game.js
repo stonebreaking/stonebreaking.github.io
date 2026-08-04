@@ -1130,8 +1130,14 @@ class StonebreakingGame {
       const sw = iw * scale, sh = ih * scale;
       ctx.drawImage(this.sceneImg, (W - sw) / 2, (H - sh) / 2, sw, sh);
       // v6.2: hafif karartma (koyu taşlar öne çıksın, dağınıklık yok)
-      // v1.20 anime tahta — taşlar okunur, sahne görünür
-      ctx.fillStyle = 'rgba(8, 12, 20, 0.42)';
+      // v1.28 mühür masası — sahne görünür, taşlar önde
+      ctx.fillStyle = 'rgba(6, 10, 18, 0.38)';
+      ctx.fillRect(0, 0, W, H);
+      // masa/taş alanı hafif vinyet
+      const vg = ctx.createRadialGradient(W/2, H*0.55, W*0.15, W/2, H*0.5, W*0.75);
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(1, 'rgba(0,0,0,0.25)');
+      ctx.fillStyle = vg;
       ctx.fillRect(0, 0, W, H);
     } else {
       const g = ctx.createRadialGradient(W / 2, H * 0.45, 30, W / 2, H * 0.5, H * 0.75);
