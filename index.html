@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.9</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.10</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2656,13 +2656,13 @@
           container.appendChild(s);
         }
       }
-      // Profesyonel tempo: 2.2s göster, 0.4s çıkış
-      await wait(2200);
+      // v1.10: Kısa BATUPIA mühür (0.9s) → hemen STONEBREAKING madalyon
+      await wait(900);
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(400);
+      await wait(250);
       goScreen('screen-splash');
       playSplashCinematic();
     }
@@ -2687,11 +2687,11 @@
 
       spawnParticles($('#splash-particles'));
 
-      // AŞAMA 1: Taş kırılır
-      await wait(1400);
-      if (stone) stone.classList.add('crack');
-      await wait(900);
+      // v1.10: Madalyon anında
       if (stone) stone.style.display = 'none';
+      if (muhur) muhur.classList.add('show');
+      const titleImg = document.getElementById('splash-title-logo');
+      if (titleImg) titleImg.style.opacity = '1';
 
       // AŞAMA 2: 4 element belirir
       ['ates', 'su', 'toprak', 'hava'].forEach((k, i) => {
@@ -3758,21 +3758,13 @@
         $('#btn-zihin')?.addEventListener('click', zhAc);
         $('#btn-prof-zihin')?.addEventListener('click', zhAc);
       } catch (_) {}
-      // M-009 FAZ 1: studios dokun → mühür vur → evren sahnesi açılır (metinsiz)
+      // v1.10: İkinci BATUPIA katmanı otomatik kalkar — madalyon sahne açık
       (function initStudiosPhase() {
         const studios = $('#studios-phase');
         if (!studios) return;
-        const seal = () => {
-          if (studios.classList.contains('sealed')) return;
-          studios.classList.add('sealed');
-          state.splashPlayed = true;
-          StoneSound.unlock();
-          StoneSound.tap && StoneSound.tap();
-          if (StoneSound.vibrate) StoneSound.vibrate(25);
-          setTimeout(() => studios.classList.add('gone'), 480);
-        };
-        studios.addEventListener('click', seal);
-        studios.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); seal(); } });
+        studios.classList.add('sealed');
+        studios.classList.add('gone');
+        state.splashPlayed = true;
       })();
 
       // M-009: rune taşa dokun → mühür kırılma parlaması → karakter seçimi
