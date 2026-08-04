@@ -2658,6 +2658,10 @@
       set('hud-level', h.endless ? '∞' + (h.level - 12) : h.level);
       set('hud-seals', h.seals);
       set('hud-combo', h.combo);
+      if (!h.combo) {
+        const ce = document.getElementById('hud-combo');
+        if (ce) { ce.style.color = ''; ce.style.textShadow = ''; }
+      }
       set('badge-hint', h.hintsLeft);
       set('badge-undo', h.undosLeft);
       set('badge-shuffle', h.shufflesLeft);
@@ -3421,6 +3425,13 @@
           const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
           StoneSound.breath(b.combo, currentEl);
           StoneSound.vibrate(18);
+          // v9.16: HUD kombo rengi söylem FX'e göre
+          const el = document.getElementById('hud-combo');
+          if (el) {
+            const map = { yan: '#e63946', ak: '#1d8cf8', dur: '#2ecc71', nefes: '#f0f0f0' };
+            el.style.color = map[b.fx] || b.color || '#ffd194';
+            el.style.textShadow = '0 0 10px ' + (map[b.fx] || b.color || '#ffd194');
+          }
         };
         game.onFail = () => {
           StoneSound.fail();
