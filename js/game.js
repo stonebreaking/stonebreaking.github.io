@@ -1042,6 +1042,19 @@ class StonebreakingGame {
     const ctx = this.ctx;
     const W = this.viewW;
     const H = this.viewH;
+    // v1.18 BT: fırça izi / trail — her kare tam sıfır
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'transparent';
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.restore();
+    // mantıksal boyuta dön
+    ctx.setTransform(this.dpr || 1, 0, 0, this.dpr || 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
     ctx.clearRect(0, 0, W + 2, H + 2);
 
     // Unified felt / scene
@@ -1071,18 +1084,22 @@ class StonebreakingGame {
 
     // v9.9: Mahjong — flying animasyon yok
 
-    // particles
+    // particles — v1.18 hızlı oyunda birikmesin
+    if (this.particles.length > 60) this.particles.splice(0, this.particles.length - 40);
+    const decay = this.particles.length > 35 ? 0.05 : 0.032;
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
-      p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life -= 0.028;
+      p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life -= decay;
       if (p.life <= 0) { this.particles.splice(i, 1); continue; }
       ctx.globalAlpha = Math.max(0, p.life);
+      ctx.shadowBlur = 0;
       ctx.fillStyle = p.color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, Math.max(0.5, p.size * p.life), 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
 
     // story combo overlay + element FX
     if (this.feedback) {
@@ -1199,6 +1216,8 @@ class StonebreakingGame {
 
     this.drawTileFace(t.type, r.x + ox, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false, isSelected);
     ctx.shadowBlur = 0;
+    ctx.shadowColor = 'transparent';
+    ctx.globalAlpha = 1;
 
     if (blocked) {
       ctx.fillStyle = 'rgba(0,0,0,0.22)';
@@ -1342,16 +1361,17 @@ class StonebreakingGame {
   }
 
   startLoop() {
+    this.stopLoop();
     const loop = () => {
-      this.draw();
       this._raf = requestAnimationFrame(loop);
+      try { this.draw(); } catch (_) {}
     };
-    cancelAnimationFrame(this._raf);
     this._raf = requestAnimationFrame(loop);
   }
 
   stopLoop() {
-    cancelAnimationFrame(this._raf);
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this._raf = 0;
   }
 
   elapsedSec() {
