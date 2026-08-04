@@ -2173,6 +2173,8 @@
       <div style="margin-top:14px;font-size:0.75rem;color:#888;letter-spacing:1px">12 MÜHÜR YOLU</div>
       <div style="font-size:0.7rem;color:#888;margin:8px 0 4px;letter-spacing:0.5px;">Bölüm Seç (açık olanlara tıkla)</div>
       <div class="seal-track" id="prof-seal-track"></div>
+      <div style="font-size:0.7rem;color:#888;margin:14px 0 4px;letter-spacing:0.5px;">Sonsuz · Son 5 Rekor</div>
+      <div id="prof-endless-history" style="font-size:0.75rem;color:#ccc;line-height:1.6;min-height:1.2em;"></div>
       <!-- v6.8.3: Toprak Ruhu Görünüm (Skins) Seçimi -->
       <div id="mand-skin-section" style="margin-top:14px;display:none">
         <div style="font-size:0.75rem;color:#888;letter-spacing:1px;margin-bottom:8px">Toprak Ruhu Görünümü</div>
@@ -2404,6 +2406,8 @@
         // v9.14 PATRON BT: İpucu/Karıştır ekonomisi — bölüm bitince +1, birikir, satın alınabilir
         bankedHints: 0,
         bankedShuffles: 0,
+        // v9.15 F1: Yerel Sonsuz rekor geçmişi (son 5)
+        endlessHistory: [], // [{wave, iq, breath, at}]
       };
     }
     function saveProfile() {
@@ -2722,6 +2726,18 @@
       // v9.14 PATRON BT: Bölüm tamamlanınca İpucu +1, Karıştır +1 (birikir)
       p.bankedHints = (p.bankedHints || 0) + 1;
       p.bankedShuffles = (p.bankedShuffles || 0) + 1;
+      // v9.15 F1: Sonsuz dalga rekor geçmişi (son 5)
+      if (lv > 12) {
+        const entry = {
+          wave: lv - 12,
+          iq: Math.round((stats.iq || 0) * 10) / 10,
+          breath: stats.combo || 0,
+          at: Date.now()
+        };
+        p.endlessHistory = Array.isArray(p.endlessHistory) ? p.endlessHistory : [];
+        p.endlessHistory.unshift(entry);
+        p.endlessHistory = p.endlessHistory.slice(0, 5);
+      }
       saveProfile();
     }
 
@@ -3142,6 +3158,24 @@
       $('#prof-chapter').textContent = p.chapter || state.chapter || 1;
       const ph = $('#prof-hints'); if (ph) ph.textContent = p.bankedHints || 0;
       const ps = $('#prof-shuffles'); if (ps) ps.textContent = p.bankedShuffles || 0;
+      // F1: Sonsuz son 5 rekor
+      const histEl = $('#prof-endless-history');
+      if (histEl) {
+        const hist = Array.isArray(p.endlessHistory) ? p.endlessHistory : [];
+        if (!hist.length) {
+          histEl.textContent = 'Henüz Sonsuz rekoru yok';
+          histEl.style.color = '#666';
+        } else {
+          histEl.style.color = '#ccc';
+          histEl.innerHTML = hist.map((h, i) =>
+            `<div style="display:flex;gap:10px;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);padding:3px 0;">
+              <span style="color:#ffd194">#${i+1} · Dalga ${h.wave}</span>
+              <span>IQ ${h.iq}</span>
+              <span>Nefes ${h.breath}</span>
+            </div>`
+          ).join('');
+        }
+      }
       const pe = $('#prof-endless');
       if (pe) {
         pe.textContent = p.endlessUnlocked ? 'Açık ∞' : 'Kapalı';
