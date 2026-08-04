@@ -67,7 +67,7 @@ const ENDLESS_LINES = [
 ];
 
 // v9.27 WP VIDEO MODEL — Tepsili eşleşme
-const TRAY_MAX = 7;
+const TRAY_MAX = 4; // v9.31 WP VIDEO — 4 slot kolye
 const COMBO_WINDOW_MS = 4000;
 
 // v9.16 PATRON BT — Combo = element söylemleri (Yan / Ak / Dur / Nefes Al)
@@ -989,7 +989,7 @@ class StonebreakingGame {
         hintsLeft: this.hintsLeft,
         undosLeft: this.undosLeft,
         trayCount: (this.tray && this.tray.length) || 0,
-        trayMax: typeof TRAY_MAX !== 'undefined' ? TRAY_MAX : 7,
+        trayMax: typeof TRAY_MAX !== 'undefined' ? TRAY_MAX : 4,
         shufflesLeft: this.shufflesLeft,
         element: this.currentElement,
       });

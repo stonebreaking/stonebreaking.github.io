@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.30 · KOLYE TEPSİ · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.31 · KOLYE 4 SLOT · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2106,7 +2106,7 @@
       <div id="hud-element">🔥 Ateş</div>
       <div>Bölüm <b id="hud-level">1</b></div>
       <div>Mühür <b id="hud-seals">0</b></div>
-      <div>Kolye <b id="hud-tray">0/7</b></div>
+      <div>Kolye <b id="hud-tray">0/4</b></div>
       <div>Kombo <b id="hud-combo">0</b></div>
     </div>
 
@@ -2791,7 +2791,7 @@
       const trayEl = document.getElementById('hud-tray');
       if (trayEl) {
         const tc = h.trayCount || 0;
-        const tm = h.trayMax || 7;
+        const tm = h.trayMax || 4;
         trayEl.textContent = tc + '/' + tm;
         trayEl.style.color = tc >= tm - 1 ? '#e63946' : (tc >= tm - 2 ? '#ffb300' : '');
       }
@@ -4200,7 +4200,7 @@
       { t: 'Serbest taşı kolyeye al', b: 'Üstü açık ve yanı boş taşı seç — kolye tepsisine gider.' },
       { t: 'Aynı mühürler eşleşir', b: 'Tepsinde aynı yüzden iki mühür buluşunca kırılır, IQ yükselir.' },
       { t: 'Üstü veya iki yanı kapalı kilitli', b: 'Önce üsttekileri ve yanları aç. Kilitli taşa dokunulmaz.' },
-      { t: 'Kolye dolmasın', b: 'Tepsi taşarsa mühürler taşar. İpucu ve Karıştır reklamla açılabilir.' },
+      { t: 'Kolye 4 mühür taşır', b: '4 slot dolar ve eşleşme yoksa mühürler taşar. İpucu / Karıştır reklamla açılır.' },
     ];
     let tutIdx = 0;
     function showTutorialIfNeeded() {
