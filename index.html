@@ -2025,7 +2025,7 @@
     <!-- v1.50: metinsiz dokunma — yazı yok, buton görünümü yok -->
     <div id="kolye-hint" aria-hidden="true" style="display:none!important"></div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.59</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.60</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2207,6 +2207,7 @@
       <div>Bölüm <b id="hud-level">1</b></div>
       <div>Mühür <b id="hud-seals">0</b></div>
       <div>Kolye <b id="hud-tray">0/4</b></div>
+      <div style="opacity:.85;font-size:.72rem;letter-spacing:.5px" id="hud-challenge"></div>
       <div>Kombo <b id="hud-combo">0</b></div>
     </div>
 
@@ -2498,7 +2499,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
-  <script src="js/game.js?v=159"></script>
+  <script src="js/game.js?v=160"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/mindmap.js?v=155"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
@@ -2920,6 +2921,9 @@
       const EL_NAMES = { ates: '🔥 Ateş', su: '💧 Su', toprak: '🗿 Toprak', hava: '💨 Hava', karma: '◆ Tümü' }; // v9.12: sonsuz mod = tüm elementler
       const elBadge = document.getElementById('hud-element');
       if (elBadge) elBadge.textContent = EL_NAMES[h.element] || '';
+      const chEl = document.getElementById('hud-challenge');
+      if (chEl && h.challenge) chEl.textContent = h.challenge;
+      else if (chEl) chEl.textContent = '';
 
       // v9.9: Enerji barı — IQ bazlı (max 200)
       const maxIQ = 200;

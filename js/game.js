@@ -20,6 +20,56 @@
 // Klasik Mahjong: aynı serbest karolar8 eşleşir · üstteki kilitler · sol/sağ açar · mühürle patron BT
 // =========================================================
 
+
+// v1.60 — Element IQ / dikkat testleri (bölüm içi canlı ölçüm)
+const ELEMENT_CHALLENGE = {
+  ates: {
+    id: 'hiz',
+    name: 'Alev Hızı',
+    desc: 'Hız ölçümü — çabuk eşleştir, ısıyı tut',
+    // eşleşme arası ms hedefi
+    targetGapMs: 2200,
+    iqPerFast: 1.4,
+    iqPerSlow: -0.6,
+    heatOnSlow: true,
+  },
+  su: {
+    id: 'akis',
+    name: 'Akış Dengesi',
+    desc: 'Dikkat + denge — tepsiyi boş tut, hata yapma',
+    targetGapMs: 3500,
+    iqPerClean: 1.2,
+    iqPerError: -1.5,
+    favorBalance: true,
+  },
+  toprak: {
+    id: 'sabir',
+    name: 'Sabır Taşı',
+    desc: 'Strateji — az güç kullan, doğru sırayı gör',
+    targetGapMs: 5000,
+    iqPerNoPower: 1.5,
+    iqPerPower: -0.4,
+    favorStrategy: true,
+  },
+  hava: {
+    id: 'dikkat',
+    name: 'Rüzgar Dikkat',
+    desc: 'Dikkat testi — serbest taşı seç, yanlış dokunma',
+    targetGapMs: 4000,
+    iqPerFreeHit: 1.3,
+    iqPerWrong: -1.8,
+    favorAttention: true,
+  },
+  karma: {
+    id: 'zihin',
+    name: 'Sonsuz Zihin',
+    desc: 'Tüm testler bir arada',
+    targetGapMs: 3000,
+    iqPerFast: 1.0,
+    iqPerClean: 1.0,
+  },
+};
+
 const ELEMENTS = {
   ates:   { id: 'ates',   name: 'Ateş',   color: '#ff6b35', emoji: '🔥', spirit: 'Kor'  },
   su:     { id: 'su',     name: 'Su',     color: '#4ecdc4', emoji: '💧', spirit: 'Baam' },
@@ -449,6 +499,13 @@ class StonebreakingGame {
     })(level);
     // v9.12.0 · M-018 (Patron emri 04.08): SONSUZ MOD = TÜM ELEMENTLER bir arada
     this.currentElement = this.endless ? 'karma' : elementKey;
+    // v1.60 element IQ testi durumu
+    this.challenge = ELEMENT_CHALLENGE[this.currentElement] || ELEMENT_CHALLENGE.karma;
+    this._lastMatchAt = 0;
+    this._fastMatches = 0;
+    this._slowMatches = 0;
+    this._wrongTaps = this._wrongTaps || 0;
+    this._challengeScore = 0;
     // v9.11.0 · Bölüm 11 "Kara Taşlar": izolasyon BİLEREK bozulur (mühürlü 4 element karışık)
     // v9.12.0 · M-018 RAMPA — IQ mantığı: bölüm ilerledikçe tip havuzu açılır (B1=4 tip · B6+=9 tip)
     // M-014 ELITE mühür: Sonsuz Mod'da bonus tip olarak karışır (36+1=37 tip)
@@ -459,7 +516,7 @@ class StonebreakingGame {
       // v9.30 Sonsuz varyant: dalga arttıkça daha fazla rune tipi
       const wave = Math.max(1, level - 12);
       const all = [...this.elementSets.ates, ...this.elementSets.su, ...this.elementSets.toprak, ...this.elementSets.hava];
-      const typeCount = Math.min(all.length, 12 + Math.floor(wave * 1.5));
+      const typeCount = Math.min(all.length, 16 + Math.floor(wave * 2)); // v1.60 akıcı sonsuz
       elementTypes = all.slice(0, typeCount);
       if (wave >= 4 && this.eliteTile) elementTypes = elementTypes.concat([this.eliteTile]);
     } else {
@@ -720,7 +777,7 @@ class StonebreakingGame {
         if (!t.free) {
           this.toast('🔒 Kilitli mühür — üstü veya iki yanı dolu');
           t.glow = 0.85;
-          t.shake = 1;
+          t.shake = 1; if (typeof this.applyChallengeWrongTap === 'function') this.applyChallengeWrongTap();
           setTimeout(() => { if (t.active) { t.glow = 0; t.shake = 0; } }, 280);
           return;
         }
@@ -836,6 +893,7 @@ class StonebreakingGame {
   }
 
   onMatch(type) {
+    if (typeof this.applyChallengeOnMatch === 'function') this.applyChallengeOnMatch();
     const now = performance.now();
     if (now <= this.comboUntil) this.combo += 1;
     else this.combo = 1;
@@ -913,6 +971,50 @@ class StonebreakingGame {
     }
   }
 
+
+  /** v1.60 — eşleşme anında element testi */
+  applyChallengeOnMatch() {
+    const ch = this.challenge || ELEMENT_CHALLENGE.karma;
+    const now = performance.now();
+    let delta = 0.8;
+    if (this._lastMatchAt > 0) {
+      const gap = now - this._lastMatchAt;
+      const target = ch.targetGapMs || 3000;
+      if (ch.id === 'hiz' || this.currentElement === 'ates') {
+        if (gap <= target) { delta += ch.iqPerFast || 1.2; this._fastMatches++; this._challengeScore += 2; }
+        else { delta += ch.iqPerSlow || -0.5; this._slowMatches++; }
+      } else if (ch.id === 'akis' || this.currentElement === 'su') {
+        const trayN = (this.tray && this.tray.length) || 0;
+        if (trayN <= 1) { delta += ch.iqPerClean || 1.0; this._challengeScore += 2; }
+        else { delta += (ch.iqPerError || -0.8) * 0.5; }
+      } else if (ch.id === 'sabir' || this.currentElement === 'toprak') {
+        // güç kullanılmadıysa bonus (hints/shuf aynı kaldıysa)
+        delta += 1.0;
+        this._challengeScore += 1;
+      } else if (ch.id === 'dikkat' || this.currentElement === 'hava') {
+        delta += ch.iqPerFreeHit || 1.1;
+        this._challengeScore += 2;
+      } else {
+        if (gap <= (ch.targetGapMs || 3000)) { delta += 1.0; this._fastMatches++; }
+      }
+    }
+    this._lastMatchAt = now;
+    this.iq = Math.round((this.iq + delta) * 10) / 10;
+    if (this.iq < 20) this.iq = 20;
+    if (this.iq > 200) this.iq = 200;
+  }
+
+  applyChallengeWrongTap() {
+    const ch = this.challenge || {};
+    this._wrongTaps = (this._wrongTaps || 0) + 1;
+    if (ch.id === 'dikkat' || this.currentElement === 'hava') {
+      this.iq = Math.round((this.iq + (ch.iqPerWrong || -1.5)) * 10) / 10;
+    } else if (ch.id === 'akis' || this.currentElement === 'su') {
+      this.iq = Math.round((this.iq - 0.8) * 10) / 10;
+    }
+    if (this.iq < 20) this.iq = 20;
+  }
+
   checkWin() {
     // v9.29: tahta + kolye tepsisi boş olmalı
     const rem = this.tiles.filter((t) => t.active).length;
@@ -929,6 +1031,8 @@ class StonebreakingGame {
           const payload = {
             level: this.level,
             iq: this.iq,
+        challenge: this.challenge ? this.challenge.name : '',
+        challengeScore: this._challengeScore || 0,
             combo: this.maxCombo,
             matches: this.matches,
             seals: this.seals,
