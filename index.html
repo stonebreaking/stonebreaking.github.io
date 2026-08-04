@@ -1899,7 +1899,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.20 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.21 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2176,6 +2176,12 @@
       <div class="seal-track" id="prof-seal-track"></div>
       <div style="font-size:0.7rem;color:#888;margin:14px 0 4px;letter-spacing:0.5px;">Sonsuz · Son 5 Rekor</div>
       <div id="prof-endless-history" style="font-size:0.75rem;color:#ccc;line-height:1.6;min-height:1.2em;"></div>
+      <div style="margin-top:14px">
+        <button class="btn-seal" type="button" id="btn-daily-seal" style="width:100%">
+          <span class="bs-rune">◆</span><span class="bs-label">Günün Mührü</span><span class="bs-rune">◆</span>
+        </button>
+        <div id="daily-seal-msg" style="font-size:0.7rem;color:#9a9ab0;margin-top:8px;line-height:1.5;min-height:1em;"></div>
+      </div>
       <!-- v6.8.3: Toprak Ruhu Görünüm (Skins) Seçimi -->
       <div id="mand-skin-section" style="margin-top:14px;display:none">
         <div style="font-size:0.75rem;color:#888;letter-spacing:1px;margin-bottom:8px">Toprak Ruhu Görünümü</div>
@@ -2409,11 +2415,48 @@
         bankedShuffles: 0,
         // v9.15 F1: Yerel Sonsuz rekor geçmişi (son 5)
         endlessHistory: [], // [{wave, iq, breath, at}]
+        dailySealDate: null, // v9.21 Günün Mührü YYYY-MM-DD
       };
     }
     function saveProfile() {
       try { localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile)); } catch (_) {}
       refreshEndlessButton();
+    }
+
+    function todayKey() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    // v9.21: Günün Mührü — sadece Sonsuz kilidi sonrası, günde 1
+    const DAILY_SEALS = [
+      { spirit: 'kor',  breath: 'Yan.', mind: 'Cesaretinle bir mühür daha.' },
+      { spirit: 'baam', breath: 'Ak.', mind: 'Acele etme. Akışı dinle.' },
+      { spirit: 'mand', breath: 'Dur.', mind: 'Sabır taşı kırar.' },
+      { spirit: 'zepy', breath: 'Nefes Al.', mind: 'Hafif ol. Görünmeyeni gör.' },
+    ];
+
+    function claimDailySeal() {
+      const msg = $('#daily-seal-msg');
+      const p = state.profile;
+      if (!p.endlessUnlocked) {
+        if (msg) msg.textContent = 'Günün Mührü, Evren Mührü kırıldıktan sonra açılır.';
+        return;
+      }
+      const key = todayKey();
+      if (p.dailySealDate === key) {
+        if (msg) msg.textContent = 'Bugünün mührü okundu. Yarın tekrar gel.';
+        return;
+      }
+      const seal = DAILY_SEALS[new Date().getDate() % 4];
+      p.dailySealDate = key;
+      p.bankedHints = (p.bankedHints || 0) + 1;
+      saveProfile();
+      if (msg) {
+        msg.innerHTML = '<span style="color:#ffd194">' + seal.breath + '</span> ' + seal.mind +
+          '<br><span style="color:#7CFFB2">💡 +1 İpucu</span>';
+      }
+      showToast('Günün Mührü · 💡 +1');
     }
 
     function refreshEndlessButton() {
@@ -3788,6 +3831,11 @@
         }, { passive: true });
       });
       $('#btn-spirit-back')?.addEventListener('click', () => goScreen('screen-character'));
+      $('#btn-daily-seal')?.addEventListener('click', () => {
+        StoneSound.unlock();
+        StoneSound.tap();
+        claimDailySeal();
+      });
       $('#btn-spirit-next')?.addEventListener('click', () => {
         if (!state.spirit) return;
         StoneSound.unlock();

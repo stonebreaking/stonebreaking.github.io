@@ -1,10 +1,14 @@
 // ============================================================
-// STONEBREAKING · BATUPIA Studios · PATRON BT VİZYON MÜHRÜ
-// Kurucu: Batuhan Taşkıran · İlk oyun / ilk marka
-// 4 Ruh taşlara gömüldü → Stonebreaker uyandırır
-// Bölüm bitince İpucu+1 / Karıştır+1 (birikir)
-// Kolye merkez · Pokemon-kartı anime vizyonu
-// GitHub tek yedek
+// STONEBREAKING · BATUPIA Studios · PATRON BT KUSURSUZ SENARYO
+// Kurucu: Batuhan Taşkıran · İlk oyun / ilk marka · GitHub tek yedek
+// Stonebreaker = taş kırıcı (element sahibi değil) · Kolye merkez
+// 4 Ruh: Kor(Yan/Ateş) Baam(Ak/Su) Mand(Dur/Toprak) Zepy(Nefes Al/Hava)
+// Akış: BATUPIA → Logo → Karakter → Ruh → 12 Bölüm → Evren Mührü → Sonsuz
+// 1-3 Ateş | 4-6 Su | 7-9 Toprak | 10-12 Hava | Sonsuz = tüm semboller
+// Kombo: Yan→Ak→Dur→Nefes Al · Tepsi YOK · Mahjong Solitaire
+// Ekonomi: bölüm sonu İpucu+1 Karıştır+1 birikir · kartlar 3/6/9/12
+// Sonsuz: zihin güçlendirme · Günün Mührü kilit sonrası · F1 yerel rekor
+// Vizyon: anime/kart koleksiyonu · günde 10 dk · rahat uyu
 // ============================================================
 // =========================================================
 // STONEBREAKING — Mahjong Solitaire v9.12.0
