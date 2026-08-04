@@ -39,7 +39,7 @@ const SPIRITS = {
     cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
     quote: 'İlk kıvılcımı ben yakarım. Cesaretinle gel.',
     scene: '06_GRAFIK/sahne_ates_vadisi.png',
-    portrait: '06_GRAFIK/kor_ates_ruhu.png',
+    portrait: '06_GRAFIK/ruh_kor_ates_sinematik.png',
     chapters: [1, 2, 3],
   },
   baam: {
@@ -52,7 +52,7 @@ const SPIRITS = {
     cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
     quote: 'Acele etme. Akışı dinle.',
     scene: '06_GRAFIK/sahne_derinlikler.png',
-    portrait: '06_GRAFIK/baam_su_ruhu.png',
+    portrait: '06_GRAFIK/ruh_baam_su_sinematik.png',
     chapters: [4, 5, 6],
   },
   mand: {
@@ -65,7 +65,7 @@ const SPIRITS = {
     cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
     quote: 'Sabır taşı kırar. Ben beklerim.',
     scene: '06_GRAFIK/sahne_kristal_magara.png',
-    portrait: '06_GRAFIK/mand_toprak_ruhu_erkek.png',
+    portrait: '06_GRAFIK/ruh_mand_toprak_sinematik.png',
     chapters: [7, 8, 9],
   },
   zepy: {
@@ -78,7 +78,7 @@ const SPIRITS = {
     cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
     quote: 'Hafif ol. Görünmeyeni gör.',
     scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png',
-    portrait: '06_GRAFIK/zepy_hava_ruhu.png',
+    portrait: '06_GRAFIK/ruh_zepy_hava_sinematik.png',
     chapters: [10, 11, 12],
   },
 };
