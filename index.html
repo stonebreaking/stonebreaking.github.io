@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.1</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.2</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2417,7 +2417,7 @@
     <div class="tut-card">
       <div class="tut-step" id="tut-step-label">1 / 4</div>
       <h3 id="tut-title">Aynı mühürden iki taş seç</h3>
-      <p id="tut-body">Serbest iki taşın yüzü aynıysa dokun — mühür kırılır, kolyeye gömülür.</p>
+      <p id="tut-body">Serbest taşı seç — kolyeye gider. Aynı yüzden iki mühür kırılır.</p>
       <button class="btn-seal primary" type="button" id="btn-tut-next">
         <span class="bs-rune">◈</span><span class="bs-label">Devam</span><span class="bs-rune">◈</span>
       </button>
@@ -2919,13 +2919,13 @@
       if (eb) eb.style.display = (lv === 12) ? 'inline-block' : 'none';
 
       const breaths = [
-        'Taş kırıldı. Kolyeye bir mühür daha gömüldü.',
-        'Hiçbir mühür kaçmadı — 4 ruh seni duydu.',
-        'Taş kırıldı. Ruh bir adım daha uyandı.',
+        'Taşlar kırıldı. Kolye mühürleri taşıdı — ruh bir adım uyandı.',
+        'Kolye tertemiz. Hiçbir mühür taşmadı — dört ruh seni duydu.',
+        'Mühürler kolyeye gömüldü. Zihin netleşiyor.',
       ];
       let msg;
       if (lv === 12) {
-        msg = 'Dört ruh bir arada. Kolye tamamlandı — Evren Mührü kırıldı. Zihin Haritası açılıyor. Kader senin elinde.';
+        msg = 'On iki mühür kolyeye gömüldü. Dört ruh bir arada — Evren Mührü kırıldı. Zihin Haritası açılıyor.';
       } else if (endless) {
         msg = breaths[1];
       } else {

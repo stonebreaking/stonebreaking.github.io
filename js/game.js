@@ -1112,12 +1112,17 @@ class StonebreakingGame {
     const th = this.trayH || 64;
     // Bar arka plan
     ctx.save();
-    ctx.fillStyle = 'rgba(8,14,12,0.72)';
+    const fill = (this.tray && this.tray.length) || 0;
+    ctx.fillStyle = 'rgba(8,14,12,0.78)';
     ctx.beginPath();
     ctx.roundRect(8, 6, W - 16, th - 4, 12);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255,209,148,0.22)';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = fill >= TRAY_MAX - 1
+      ? 'rgba(230,57,70,0.55)'
+      : fill >= TRAY_MAX - 2
+        ? 'rgba(255,179,0,0.45)'
+        : 'rgba(255,209,148,0.22)';
+    ctx.lineWidth = fill >= TRAY_MAX - 1 ? 2.2 : 1.5;
     ctx.stroke();
     // Slotlar
     const n = TRAY_MAX;
