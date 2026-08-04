@@ -824,13 +824,15 @@ class StonebreakingGame {
   }
 
   checkWin() {
+    // v9.29: tahta + kolye tepsisi boş olmalı
     const rem = this.tiles.filter((t) => t.active).length;
-    if (rem === 0) {
+    const trayRem = (this.tray && this.tray.length) || 0;
+    if (rem === 0 && trayRem === 0) {
       if (this._winScheduled) return;
       this._winScheduled = true;
       setTimeout(() => {
         this._winScheduled = false;
-        if (this.tiles.some((t) => t.active) || 0 || 0) return;
+        if (this.tiles.some((t) => t.active) || (this.tray && this.tray.length)) return;
         this.locked = true;
         const elapsed = Math.max(1, (performance.now() - this.startedAt) / 1000);
         if (typeof this.onWin === 'function') {
@@ -977,6 +979,8 @@ class StonebreakingGame {
         moves: this.moves,
         hintsLeft: this.hintsLeft,
         undosLeft: this.undosLeft,
+        trayCount: (this.tray && this.tray.length) || 0,
+        trayMax: typeof TRAY_MAX !== 'undefined' ? TRAY_MAX : 7,
         shufflesLeft: this.shufflesLeft,
         element: this.currentElement,
       });
