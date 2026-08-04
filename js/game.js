@@ -35,7 +35,7 @@ const SPIRITS = {
     sigil: '🔥', color: '#ff6b35', colorDeep: '#e63946',
     form: 'Alev beden · göğüste elmas mühür',
     kolye: '06_GRAFIK/kolye_muhur_resmi.png',
-    tile: '06_GRAFIK/tile_fire_ref.png',
+    tile: '06_GRAFIK/tas_sembol_ates_core.png',
     cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
     quote: 'İlk kıvılcımı ben yakarım. Cesaretinle gel.',
     scene: '06_GRAFIK/sahne_ates_vadisi.png',
@@ -74,7 +74,7 @@ const SPIRITS = {
     sigil: '🌬', color: '#e8f4ff', colorDeep: '#a8d8ea',
     form: 'Rüzgâr kanat · bulut spiral mührü',
     kolye: '06_GRAFIK/kolye_muhur_resmi.png',
-    tile: '06_GRAFIK/tile_air_ref.png',
+    tile: '06_GRAFIK/tas_sembol_hava_core.png',
     cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
     quote: 'Hafif ol. Görünmeyeni gör.',
     scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png',
@@ -224,15 +224,15 @@ class StonebreakingGame {
     // v9.28 MÜHÜRLÜ TAŞ SETİ — sembol yüzleri (okunabilir)
     this.elementSets = {
       ates: [
-        { key: 'ates_core', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tile_fire_ref.png' },
-        { key: 'ates_1',    color: '#ff6b35', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_1.png' },
-        { key: 'ates_2',    color: '#ff8c1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_2.png' },
-        { key: 'ates_3',    color: '#ff5722', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_3.png' },
-        { key: 'ates_4',    color: '#ff6b35', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_4.png' },
-        { key: 'ates_5',    color: '#ff8c1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_5.png' },
-        { key: 'ates_6',    color: '#ffb300', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_6.png' },
-        { key: 'ates_alev', color: '#ff5722', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_alev.png' },
-        { key: 'ates_volkan', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_volkan.png' },
+        { key: 'ates_core', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
+        { F_GRAFIK/tas_sembol_ates_core.png' },
       ],
       su: [
         { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_core.png' },
@@ -257,13 +257,13 @@ class StonebreakingGame {
         { key: 'toprak_kristal', color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
       ],
       hava: [
-        { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tile_air_ref.png' },
-        { key: 'hava_1',    color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_1.png' },
-        { key: 'hava_2',    color: '#e8f4ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_2.png' },
-        { key: 'hava_3',    color: '#b3e5fc', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_3.png' },
-        { key: 'hava_4',    color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_4.png' },
-        { key: 'hava_5',    color: '#e8f4ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_5.png' },
-        { key: 'hava_6',    color: '#f5f9ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_6.png' },
+        { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_core.png' },
+        { F_GRAFIK/tas_sembol_hava_core.png' },
+        { F_GRAFIK/tas_sembol_hava_core.png' },
+        { F_GRAFIK/tas_sembol_hava_core.png' },
+        { F_GRAFIK/tas_sembol_hava_core.png' },
+        { F_GRAFIK/tas_sembol_hava_core.png' },
+        { F_GRAFIK/tas_sembol_hava_core.png' },
         { key: 'hava_spiral', color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_spiral.png' },
         { key: 'hava_simsek', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_simsek.png' },
       ],
@@ -426,7 +426,7 @@ class StonebreakingGame {
     this.startedAt = performance.now();
     // v1.20: Tahta arka plan — karakter seçim anime tapınak (yoksa)
     if (!this.sceneImg) {
-      this.setScene('06_GRAFIK/sinematik_01_ikili_tapinak.png');
+      this.setScene('06_GRAFIK/sinematik_01_ikili_tapinak.png'); // karakter seçim evreni
     }
     try {
       if (localStorage.getItem('sb_intro_toast') !== '1') {
