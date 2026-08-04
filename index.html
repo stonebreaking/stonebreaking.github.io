@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.5</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.6</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2118,10 +2118,10 @@
     <div class="match-tray" id="match-tray" aria-hidden="true"></div>
 
     <div class="controls">
-      <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır · Reklam" aria-label="Karıştır">
+      <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır" aria-label="Karıştır">
         🔀<span class="badge" id="badge-shuffle">0</span>
       </button>
-      <button class="power-btn" type="button" id="btn-hint" title="İpucu · Reklam" aria-label="İpucu">
+      <button class="power-btn" type="button" id="btn-hint" title="İpucu" aria-label="İpucu">
         💡<span class="badge" id="badge-hint">1</span>
       </button>
       <button class="power-btn" type="button" id="btn-undo" title="Geri al" aria-label="Geri al" style="display:none">
@@ -2900,6 +2900,11 @@
     function showVictory(stats) {
       state.lastStats = stats;
       applyProfileToWin(stats);
+      // v1.6: Sonsuz buton anında
+      try {
+        const ebtn = document.getElementById('btn-endless');
+        if (ebtn && state.profile.endlessUnlocked) ebtn.style.display = 'block';
+      } catch (_) {}
       const lv = stats.level || 1;
       const endless = lv > 12;
       $('#v-rank').textContent = stats.rank || 'A';
