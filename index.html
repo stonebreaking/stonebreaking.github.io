@@ -2005,7 +2005,7 @@
       style="position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(70vw,280px);height:min(70vw,280px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font-size:0.72rem;letter-spacing:2.5px;color:rgba(255,209,148,0.85);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.28</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.29</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2399,9 +2399,13 @@
       <div class="v-stat"><div class="l">En Uzun Kombo</div><div class="v" id="v-combo">0</div></div>
     </div>
     <p class="v-msg" id="v-msg">Taşları doğru okudun. Evren mühürü titreşti.</p>
-    <button class="btn-ui primary" type="button" id="btn-next-level">Sonraki Bölüm</button>
-    <button class="btn-ui" type="button" id="btn-zihin" style="margin-top:10px">🧠 Zihin Haritası <span id="v-zihin-tas" style="opacity:.85"></span></button>
-    <button class="btn-ui" type="button" id="btn-victory-menu" style="margin-top:10px">Ana Menü</button>
+    <div id="victory-actions" style="display:flex;flex-direction:column;gap:10px;width:min(320px,92%);margin:8px auto 0;">
+      <button class="btn-ui primary" type="button" id="btn-next-level">Sonraki Bölüm</button>
+      <button class="btn-ui" type="button" id="btn-replay">↻ Yeniden Oyna</button>
+      <button class="btn-ui" type="button" id="btn-zihin">🧠 Zihin Haritasını Gör</button>
+      <button class="btn-ui" type="button" id="btn-victory-profile">👤 Profilini Gör</button>
+      <button class="btn-ui" type="button" id="btn-victory-menu">⌂ Başa Dön</button>
+    </div>
   </div>
 
   <!-- M-010: "BU DAHA BAŞLANGIÇ…" — 12. bölüm sonrası sinematik sekans -->
@@ -4276,6 +4280,39 @@
         if (game) game.stopLoop();
         goScreen('screen-splash');
       });
+      // v1.29: Oyun sonu menü
+      $('#btn-replay')?.addEventListener('click', () => {
+        hideVictory();
+        try { StoneSound.tap && StoneSound.tap(); } catch(_){}
+        const lv = (state.lastStats && state.lastStats.level) || state.chapter || 1;
+        startGame({ forceChapter: lv, replay: true });
+      });
+      $('#btn-victory-profile')?.addEventListener('click', () => {
+        hideVictory();
+        if (game) game.stopLoop();
+        try { renderProfile && renderProfile(); } catch(_){}
+        try { drawMindMap && drawMindMap(); } catch(_){}
+        goScreen('screen-profile');
+      });
+      // Zihin: önce ZIHIN paneli, yoksa profil haritası
+      const zhBtn = $('#btn-zihin');
+      if (zhBtn) {
+        zhBtn.onclick = () => {
+          try { StoneSound.tap && StoneSound.tap(); } catch(_){}
+          hideVictory();
+          if (window.ZIHIN && typeof ZIHIN.ac === 'function') {
+            try { ZIHIN.ac(); return; } catch(_){}
+          }
+          if (game) game.stopLoop();
+          try { renderProfile && renderProfile(); } catch(_){}
+          try { drawMindMap && drawMindMap(); } catch(_){}
+          goScreen('screen-profile');
+          setTimeout(() => {
+            const mm = $('#mind-map-section');
+            if (mm) mm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 200);
+        };
+      }
 
       // v6.8.3: Skin-chips listener
       $$('.skin-chip').forEach((chip) => {
