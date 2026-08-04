@@ -924,7 +924,7 @@ class StonebreakingGame {
         this.locked = true;
         const elapsed = Math.max(1, (performance.now() - this.startedAt) / 1000);
         if (typeof this.onWin === 'function') {
-          this.onWin({
+          const payload = {
             level: this.level,
             iq: this.iq,
             combo: this.maxCombo,
@@ -934,7 +934,21 @@ class StonebreakingGame {
             timeSec: elapsed,
             element: this.currentElement,
             rank: this.rankFor(this.iq, this.maxCombo),
-          });
+          };
+          if (window.STONE_MindMap) {
+            try {
+              window.__mindLast = window.STONE_MindMap.fromWinPayload(payload, {
+                spiritId: this.spiritId || this.currentElement,
+                hintsUsed: Math.max(0, (this._hintsStart || 0) - (this.hintsLeft || 0)),
+                shufflesUsed: Math.max(0, (this._shufStart || 0) - (this.shufflesLeft || 0)),
+                fails: this._failCount || 0,
+                wrongTaps: this._wrongTaps || 0,
+                breaths: this._breaths || {},
+                criticalTray: this._criticalTray || 0,
+              });
+            } catch (e) {}
+          }
+          this.onWin(payload);
         }
       }, 500);
     }
