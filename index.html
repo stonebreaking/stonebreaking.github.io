@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.29 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.30 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2106,6 +2106,7 @@
       <div id="hud-element">🔥 Ateş</div>
       <div>Bölüm <b id="hud-level">1</b></div>
       <div>Mühür <b id="hud-seals">0</b></div>
+      <div>Kolye <b id="hud-tray">0/7</b></div>
       <div>Kombo <b id="hud-combo">0</b></div>
     </div>
 
@@ -2787,6 +2788,13 @@
       set('hud-level', h.endless ? '∞' + (h.level - 12) : h.level);
       set('hud-seals', h.seals);
       set('hud-combo', h.combo);
+      const trayEl = document.getElementById('hud-tray');
+      if (trayEl) {
+        const tc = h.trayCount || 0;
+        const tm = h.trayMax || 7;
+        trayEl.textContent = tc + '/' + tm;
+        trayEl.style.color = tc >= tm - 1 ? '#e63946' : (tc >= tm - 2 ? '#ffb300' : '');
+      }
       if (!h.combo) {
         const ce = document.getElementById('hud-combo');
         if (ce) { ce.style.color = ''; ce.style.textShadow = ''; }

@@ -377,12 +377,21 @@ class StonebreakingGame {
     // v9.11.0 · Bölüm 11 "Kara Taşlar": izolasyon BİLEREK bozulur (mühürlü 4 element karışık)
     // v9.12.0 · M-018 RAMPA — IQ mantığı: bölüm ilerledikçe tip havuzu açılır (B1=4 tip · B6+=9 tip)
     // M-014 ELITE mühür: Sonsuz Mod'da bonus tip olarak karışır (36+1=37 tip)
-    const elementTypes = level === 11 && !this.endless
-      ? this.karaSet
-      : (this.endless
-          ? [...this.elementSets.ates, ...this.elementSets.su, ...this.elementSets.toprak, ...this.elementSets.hava, this.eliteTile]
-          : this.elementSets[elementKey].slice(0, Math.min(this.elementSets[elementKey].length, 3 + level)));
-    this.types = elementTypes; // SADECE bu setin taşları
+    let elementTypes;
+    if (level === 11 && !this.endless) {
+      elementTypes = this.karaSet;
+    } else if (this.endless) {
+      // v9.30 Sonsuz varyant: dalga arttıkça daha fazla rune tipi
+      const wave = Math.max(1, level - 12);
+      const all = [...this.elementSets.ates, ...this.elementSets.su, ...this.elementSets.toprak, ...this.elementSets.hava];
+      const typeCount = Math.min(all.length, 12 + Math.floor(wave * 1.5));
+      elementTypes = all.slice(0, typeCount);
+      if (wave >= 4 && this.eliteTile) elementTypes = elementTypes.concat([this.eliteTile]);
+    } else {
+      const n = Math.min(this.elementSets[elementKey].length, 3 + Math.floor(level * 0.7));
+      elementTypes = this.elementSets[elementKey].slice(0, Math.max(4, n));
+    }
+    this.types = elementTypes;
 
     // v9.9: 2'li DAĞITIM — her tip 2 adet (çift), Vita Mahjong garantili çözülebilir
     const groups = layout.length / 2;
