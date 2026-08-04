@@ -1899,7 +1899,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.21 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.23 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2457,6 +2457,41 @@
           '<br><span style="color:#7CFFB2">💡 +1 İpucu</span>';
       }
       showToast('Günün Mührü · 💡 +1');
+    }
+
+    function updateSpiritLocks() {
+      const p = state.profile || {};
+      const opened = p.sealsOpened || [];
+      const maxCh = Math.max(0, ...(opened.length ? opened : [0]), p.chapter || 1);
+      // Baam 4+ (bölüm 3 tamam), Mand 7+ (bölüm 6), Zepy 10+ (bölüm 9)
+      const unlock = {
+        kor: true,
+        baam: maxCh > 3 || opened.includes(3) || opened.includes(4) || opened.includes(5) || opened.includes(6),
+        mand: maxCh > 6 || opened.includes(6) || opened.includes(7) || opened.includes(8) || opened.includes(9),
+        zepy: maxCh > 9 || opened.includes(9) || opened.includes(10) || opened.includes(11) || opened.includes(12),
+      };
+      // chapter progress also counts: if chapter is 4, baam open
+      if ((p.chapter || 1) >= 4) unlock.baam = true;
+      if ((p.chapter || 1) >= 7) unlock.mand = true;
+      if ((p.chapter || 1) >= 10) unlock.zepy = true;
+      $$('#screen-spirit .spirit-card').forEach((card) => {
+        const s = card.dataset.spirit;
+        if (!s || s === 'kor') {
+          card.classList.remove('locked');
+          const lock = card.querySelector('.spirit-lock');
+          if (lock) lock.style.display = 'none';
+          return;
+        }
+        if (unlock[s]) {
+          card.classList.remove('locked');
+          const lock = card.querySelector('.spirit-lock');
+          if (lock) lock.style.display = 'none';
+        } else {
+          card.classList.add('locked');
+          const lock = card.querySelector('.spirit-lock');
+          if (lock) lock.style.display = '';
+        }
+      });
     }
 
     function refreshEndlessButton() {
@@ -3238,6 +3273,20 @@
           ).join('');
         }
       }
+      // v9.22: Günün Mührü durum satırı
+      const dmsg = $('#daily-seal-msg');
+      if (dmsg) {
+        if (!p.endlessUnlocked) {
+          dmsg.textContent = 'Evren Mührü sonrası açılır.';
+          dmsg.style.color = '#666';
+        } else if (p.dailySealDate === (typeof todayKey === 'function' ? todayKey() : '')) {
+          dmsg.textContent = 'Bugünün mührü okundu.';
+          dmsg.style.color = '#7CFFB2';
+        } else {
+          dmsg.textContent = 'Dokun · Günün rehber sözünü al.';
+          dmsg.style.color = '#9a9ab0';
+        }
+      }
       const pe = $('#prof-endless');
       if (pe) {
         pe.textContent = p.endlessUnlocked ? 'Açık ∞' : 'Kapalı';
@@ -3761,6 +3810,7 @@
         if (!state.mascot) return;
         StoneSound.unlock();
         StoneSound.tap();
+        updateSpiritLocks();
         goScreen('screen-spirit');
       });
 
@@ -4074,6 +4124,7 @@
       if (state.profile.spirit) state.spirit = state.profile.spirit;
       if (state.profile.mascot) state.mascot = state.profile.mascot;
       refreshEndlessButton();
+      updateSpiritLocks();
       // SAHNE -1 → SAHNE 0 akışı
       playStudioIntro();
       const warm = new Image();
