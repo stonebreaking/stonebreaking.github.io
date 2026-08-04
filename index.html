@@ -28,11 +28,21 @@
     /* ========== SAHNE -1: BATUPIA STUDIOS INTRO ========== */
     #screen-studio-intro {
       position: relative;
-      background: #07070f;
+      background: #05050c;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+    }
+    #screen-studio-intro #loading-batupia-img {
+      object-fit: contain;
+      background: #05050c;
+    }
+    @media (max-width: 480px) {
+      #screen-studio-intro #loading-batupia-img {
+        object-fit: contain;
+        object-position: center center;
+      }
     }
     #screen-studio-intro .studio-bg {
       position: absolute;
@@ -1915,24 +1925,12 @@
 <body>
 
   <!-- ========== 0. BATUPIA STUDIOS INTRO (SAHNE -1) — STONEBREAKING EVRENİ ========== -->
-  <section id="screen-studio-intro" class="screen active" aria-label="BATUPIA Studios">
-    <div class="studio-bg"></div>
-    <div class="studio-content">
-      <div class="studio-line-top"></div>
-      <!-- v9.9: BATUPIA logo görseli + CSS ◆ mühür -->
-      <div class="studio-logo-wrap" id="studio-logo">
-        <!-- v9.12.1 · M-019: elmas logo KALDIRILDI — kompozisyon sağa kayıktı (Patron 04.08); mühürlü seal tek BATUPIA görseli, wrap içinde tam ortalı -->
-        <img src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 0 40px rgba(255,150,64,0.5))" />
-        <div class="studio-muhur">◆</div>
-        <div class="studio-muhur-crack ates"></div>
-        <div class="studio-muhur-crack su"></div>
-        <div class="studio-muhur-crack toprak"></div>
-        <div class="studio-muhur-crack hava"></div>
-      </div>
-      <!-- v9.11.1 Patron 03.08: isim yazıları KALDIRILDI — logo görselinde zaten BATUPIA STUDIOS yazıyor (yineleme yok) -->
-      <div class="studio-line-bottom"></div>
-    </div>
-    <div class="studio-particles" id="studio-particles"></div>
+  <section id="screen-studio-intro" class="screen active" aria-label="BATUPIA Yükleniyor">
+    <!-- v1.21: Kullanıcı loading kartı — telefon dikey full -->
+    <img id="loading-batupia-img" src="06_GRAFIK/loading_batupia_acilista.png" alt="BATUPIA Yükleniyor"
+      style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#05050c;z-index:1;" />
+    <div id="loading-pct" style="position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:2;font-size:0.95rem;font-weight:800;letter-spacing:3px;color:#e8c990;text-shadow:0 0 12px rgba(232,201,144,0.5);pointer-events:none;">0%</div>
+    <div class="studio-particles" id="studio-particles" style="display:none"></div>
   </section>
 
   <!-- ========== 1. AÇILIŞ — STONEBREAKING EVRENİ SİNEMATİK ========== -->
@@ -1985,7 +1983,7 @@
       style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(58vw,240px);height:min(58vw,240px);border-radius:50%;border:0;background:radial-gradient(circle,rgba(255,209,148,0.08) 0%,transparent 70%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:12vh;transform:translateX(-50%);z-index:6;font-size:0.7rem;letter-spacing:2.5px;color:rgba(255,209,148,0.75);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.20</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.21</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2693,33 +2691,26 @@
 
     async function playStudioIntro() {
       const intro = $('#screen-studio-intro');
-      const container = $('#studio-particles');
-      // Hafif parçacıklar
-      if (container) {
-        const colors = ['#ffd194', '#ffb347', 'rgba(255,209,148,0.5)'];
-        for (let i = 0; i < 12; i++) {
-          const s = document.createElement('span');
-          s.style.cssText = `
-            position:absolute;
-            left:${Math.random()*100}%;
-            bottom:-4px;
-            width:${2+Math.random()*3}px;
-            height:${2+Math.random()*3}px;
-            border-radius:50%;
-            background:${colors[i%3]};
-            opacity:0;
-            animation: particleDrift ${8+Math.random()*6}s linear ${Math.random()*2}s infinite;
-          `;
-          container.appendChild(s);
-        }
-      }
-      // v1.19: BATUPIA marka ritmi — ekip değerlendirmesi için yeterli süre
-      await wait(2400);
+      const pctEl = $('#loading-pct');
+      // v1.21: Loading kartı + yüzde animasyonu
+      const total = 2800;
+      const t0 = performance.now();
+      await new Promise((resolve) => {
+        const tick = () => {
+          const p = Math.min(100, Math.floor(((performance.now() - t0) / total) * 100));
+          if (pctEl) pctEl.textContent = p + '%';
+          if (p >= 100) resolve();
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+      if (pctEl) pctEl.textContent = '100%';
+      await wait(200);
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(450);
+      await wait(400);
       goScreen('screen-splash');
       playSplashCinematic();
     }
