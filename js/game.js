@@ -888,6 +888,7 @@ class StonebreakingGame {
     this.hintIds.add(best.id);
     best.glow = 2;
     this.hintsLeft--;
+    if (typeof this.onPowerUse === 'function') this.onPowerUse('hint');
     this.emitAll();
     this.toast('💡 İpucu');
     setTimeout(() => { best.glow = 0; this.hintIds.delete(best.id); }, 1600);
@@ -905,6 +906,7 @@ class StonebreakingGame {
     }
     active.forEach((t, i) => { t.type = types[i]; });
     this.shufflesLeft--;
+    if (typeof this.onPowerUse === 'function') this.onPowerUse('shuffle');
     this.updateFree();
     this.emitAll();
     this.toast('🔄 Karıştırıldı');

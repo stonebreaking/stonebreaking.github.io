@@ -1899,7 +1899,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.17 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.18 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -3432,6 +3432,17 @@
             const map = { yan: '#e63946', ak: '#1d8cf8', dur: '#2ecc71', nefes: '#f0f0f0' };
             el.style.color = map[b.fx] || b.color || '#ffd194';
             el.style.textShadow = '0 0 10px ' + (map[b.fx] || b.color || '#ffd194');
+          }
+        };
+        // v9.17: Banked stok — kullanılan ipucu/karıştır envanterden düşer
+        game.onPowerUse = (kind) => {
+          const p = state.profile;
+          if (kind === 'hint' && (p.bankedHints || 0) > 0) {
+            p.bankedHints -= 1;
+            saveProfile();
+          } else if (kind === 'shuffle' && (p.bankedShuffles || 0) > 0) {
+            p.bankedShuffles -= 1;
+            saveProfile();
           }
         };
         game.onFail = () => {
