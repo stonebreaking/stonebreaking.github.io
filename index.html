@@ -882,6 +882,9 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
+      background: url('06_GRAFIK/story_map_konsept_v1.png') center/cover no-repeat;
+      opacity: 0.22;
+      filter: blur(2px) brightness(0.55);
     }
     #screen-spirit > * { position: relative; z-index: 1; }
 
@@ -1983,7 +1986,7 @@
       style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(58vw,240px);height:min(58vw,240px);border-radius:50%;border:0;background:radial-gradient(circle,rgba(255,209,148,0.08) 0%,transparent 70%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:12vh;transform:translateX(-50%);z-index:6;font-size:0.7rem;letter-spacing:2.5px;color:rgba(255,209,148,0.75);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.21</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.22</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2053,7 +2056,7 @@
 
     <div class="char-footer">
       <button class="btn-seal" type="button" id="btn-char-back"><span class="bs-rune">◆</span><span class="bs-label">Geri</span><span class="bs-rune">◆</span></button>
-      <button class="btn-seal primary" type="button" id="btn-char-next" disabled><span class="bs-rune">◈</span><span class="bs-label">Ruhunu Seç</span><span class="bs-rune">◈</span></button>
+      <button class="btn-seal primary" type="button" id="btn-char-next" disabled><span class="bs-rune">◈</span><span class="bs-label">Hikâye Haritası</span><span class="bs-rune">◈</span></button>
     </div>
     <div class="char-sig">by BATUPIA Studios</div>
   </section>
@@ -3956,6 +3959,12 @@
       $('#btn-char-back')?.addEventListener('click', () => goScreen('screen-splash'));
       $('#btn-char-next')?.addEventListener('click', () => {
         if (!state.mascot) return;
+        StoneSound.unlock();
+        StoneSound.tap();
+        // v1.22: Hikâye haritası (story map konsept)
+        goScreen('screen-story-map');
+      });
+      $('#btn-story-continue')?.addEventListener('click', () => {
         StoneSound.unlock();
         StoneSound.tap();
         updateSpiritLocks();
