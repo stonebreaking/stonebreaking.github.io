@@ -206,6 +206,10 @@
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse at 50% 40%, #15121f 0%, #05050c 72%);
+      background-image: url('06_GRAFIK/splash_logo_kolye_birlesik.png?v=131');
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
       z-index: 0;
     }
     #screen-splash .seal-backdrop { display: none !important; }
@@ -1973,9 +1977,9 @@
         <div class="cin-orb toprak" id="orb-toprak"></div>
         <div class="cin-orb hava" id="orb-hava"></div>
         <!-- v1.9 MÜHÜR: kullanıcı madalyon/title referansı — element yazılı STONEBREAKING -->
-        <img src="06_GRAFIK/logo_stonebreaking_element_guardians.png?v=124" alt="STONEBREAKING" id="splash-title-logo" />
+        <img src="06_GRAFIK/logo_stonebreaking_element_guardians.png?v=124" alt="STONEBREAKING" id="splash-title-logo" style="display:none!important" />
         <!-- v1.24 MÜHÜR KOLYE — dokunulacak merkez -->
-        <img src="06_GRAFIK/kolye_muhur_resmi.png?v=129" alt="Kolye" id="splash-kolye" />
+        <img src="06_GRAFIK/kolye_muhur_resmi.png?v=129" alt="Kolye" id="splash-kolye" style="display:none!important" />
         <div class="splash-logo-text" id="muhur-logo" style="opacity:0;pointer-events:none" aria-hidden="true">
           <div class="splash-logo-muhur">◆</div>
         </div>
@@ -2002,10 +2006,10 @@
       </button>
     </div>
     <button type="button" id="kolye-start-hit" aria-label="Kolyeye dokun"
-      style="position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(70vw,280px);height:min(70vw,280px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
+      style="position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:min(55vw,260px);height:min(55vw,260px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font-size:0.72rem;letter-spacing:2.5px;color:rgba(255,209,148,0.85);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.30</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.31</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
