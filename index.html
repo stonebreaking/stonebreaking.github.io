@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.31 · KOLYE 4 SLOT · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.0</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2397,6 +2397,21 @@
   <script src="js/game.js?v=72"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
+
+
+  <div id="fail-overlay" style="display:none;position:fixed;inset:0;z-index:9980;background:rgba(4,8,12,0.88);align-items:center;justify-content:center;padding:20px;">
+    <div style="max-width:320px;width:100%;background:linear-gradient(160deg,#1a2030,#0e1218);border:1px solid rgba(230,57,70,0.35);border-radius:16px;padding:24px 20px;text-align:center;color:#eee;">
+      <div style="font-size:0.7rem;letter-spacing:2px;color:#e63946;margin-bottom:8px;">MÜHÜR TAŞTI</div>
+      <h3 style="margin:0 0 10px;color:#ffd194;font-size:1.1rem;">Kolye taşıyamadı</h3>
+      <p style="margin:0 0 18px;font-size:0.85rem;color:#a8a8b8;line-height:1.5;">Mühürler kolyeye sığmadı. Yeniden kır — ruhlar bekliyor.</p>
+      <button class="btn-seal primary" type="button" id="btn-fail-retry" style="width:100%;margin-bottom:10px;">
+        <span class="bs-rune">◈</span><span class="bs-label">Yeniden Mühürle</span><span class="bs-rune">◈</span>
+      </button>
+      <button class="btn-seal" type="button" id="btn-fail-home" style="width:100%;">
+        <span class="bs-label">Ana Menü</span>
+      </button>
+    </div>
+  </div>
 
   <div id="tutorial-overlay" aria-label="Nasıl oynanır">
     <div class="tut-card">
@@ -3604,11 +3619,8 @@
         game.onTrayFull = () => {
           StoneSound.fail();
           StoneSound.vibrate([40, 40, 80]);
-          showToast('Kolye taşıyamadı · Mühürler taştı');
-          setTimeout(() => {
-            showToast('Yeniden mühürleniyor…');
-            startGame({ chapter: state.chapter || game.level, force: true });
-          }, 1200);
+          const fo = document.getElementById('fail-overlay');
+          if (fo) { fo.style.display = 'flex'; }
         };
         game.onWin = (stats) => {
           const currentSpirit = state.spirit || 'kor';
@@ -3973,6 +3985,18 @@
         StoneSound.hint(); game && game.hint();
       });
       $('#btn-tut-next')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.tap(); advanceTutorial(); });
+      $('#btn-fail-retry')?.addEventListener('click', () => {
+        StoneSound.unlock(); StoneSound.tap();
+        const fo = document.getElementById('fail-overlay');
+        if (fo) fo.style.display = 'none';
+        startGame({ chapter: state.chapter || (game && game.level) || 1, force: true });
+      });
+      $('#btn-fail-home')?.addEventListener('click', () => {
+        StoneSound.unlock(); StoneSound.tap();
+        const fo = document.getElementById('fail-overlay');
+        if (fo) fo.style.display = 'none';
+        goScreen('screen-splash');
+      });
       $('#btn-undo')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.undo(); game && game.undo(); });
       // v9.9: Ayarlar butonu
       $('#btn-settings')?.addEventListener('click', () => {

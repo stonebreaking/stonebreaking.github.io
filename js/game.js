@@ -286,8 +286,8 @@ class StonebreakingGame {
     // Tray metrics
     // Mahjong Solitaire — tahta doğrudan üstten başlar
     this.slotGap = 6;
-    this.trayH = Math.max(56, Math.floor(this.viewW * 0.14));
-    this.boardTop = this.trayH + 12;
+    this.trayH = Math.max(72, Math.floor(this.viewW * 0.18));
+    this.boardTop = this.trayH + 14;
 
     this.fitTilesToView();
   }
@@ -934,15 +934,10 @@ class StonebreakingGame {
     return true;
   }
 
-  // v9.10.4: Hamle kalmadı mı? — evren ÜCRETSİZ karıştırır (Vita garantisi: kilitlenme yok)
+  // v9.32: Tepsi model — hamle = serbest taş var ve kolyede yer var
   hasMoves() {
-    const free = this.tiles.filter((t) => t.active && t.free);
-    const seen = new Set();
-    for (const t of free) {
-      if (seen.has(t.type)) return true;
-      seen.add(t.type);
-    }
-    return false;
+    if ((this.tray && this.tray.length) >= TRAY_MAX) return false;
+    return this.tiles.some((t) => t.active && t.free);
   }
 
   ensureMoves(secenek = {}) {
@@ -1111,8 +1106,8 @@ class StonebreakingGame {
     // Slotlar
     const n = TRAY_MAX;
     const gap = 6;
-    const slotW = Math.min(52, Math.floor((W - 32 - gap * (n - 1)) / n));
-    const slotH = Math.min(th - 14, Math.floor(slotW / 0.72));
+    const slotW = Math.min(72, Math.floor((W - 28 - gap * (n - 1)) / n));
+    const slotH = Math.min(th - 12, Math.floor(slotW / 0.75));
     const totalW = n * slotW + (n - 1) * gap;
     let x0 = (W - totalW) / 2;
     const y0 = 6 + (th - 4 - slotH) / 2;
