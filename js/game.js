@@ -980,19 +980,20 @@ class StonebreakingGame {
         ctx.save();
         ctx.globalAlpha = Math.min(1, this.feedback.life * 1.5);
         ctx.textAlign = 'center';
-        ctx.font = `bold ${Math.max(30, Math.floor(W * 0.095))}px system-ui, sans-serif`;
+        // v9.13: daha küçük, zarif nefes yazısı (büyük yazı şikayeti)
+        ctx.font = `bold ${Math.max(16, Math.floor(W * 0.048))}px system-ui, sans-serif`;
         ctx.fillStyle = this.feedback.color;
         ctx.shadowColor = this.feedback.color;
-        ctx.shadowBlur = 22;
-        const fy = this.boardTop + 36;
+        ctx.shadowBlur = 12;
+        const fy = this.boardTop + 28;
         ctx.fillText(this.feedback.text, W / 2, fy);
         ctx.shadowBlur = 0;
-        ctx.font = `600 ${Math.max(13, Math.floor(W * 0.036))}px system-ui, sans-serif`;
-        ctx.fillStyle = 'rgba(255,240,210,0.95)';
-        if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, fy + 26);
-        ctx.font = `bold ${Math.max(15, Math.floor(W * 0.04))}px system-ui, sans-serif`;
+        ctx.font = `600 ${Math.max(11, Math.floor(W * 0.028))}px system-ui, sans-serif`;
+        ctx.fillStyle = 'rgba(255,240,210,0.9)';
+        if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, fy + 18);
+        ctx.font = `bold ${Math.max(12, Math.floor(W * 0.032))}px system-ui, sans-serif`;
         ctx.fillStyle = '#ffd194';
-        ctx.fillText(`Nefes x${this.feedback.combo}`, W / 2, fy + 50);
+        ctx.fillText(`Nefes x${this.feedback.combo}`, W / 2, fy + 36);
         ctx.restore();
       }
     }
