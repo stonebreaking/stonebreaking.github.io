@@ -357,11 +357,12 @@ class StonebreakingGame {
     this.moves = 0;
     this.seals = 0;
     // Sonsuz Mod güç dengesi: her 3 dalga'da 1 ekstra ipucu ve geri al
+    // v1.5: Kolye modelinde karıştır kritik — 1. bölümden ver
     this.hintsLeft = 1 + Math.floor((L - 1) / 4) + (this.endless ? Math.floor((level - 12) / 3) : 0);
-    this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? Math.floor((level - 12) / 4) : 0);
-    this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0) : 0;
+    this.undosLeft = 0; // geri al yok
+    this.shufflesLeft = 1 + Math.floor((L - 1) / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0);
     this.startedAt = performance.now();
-    setTimeout(() => this.toast('Serbest taşı seç — tepsiye gider'), 700);
+    setTimeout(() => this.toast('Serbest taşı kolyeye al · aynı mühürler kırılır'), 700);
 
     this.comboUntil = 0;
 
