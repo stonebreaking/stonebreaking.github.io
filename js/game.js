@@ -362,7 +362,14 @@ class StonebreakingGame {
     this.undosLeft = 0; // geri al yok
     this.shufflesLeft = 1 + Math.floor((L - 1) / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0);
     this.startedAt = performance.now();
-    setTimeout(() => this.toast('Serbest taşı kolyeye al · aynı mühürler kırılır'), 700);
+    try {
+      if (localStorage.getItem('sb_intro_toast') !== '1') {
+        setTimeout(() => this.toast('Serbest taşı kolyeye al · aynı mühürler kırılır'), 700);
+        localStorage.setItem('sb_intro_toast', '1');
+      }
+    } catch (_) {
+      setTimeout(() => this.toast('Serbest taşı kolyeye al · aynı mühürler kırılır'), 700);
+    }
 
     this.comboUntil = 0;
 
@@ -644,9 +651,10 @@ class StonebreakingGame {
       const r = this.tileRect(t);
       if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
         if (!t.free) {
-          this.toast('🔒 Bu taş kapalı — üstü veya iki yanı dolu');
-          t.glow = 0.6;
-          setTimeout(() => { if (t.active) t.glow = 0; }, 220);
+          this.toast('🔒 Kilitli mühür — üstü veya iki yanı dolu');
+          t.glow = 0.85;
+          t.shake = 1;
+          setTimeout(() => { if (t.active) { t.glow = 0; t.shake = 0; } }, 280);
           return;
         }
         this.pickToTray(t);
@@ -1169,12 +1177,16 @@ class StonebreakingGame {
     const blocked = !t.free;
     const ctx = this.ctx;
     const isSelected = (this.selectedTile === t.id);
+    let ox = 0;
+    if (t.shake) {
+      ox = Math.sin(performance.now() / 30) * 3;
+    }
 
     // 3D DEPTH — alt gölge
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
     ctx.beginPath();
-    ctx.roundRect(r.x + 4, r.y + 6, r.w, r.h, 10);
+    ctx.roundRect(r.x + 4 + ox, r.y + 6, r.w, r.h, 10);
     ctx.fill();
     ctx.restore();
 
@@ -1183,13 +1195,13 @@ class StonebreakingGame {
       ctx.shadowBlur = isSelected ? 24 : 18 * (t.glow || 1.5);
     } else ctx.shadowBlur = 0;
 
-    this.drawTileFace(t.type, r.x, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false, isSelected);
+    this.drawTileFace(t.type, r.x + ox, r.y, r.w, r.h, blocked ? 0.55 : 1, blocked, false, isSelected);
     ctx.shadowBlur = 0;
 
     if (blocked) {
       ctx.fillStyle = 'rgba(0,0,0,0.22)';
       ctx.beginPath();
-      ctx.roundRect(r.x, r.y, r.w, r.h, 10);
+      ctx.roundRect(r.x + ox, r.y, r.w, r.h, 10);
       ctx.fill();
     }
   }
