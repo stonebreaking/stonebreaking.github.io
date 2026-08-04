@@ -66,7 +66,8 @@ const ENDLESS_LINES = [
   'Taşlar durmadan konuşuyor.',
 ];
 
-// Mahjong Solitaire — TRAY_MAX yok
+// v9.27 WP VIDEO MODEL — Tepsili eşleşme
+const TRAY_MAX = 7;
 const COMBO_WINDOW_MS = 4000;
 
 // v9.16 PATRON BT — Combo = element söylemleri (Yan / Ak / Dur / Nefes Al)
@@ -122,16 +123,16 @@ class StonebreakingGame {
     this.gapX = 3;
     this.zLift = 10;
 
-    // Tray geometry (inside canvas, top)
-    // Mahjong Solitaire: seçili karo (ilk tıklama)
+    // v9.27 WP VIDEO: üst tepsi
+    this.tray = []; // [{type, fromId}]
     this.selectedTile = null;
-    // Güvenli varsayılan: resize() gelene kadar NaN geometri önlenir
     this.boardTop = 100;
+    this.trayH = 64;
 
 
     this.tiles = [];
     this.history = []; // geri al için
-    this.particles = []; this.selectedTile = null;
+    this.particles = []; this.selectedTile = null; this.tray = [];
     this.tileImages = {};
     this.sceneImg = null;
     this.sceneKey = '';
@@ -287,9 +288,8 @@ class StonebreakingGame {
     // Tray metrics
     // Mahjong Solitaire — tahta doğrudan üstten başlar
     this.slotGap = 6;
-
-    // v9.24: dikey tablet taş — slot kare zorunluluğu kalktı
-    this.boardTop = 8;
+    this.trayH = Math.max(56, Math.floor(this.viewW * 0.14));
+    this.boardTop = this.trayH + 12;
 
     this.fitTilesToView();
   }
@@ -363,12 +363,12 @@ class StonebreakingGame {
     this.undosLeft = 1 + Math.floor((L - 1) / 3) + (this.endless ? Math.floor((level - 12) / 4) : 0);
     this.shufflesLeft = L >= 3 ? 1 + Math.floor(L / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0) : 0;
     this.startedAt = performance.now();
-    setTimeout(() => this.toast('Aynı yüzden 2 serbest taş seç'), 700);
+    setTimeout(() => this.toast('Serbest taşı seç — tepsiye gider'), 700);
 
     this.comboUntil = 0;
 
     const layout = this.buildLayout(level);
-    // v9.9: Klasik Mahjong Solitaire — tepsi YOK, direkt tahta eşleşme
+    // v9.27: Tepsili model — çift sayı hâlâ iyi (eşleşme için)
     while (layout.length % 2 !== 0) layout.pop();
 
     // v9.9: ELEMENT İZOLASYONU — hikâye bölümlerinde her level SADECE 1 elementin taşlarını kullanır
@@ -624,7 +624,13 @@ class StonebreakingGame {
   /** Where the next inserted tile of this type will land */
   // ---- input / pick ----
   handleClick(mx, my) {
-    // v9.9: Klasik Mahjong Solitaire — iki serbest aynı karo = eşleş
+    // v9.27 WP VIDEO: serbest taş → tepsiye
+    if (this.locked || this.inputLocked) return;
+    // Tepsi dolu ve eşleşme yoksa tıklama yok
+    if (this.tray.length >= TRAY_MAX) {
+      this.toast('Kolye dolu · eşleştir veya mühürü aç');
+      return;
+    }
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => b.z - a.z || b.row - a.row);
     for (const t of sorted) {
       const r = this.tileRect(t);
@@ -635,81 +641,79 @@ class StonebreakingGame {
           setTimeout(() => { if (t.active) t.glow = 0; }, 220);
           return;
         }
-        this.selectTile(t);
+        this.pickToTray(t);
         return;
       }
     }
-    // Boş alana tıkla → seçimi kaldır
-    if (this.selectedTile) {
-      this.selectedTile.glow = 0;
-      this.selectedTile = null;
-      this.emitAll();
-    }
   }
 
-  selectTile(t) {
-    if (!t.active || !t.free) return;
-
-    // İlk seçim
-    if (!this.selectedTile) {
-      this.selectedTile = t;
-      t.glow = 1.5;
-      this.emitAll();
+  pickToTray(t) {
+    if (!t || !t.active || !t.free) return;
+    if (this.tray.length >= TRAY_MAX) {
+      this.toast('Kolye dolu · eşleştir veya mühürü aç');
+      this.failTray();
       return;
     }
-
-    // Aynı karo → seçimi kaldır
-    if (this.selectedTile.id === t.id) {
-      this.selectedTile.glow = 0;
-      this.selectedTile = null;
-      this.emitAll();
-      return;
+    // Tahtadan kaldır, tepsiye ekle
+    t.active = false;
+    t.glow = 0;
+    this.tray.push({ type: t.type, fromId: t.id });
+    this.moves++;
+    this.history.push({ kind: 'pick', tileId: t.id, type: t.type, traySnap: this.tray.map(x => ({...x})) });
+    const r = this.tileRect(t);
+    this.spawnShatter(r.x + r.w / 2, r.y + r.h / 2, this.types[t.type]?.color || '#ffd194');
+    this.updateFree();
+    this.resolveTrayMatches();
+    this.emitAll();
+    if (typeof this.onPick === 'function') this.onPick(t);
+    // Tepsi doldu mu?
+    if (this.tray.length >= TRAY_MAX) {
+      // Son bir eşleşme denemesi resolveTrayMatches zaten yaptı
+      if (this.tray.length >= TRAY_MAX) this.failTray();
     }
+    this.ensureMoves();
+    this.checkWin();
+  }
 
-    // İkinci seçim — aynı tip mi?
-    if (this.selectedTile.type === t.type) {
-      // EŞLEŞTİ! İki karo kaldır
-      const first = this.selectedTile;
-      this.selectedTile = null;
-
-      this.history.push({
-        tile1Id: first.id, tile1Type: first.type,
-        tile2Id: t.id, tile2Type: t.type,
-        iq: this.iq, combo: this.combo,
-        matches: this.matches, seals: this.seals,
-        maxCombo: this.maxCombo,
+  resolveTrayMatches() {
+    // Aynı tipten 2+ varsa eşleştir (çift çift kaldır)
+    let changed = true;
+    while (changed) {
+      changed = false;
+      const counts = {};
+      this.tray.forEach((s, i) => {
+        counts[s.type] = counts[s.type] || [];
+        counts[s.type].push(i);
       });
-
-      first.active = false;
-      t.active = false;
-      first.glow = 0;
-      t.glow = 0;
-      this.moves++;
-      this.hintIds.delete(first.id);
-      this.hintIds.delete(t.id);
-
-      // Patlatma efekti
-      const r1 = this.tileRect(first);
-      const r2 = this.tileRect(t);
-      this.spawnShatter(r1.x + r1.w/2, r1.y + r1.h/2, this.types[first.type]?.color || '#ffd194');
-      this.spawnShatter(r2.x + r2.w/2, r2.y + r2.h/2, this.types[t.type]?.color || '#ffd194');
-
-      this.updateFree();
-      this.onMatch(first.type);
-      this.emitAll();
-      this.checkWin();
-      this.ensureMoves(); // v9.10.4: hamle kalmazsa evren karıştırır
-      if (typeof this.onPick === 'function') this.onPick(t);
-    } else {
-      // Farklı tip → ilk seçimi kaldır, yeni seç
-      this.selectedTile.glow = 0;
-      this.selectedTile = t;
-      t.glow = 1.5;
-      this.toast('◆ Aynı sembolü seç — iki serbest taş');
-      this.emitAll();
+      for (const typeStr of Object.keys(counts)) {
+        const idxs = counts[typeStr];
+        if (idxs.length >= 2) {
+          // Son iki aynı tipi kaldır
+          const a = idxs[idxs.length - 1];
+          const b = idxs[idxs.length - 2];
+          const remove = [a, b].sort((x, y) => y - x);
+          const meta = this.types[Number(typeStr)] || this.types[0];
+          remove.forEach((ix) => this.tray.splice(ix, 1));
+          this.onMatch(Number(typeStr));
+          // Tepsi ortasından partikül
+          const cx = this.viewW / 2;
+          const cy = (this.trayH || 64) / 2;
+          this.spawnShatter(cx, cy, meta.color || '#ffd194');
+          changed = true;
+          break;
+        }
+      }
     }
   }
 
+  failTray() {
+    // v9.27: Evren dili — Yer Kalmadı YOK
+    this.toast('Kolye taşıyamadı · Mühürler taştı');
+    this.locked = true;
+    if (typeof this.onTrayFull === 'function') this.onTrayFull({ tray: this.tray.slice() });
+  }
+
+  // v9.16: Söylem görsel efektleri
   // v9.16: Söylem görsel efektleri — Yan / Ak / Dur / Nefes Al
   spawnComboFx(fx, color) {
     const W = this.viewW;
@@ -1011,7 +1015,8 @@ class StonebreakingGame {
     }
     // (çizgi deseni kaldırıldı — temiz film zemini)
 
-    // v9.9: Mahjong Solitaire — tepsi yok
+    // v9.27 WP VIDEO — üst tepsi çizimi
+    this.drawTray();
 
     // ---- BOARD tiles ----
     const sorted = [...this.tiles].filter((t) => t.active).sort((a, b) => a.z - b.z || a.row - b.row || a.col - b.col);
@@ -1077,6 +1082,44 @@ class StonebreakingGame {
       this.combo = 0;
       this.emitAll();
     }
+  }
+
+  drawTray() {
+    const ctx = this.ctx;
+    const W = this.viewW;
+    const th = this.trayH || 64;
+    // Bar arka plan
+    ctx.save();
+    ctx.fillStyle = 'rgba(8,14,12,0.72)';
+    ctx.beginPath();
+    ctx.roundRect(8, 6, W - 16, th - 4, 12);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,209,148,0.22)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Slotlar
+    const n = TRAY_MAX;
+    const gap = 6;
+    const slotW = Math.min(52, Math.floor((W - 32 - gap * (n - 1)) / n));
+    const slotH = Math.min(th - 14, Math.floor(slotW / 0.72));
+    const totalW = n * slotW + (n - 1) * gap;
+    let x0 = (W - totalW) / 2;
+    const y0 = 6 + (th - 4 - slotH) / 2;
+    for (let i = 0; i < n; i++) {
+      const x = x0 + i * (slotW + gap);
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.strokeStyle = 'rgba(255,209,148,0.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(x, y0, slotW, slotH, 8);
+      ctx.fill();
+      ctx.stroke();
+      const item = this.tray[i];
+      if (item) {
+        this.drawTileFace(item.type, x, y0, slotW, slotH, 1, false, false, false);
+      }
+    }
+    ctx.restore();
   }
 
   drawTile(t) {

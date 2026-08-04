@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.26 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.27 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2117,13 +2117,13 @@
     <div class="match-tray" id="match-tray" aria-hidden="true"></div>
 
     <div class="controls">
-      <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır" aria-label="Karıştır">
+      <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır · Reklam" aria-label="Karıştır">
         🔀<span class="badge" id="badge-shuffle">0</span>
       </button>
-      <button class="power-btn" type="button" id="btn-hint" title="İpucu" aria-label="İpucu">
+      <button class="power-btn" type="button" id="btn-hint" title="İpucu · Reklam" aria-label="İpucu">
         💡<span class="badge" id="badge-hint">1</span>
       </button>
-      <button class="power-btn" type="button" id="btn-undo" title="Geri al" aria-label="Geri al">
+      <button class="power-btn" type="button" id="btn-undo" title="Geri al" aria-label="Geri al" style="display:none">
         ↩<span class="badge" id="badge-undo">1</span>
       </button>
     </div>
@@ -3593,6 +3593,19 @@
           StoneSound.fail();
           StoneSound.vibrate(60);
         };
+        game.onTrayFull = () => {
+          StoneSound.fail();
+          StoneSound.vibrate([40, 40, 80]);
+          showToast('Kolye taşıyamadı · Mühürler taştı');
+          // Basit yeniden: aynı bölüm
+          setTimeout(() => {
+            if (confirm('Kolye doldu. Mühürü yeniden kır?')) {
+              startGame({ chapter: state.chapter || game.level, force: true });
+            } else {
+              goScreen('screen-splash');
+            }
+          }, 400);
+        };
         game.onWin = (stats) => {
           const currentSpirit = state.spirit || 'kor';
           const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
@@ -3934,8 +3947,27 @@
         startGame(endless ? { endless: true } : {});
       });
 
-      $('#btn-shuffle')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.shuffle(); game && game.shuffle(); });
-      $('#btn-hint')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.hint(); game && game.hint(); });
+      $('#btn-shuffle')?.addEventListener('click', () => {
+        StoneSound.unlock();
+        if (game && game.shufflesLeft <= 0) {
+          showToast('Reklam sonrası 🔄 Karıştır');
+          game.shufflesLeft = (game.shufflesLeft || 0) + 1;
+          game.emitAll && game.emitAll();
+          return;
+        }
+        StoneSound.shuffle(); game && game.shuffle();
+      });
+      $('#btn-hint')?.addEventListener('click', () => {
+        StoneSound.unlock();
+        if (game && game.hintsLeft <= 0) {
+          // Reklam getirisi iskeleti — gerçek SDK sonra
+          showToast('Reklam sonrası 💡 İpucu');
+          game.hintsLeft = (game.hintsLeft || 0) + 1;
+          game.emitAll && game.emitAll();
+          return;
+        }
+        StoneSound.hint(); game && game.hint();
+      });
       $('#btn-tut-next')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.tap(); advanceTutorial(); });
       $('#btn-undo')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.undo(); game && game.undo(); });
       // v9.9: Ayarlar butonu
@@ -4161,10 +4193,10 @@
 
     // v9.26: Vita tutorial → STONEBREAKING
     const TUT_STEPS = [
-      { t: 'Aynı mühürden iki taş seç', b: 'Serbest iki taşın yüzü aynıysa dokun — mühür kırılır, kolyeye gömülür.' },
-      { t: 'Üsttekileri kır, altı uyanır', b: 'Üst katmandaki taşları eşleştir. Alttakilerin kilidi açılır.' },
-      { t: 'Üstü kapalı taş kilitli', b: 'Üstünde başka taş varsa seçemezsin. Önce üstü temizle.' },
-      { t: 'Sol ve sağ doluysa kilitli', b: 'Bir taşın hem solu hem sağı doluysa kilitlidir. Yanları aç.' },
+      { t: 'Serbest taşı kolyeye al', b: 'Üstü açık ve yanı boş taşı seç — kolye tepsisine gider.' },
+      { t: 'Aynı mühürler eşleşir', b: 'Tepsinde aynı yüzden iki mühür buluşunca kırılır, IQ yükselir.' },
+      { t: 'Üstü veya iki yanı kapalı kilitli', b: 'Önce üsttekileri ve yanları aç. Kilitli taşa dokunulmaz.' },
+      { t: 'Kolye dolmasın', b: 'Tepsi taşarsa mühürler taşar. İpucu ve Karıştır reklamla açılabilir.' },
     ];
     let tutIdx = 0;
     function showTutorialIfNeeded() {
