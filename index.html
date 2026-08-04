@@ -1899,7 +1899,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.19 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.20 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2413,6 +2413,18 @@
     }
     function saveProfile() {
       try { localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile)); } catch (_) {}
+      refreshEndlessButton();
+    }
+
+    function refreshEndlessButton() {
+      const ebtn = $('#btn-endless');
+      if (!ebtn) return;
+      if (state.profile && state.profile.endlessUnlocked) {
+        ebtn.style.display = 'block';
+        ebtn.classList.add('show');
+      } else {
+        ebtn.style.display = 'none';
+      }
     }
 
     function showToast(msg) {
@@ -4013,6 +4025,7 @@
       // restore light state
       if (state.profile.spirit) state.spirit = state.profile.spirit;
       if (state.profile.mascot) state.mascot = state.profile.mascot;
+      refreshEndlessButton();
       // SAHNE -1 → SAHNE 0 akışı
       playStudioIntro();
       const warm = new Image();
