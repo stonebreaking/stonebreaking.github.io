@@ -2025,7 +2025,7 @@
     <!-- v1.50: metinsiz dokunma — yazı yok, buton görünümü yok -->
     <div id="kolye-hint" aria-hidden="true" style="display:none!important"></div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.50</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.51</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2498,7 +2498,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
-  <script src="js/game.js?v=150"></script>
+  <script src="js/game.js?v=151"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
 
@@ -3780,10 +3780,10 @@
       saveProfile();
       // v1.30: Bölüm anime sahnesi (ruh + element)
       const sceneMap = {
-        kor: '06_GRAFIK/ruh_kor_ates_sinematik.png',
-        baam: '06_GRAFIK/ruh_baam_su_sinematik.png',
-        mand: '06_GRAFIK/ruh_mand_toprak_sinematik.png',
-        zepy: '06_GRAFIK/ruh_zepy_hava_sinematik.png',
+        kor: '06_GRAFIK/ruh_kor_ates_sinematik.png?v=149',
+        baam: '06_GRAFIK/ruh_baam_su_sinematik.png?v=149',
+        mand: '06_GRAFIK/ruh_mand_toprak_sinematik.png?v=149',
+        zepy: '06_GRAFIK/ruh_zepy_hava_sinematik.png?v=149',
       };
       const sceneUrl = (sp && sp.scene) || sceneMap[state.spirit] || '06_GRAFIK/tahta_arka_plan_muhur.jpg';
       if (game) game.setScene(sceneUrl);
