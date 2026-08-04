@@ -96,12 +96,13 @@ const SEAL_BREATHS = {
 
 function breathForCombo(n) {
   let pool = SEAL_BREATHS.yan;
-  let color = '#e63946'; // Ateş kırmızı
-  if (n >= 10) { pool = SEAL_BREATHS.nefes; color = '#f0f0f0'; }      // Hava beyaz
-  else if (n >= 6) { pool = SEAL_BREATHS.dur; color = '#2ecc71'; }    // Toprak yeşil
-  else if (n >= 3) { pool = SEAL_BREATHS.ak; color = '#1d8cf8'; }     // Su mavi
+  let color = '#e63946';
+  let fx = 'yan';
+  if (n >= 10) { pool = SEAL_BREATHS.nefes; color = '#f0f0f0'; fx = 'nefes'; }
+  else if (n >= 6) { pool = SEAL_BREATHS.dur; color = '#2ecc71'; fx = 'dur'; }
+  else if (n >= 3) { pool = SEAL_BREATHS.ak; color = '#1d8cf8'; fx = 'ak'; }
   const pick = pool[Math.floor(Math.random() * pool.length)];
-  return { ...pick, color };
+  return { ...pick, color, fx };
 }
 
 class StonebreakingGame {
@@ -701,6 +702,42 @@ class StonebreakingGame {
     }
   }
 
+  // v9.16: Söylem görsel efektleri — Yan / Ak / Dur / Nefes Al
+  spawnComboFx(fx, color) {
+    const W = this.viewW;
+    const cx = W / 2;
+    const cy = (this.boardTop || 80) + 28;
+    const n = fx === 'nefes' ? 10 : fx === 'ak' ? 8 : fx === 'dur' ? 6 : 7;
+    for (let i = 0; i < n; i++) {
+      const a = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+      let vx, vy, size;
+      if (fx === 'yan') {
+        vx = (Math.random() - 0.5) * 3.2;
+        vy = -2.2 - Math.random() * 2.5;
+        size = 2 + Math.random() * 2.5;
+      } else if (fx === 'ak') {
+        vx = (Math.random() - 0.5) * 4.5;
+        vy = (Math.random() - 0.5) * 1.2;
+        size = 1.5 + Math.random() * 2;
+      } else if (fx === 'dur') {
+        vx = (Math.random() - 0.5) * 1.5;
+        vy = (Math.random() - 0.5) * 1.5;
+        size = 2 + Math.random() * 2;
+      } else {
+        vx = Math.cos(a) * (1.2 + Math.random());
+        vy = Math.sin(a) * (1.2 + Math.random());
+        size = 1.8 + Math.random() * 2.2;
+      }
+      this.particles.push({
+        x: cx + (Math.random() - 0.5) * 20,
+        y: cy + (Math.random() - 0.5) * 10,
+        vx, vy, size,
+        color: color,
+        life: fx === 'nefes' ? 1.1 : 0.95,
+      });
+    }
+  }
+
   onMatch(type) {
     const now = performance.now();
     if (now <= this.comboUntil) this.combo += 1;
@@ -721,8 +758,11 @@ class StonebreakingGame {
       sub: breath.sub,
       color: breath.color || meta.color,
       combo: this.combo,
-      life: 1.35,
+      life: breath.fx === 'nefes' ? 1.55 : 1.35,
+      fx: breath.fx || 'yan',
+      ring: breath.fx === 'nefes' ? 1 : 0,
     };
+    this.spawnComboFx(breath.fx || 'yan', breath.color || meta.color);
     this.toast(`${breath.text} · x${this.combo}`);
     if (typeof this.onBreath === 'function') {
       this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
@@ -749,8 +789,11 @@ class StonebreakingGame {
       sub: breath.sub,
       color: breath.color || meta.color,
       combo: this.combo,
-      life: 1.35,
+      life: breath.fx === 'nefes' ? 1.55 : 1.35,
+      fx: breath.fx || 'yan',
+      ring: breath.fx === 'nefes' ? 1 : 0,
     };
+    this.spawnComboFx(breath.fx || 'yan', breath.color || meta.color);
     this.toast(`${breath.text} · x${this.combo}`);
     if (typeof this.onBreath === 'function') {
       this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
@@ -979,28 +1022,43 @@ class StonebreakingGame {
     }
     ctx.globalAlpha = 1;
 
-    // story breath overlay
+    // story combo overlay + element FX
     if (this.feedback) {
       this.feedback.life -= 0.014;
       if (this.feedback.life <= 0) this.feedback = null;
       else {
         ctx.save();
-        ctx.globalAlpha = Math.min(1, this.feedback.life * 1.5);
+        const fy = this.boardTop + 28;
+        const cx = W / 2;
+        const alpha = Math.min(1, this.feedback.life * 1.5);
+        ctx.globalAlpha = alpha;
         ctx.textAlign = 'center';
-        // v9.13: daha küçük, zarif nefes yazısı (büyük yazı şikayeti)
+        // Nefes Al: genişleyen aura halkası
+        if (this.feedback.fx === 'nefes' || this.feedback.ring) {
+          const t = 1 - this.feedback.life;
+          const radius = 18 + t * 42;
+          ctx.strokeStyle = this.feedback.color;
+          ctx.lineWidth = 2;
+          ctx.globalAlpha = alpha * (1 - t);
+          ctx.beginPath();
+          ctx.arc(cx, fy - 4, radius, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.globalAlpha = alpha;
+        }
+        // Dur: hafif gölge titreşimi
+        const shake = this.feedback.fx === 'dur' ? (Math.random() - 0.5) * 2.2 : 0;
         ctx.font = `bold ${Math.max(16, Math.floor(W * 0.048))}px system-ui, sans-serif`;
         ctx.fillStyle = this.feedback.color;
         ctx.shadowColor = this.feedback.color;
-        ctx.shadowBlur = 12;
-        const fy = this.boardTop + 28;
-        ctx.fillText(this.feedback.text, W / 2, fy);
+        ctx.shadowBlur = this.feedback.fx === 'yan' ? 18 : 12;
+        ctx.fillText(this.feedback.text, cx + shake, fy + shake);
         ctx.shadowBlur = 0;
         ctx.font = `600 ${Math.max(11, Math.floor(W * 0.028))}px system-ui, sans-serif`;
         ctx.fillStyle = 'rgba(255,240,210,0.9)';
-        if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, fy + 18);
+        if (this.feedback.sub) ctx.fillText(this.feedback.sub, cx, fy + 18);
         ctx.font = `bold ${Math.max(12, Math.floor(W * 0.032))}px system-ui, sans-serif`;
         ctx.fillStyle = '#ffd194';
-        ctx.fillText(`x${this.feedback.combo}`, W / 2, fy + 36);
+        ctx.fillText(`x${this.feedback.combo}`, cx, fy + 36);
         ctx.restore();
       }
     }
