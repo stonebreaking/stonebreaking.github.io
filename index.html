@@ -2165,6 +2165,8 @@
         <div class="ps"><div class="l">Toplam Mühür</div><div class="v" id="prof-seals">0</div></div>
         <div class="ps"><div class="l">En Uzun Nefes</div><div class="v" id="prof-best-breath">0</div></div>
         <div class="ps"><div class="l">Bölüm</div><div class="v" id="prof-chapter">1</div></div>
+        <div class="ps"><div class="l">İpucu</div><div class="v" id="prof-hints">0</div></div>
+        <div class="ps"><div class="l">Karıştır</div><div class="v" id="prof-shuffles">0</div></div>
         <div class="ps"><div class="l">Sonsuz Mod</div><div class="v" id="prof-endless">Kapalı</div></div>
         <div class="ps"><div class="l">Sonsuz Rekor</div><div class="v" id="prof-endless-level">-</div></div>
       </div>
@@ -2399,6 +2401,9 @@
         sealsOpened: [], // chapter numbers
         endlessUnlocked: false, // v6.1: 12. bölüm sonrası Sonsuz Mod
         endlessLevel: 0,        // Sonsuz Mod rekoru (12 üstü seviye sayısı)
+        // v9.14 PATRON BT: İpucu/Karıştır ekonomisi — bölüm bitince +1, birikir, satın alınabilir
+        bankedHints: 0,
+        bankedShuffles: 0,
       };
     }
     function saveProfile() {
@@ -2714,6 +2719,9 @@
       if (lv > 12) p.endlessLevel = Math.max(p.endlessLevel || 0, lv - 12);
       p.spirit = state.spirit || p.spirit;
       p.mascot = state.mascot || p.mascot;
+      // v9.14 PATRON BT: Bölüm tamamlanınca İpucu +1, Karıştır +1 (birikir)
+      p.bankedHints = (p.bankedHints || 0) + 1;
+      p.bankedShuffles = (p.bankedShuffles || 0) + 1;
       saveProfile();
     }
 
@@ -3132,6 +3140,8 @@
       $('#prof-seals').textContent = p.totalSeals || 0;
       $('#prof-best-breath').textContent = p.bestBreath || 0;
       $('#prof-chapter').textContent = p.chapter || state.chapter || 1;
+      const ph = $('#prof-hints'); if (ph) ph.textContent = p.bankedHints || 0;
+      const ps = $('#prof-shuffles'); if (ps) ps.textContent = p.bankedShuffles || 0;
       const pe = $('#prof-endless');
       if (pe) {
         pe.textContent = p.endlessUnlocked ? 'Açık ∞' : 'Kapalı';
@@ -3430,6 +3440,13 @@
           game.undosLeft = (game.undosLeft || 0) + (pk.geri || 0);
           game.shufflesLeft = (game.shufflesLeft || 0) + (pk.karis || 0);
         }
+        game.emitAll && game.emitAll();
+      } catch (_) {}
+      // v9.14 PATRON BT: Birikmiş İpucu/Karıştır envanteri oyuna yansır
+      try {
+        const p = state.profile;
+        game.hintsLeft = (game.hintsLeft || 0) + (p.bankedHints || 0);
+        game.shufflesLeft = (game.shufflesLeft || 0) + (p.bankedShuffles || 0);
         game.emitAll && game.emitAll();
       } catch (_) {}
       game.resize();

@@ -1,3 +1,11 @@
+// ============================================================
+// STONEBREAKING · BATUPIA Studios · PATRON BT VİZYON MÜHRÜ
+// Kurucu: Batuhan Taşkıran · İlk oyun / ilk marka
+// 4 Ruh taşlara gömüldü → Stonebreaker uyandırır
+// Bölüm bitince İpucu+1 / Karıştır+1 (birikir)
+// Kolye merkez · Pokemon-kartı anime vizyonu
+// GitHub tek yedek
+// ============================================================
 // =========================================================
 // STONEBREAKING — Mahjong Solitaire v9.12.0
 // M-018: 4 dizilim deseni (duvar/piramit/halka/elmas) · Sonsuz = TÜM elementler (37 tip)
