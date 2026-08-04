@@ -892,27 +892,43 @@ class StonebreakingGame {
   }
 
   hint() {
-    if (this.hintsLeft <= 0) { this.toast('İpucu yok'); return false; }
+    // v9.33: Kolye stratejisi — 1) tepsindeki yüze uyan  2) tahtada çifti olan  3) herhangi serbest
+    if (this.hintsLeft <= 0) { this.toast('İpucu yok · reklamla aç'); return false; }
+    if ((this.tray && this.tray.length) >= TRAY_MAX) {
+      this.toast('Kolye dolu — önce eşleştir');
+      return false;
+    }
     this.updateFree();
     const free = this.tiles.filter((t) => t.active && t.free);
-    const trayCount = {};
+    if (!free.length) { this.toast('Serbest taş yok'); return false; }
 
-    let best = null, bestScore = -1;
-    const byType = {};
-    free.forEach((t) => { (byType[t.type] = byType[t.type] || []).push(t); });
-    for (const [typeStr, list] of Object.entries(byType)) {
-      const type = Number(typeStr);
-      const score = Math.min(3, list.length);
-      if (score > bestScore) { bestScore = score; best = list[0]; }
+    const trayTypes = new Set((this.tray || []).map((s) => s.type));
+    const freeByType = {};
+    free.forEach((t) => { (freeByType[t.type] = freeByType[t.type] || []).push(t); });
+
+    let best = null;
+    // Öncelik 1: kolyede olan tipe uyan serbest taş
+    for (const t of free) {
+      if (trayTypes.has(t.type)) { best = t; break; }
     }
-    if (!best) { this.toast('İpucu bulunamadı'); return false; }
+    // Öncelik 2: tahtada en az 2 serbest aynı tip
+    if (!best) {
+      let bestList = null;
+      for (const list of Object.values(freeByType)) {
+        if (list.length >= 2 && (!bestList || list.length > bestList.length)) bestList = list;
+      }
+      if (bestList) best = bestList[0];
+    }
+    // Öncelik 3: herhangi serbest
+    if (!best) best = free[0];
+
     this.hintIds.add(best.id);
-    best.glow = 2;
+    best.glow = 2.2;
     this.hintsLeft--;
     if (typeof this.onPowerUse === 'function') this.onPowerUse('hint');
     this.emitAll();
-    this.toast('💡 İpucu');
-    setTimeout(() => { best.glow = 0; this.hintIds.delete(best.id); }, 1600);
+    this.toast(trayTypes.has(best.type) ? '💡 Kolyeye uyan mühür' : '💡 Bu taşı kolyeye al');
+    setTimeout(() => { if (best) best.glow = 0; this.hintIds.delete(best.id); }, 1800);
     return true;
   }
 
