@@ -426,9 +426,7 @@ class StonebreakingGame {
     this.shufflesLeft = 1 + Math.floor((L - 1) / 5) + (this.endless ? Math.floor((level - 13) / 5) : 0);
     this.startedAt = performance.now();
     // v1.20: Tahta arka plan — karakter seçim anime tapınak (yoksa)
-    if (!this.sceneImg) {
-      this.setScene('06_GRAFIK/tahta_arka_plan_muhur.jpg'); // v1.33 mühürlü anime masa
-    }
+    this.setScene('06_GRAFIK/tahta_arka_plan_muhur.jpg'); // v1.36 onaylı tahta
     try {
       if (localStorage.getItem('sb_intro_toast') !== '1') {
         setTimeout(() => this.toast('Serbest taşı kolyeye al · aynı mühürler kırılır'), 700);
