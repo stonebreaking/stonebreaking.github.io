@@ -27,11 +27,73 @@ const ELEMENTS = {
   hava:   { id: 'hava',   name: 'Hava',   color: '#a8d8ea', emoji: '💨', spirit: 'Zepy' },
 };
 
+// v1.26 MÜHÜR — Ruh kimlikleri (sinematik + kolye hayvanları + tablet)
 const SPIRITS = {
-  kor:  { id: 'kor',  name: 'Kor',  element: 'ates',   title: 'Ateş Ruhu',   gender: 'erkek', quote: 'Ben Kor, Ateş Vadisi\'nin bekçisiyim.',           scene: '06_GRAFIK/sahne_ates_vadisi.png',      portrait: '06_GRAFIK/kor_ates_ruhu.png',           chapters: [1, 2, 3] },
-  baam: { id: 'baam', name: 'Baam', element: 'su',     title: 'Su Ruhu',     gender: 'kadin', quote: 'Ben Baam, Derinlikler\'in bilge ruhuyum.',       scene: '06_GRAFIK/sahne_derinlikler.png',      portrait: '06_GRAFIK/baam_su_ruhu.png',            chapters: [4, 5, 6] },
-  mand: { id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu', gender: 'erkek', quote: 'Ben Mand, Kristal Mağaralar\'ın muhafızıyım.',       scene: '06_GRAFIK/sahne_kristal_magara.png',   portrait: '06_GRAFIK/mand_toprak_ruhu_erkek.png',  chapters: [7, 8, 9] },
-  zepy: { id: 'zepy', name: 'Zepy', element: 'hava',   title: 'Hava Ruhu',   gender: 'kadin', quote: 'Ben Zepy, Gökyüzü Tapınağı\'nın rüzgarıyım.',   scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png', portrait: '06_GRAFIK/zepy_hava_ruhu.png',          chapters: [10, 11, 12] },
+  kor: {
+    id: 'kor', name: 'Kor', element: 'ates', title: 'Ateş Ruhu',
+    gender: 'erkek', animal: 'Tilki', animal_en: 'Fox',
+    sigil: '🔥', color: '#ff6b35', colorDeep: '#e63946',
+    form: 'Alev beden · göğüste elmas mühür',
+    kolye: '06_GRAFIK/kolye_muhur_resmi.png',
+    tile: '06_GRAFIK/tile_fire_ref.png',
+    cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
+    quote: 'İlk kıvılcımı ben yakarım. Cesaretinle gel.',
+    scene: '06_GRAFIK/sahne_ates_vadisi.png',
+    portrait: '06_GRAFIK/kor_ates_ruhu.png',
+    chapters: [1, 2, 3],
+  },
+  baam: {
+    id: 'baam', name: 'Baam', element: 'su', title: 'Su Ruhu',
+    gender: 'kadin', animal: 'Balina', animal_en: 'Whale',
+    sigil: '💧', color: '#3fd4ff', colorDeep: '#1d8cf8',
+    form: 'Okyanus ipek · trident mührü',
+    kolye: '06_GRAFIK/kolye_muhur_resmi.png',
+    tile: '06_GRAFIK/tas_sembol_su_core.png',
+    cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
+    quote: 'Acele etme. Akışı dinle.',
+    scene: '06_GRAFIK/sahne_derinlikler.png',
+    portrait: '06_GRAFIK/baam_su_ruhu.png',
+    chapters: [4, 5, 6],
+  },
+  mand: {
+    id: 'mand', name: 'Mand', element: 'toprak', title: 'Toprak Ruhu',
+    gender: 'erkek', animal: 'Panda', animal_en: 'Panda',
+    sigil: '🌿', color: '#c9a227', colorDeep: '#2ecc71',
+    form: 'Altın taş zırh · dağ/balta mührü',
+    kolye: '06_GRAFIK/kolye_muhur_resmi.png',
+    tile: '06_GRAFIK/tas_sembol_toprak_core.png',
+    cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
+    quote: 'Sabır taşı kırar. Ben beklerim.',
+    scene: '06_GRAFIK/sahne_kristal_magara.png',
+    portrait: '06_GRAFIK/mand_toprak_ruhu_erkek.png',
+    chapters: [7, 8, 9],
+  },
+  zepy: {
+    id: 'zepy', name: 'Zepy', element: 'hava', title: 'Hava Ruhu',
+    gender: 'kadin', animal: 'Tavşan', animal_en: 'Hare',
+    sigil: '🌬', color: '#e8f4ff', colorDeep: '#a8d8ea',
+    form: 'Rüzgâr kanat · bulut spiral mührü',
+    kolye: '06_GRAFIK/kolye_muhur_resmi.png',
+    tile: '06_GRAFIK/tile_air_ref.png',
+    cinema: '06_GRAFIK/ruh_4lu_sinematik.png',
+    quote: 'Hafif ol. Görünmeyeni gör.',
+    scene: '06_GRAFIK/sahne_gokyuzu_tapinagi.png',
+    portrait: '06_GRAFIK/zepy_hava_ruhu.png',
+    chapters: [10, 11, 12],
+  },
+};
+window.STONE_IDENTITY = {
+  studio: 'BATUPIA Studios',
+  game: 'STONEBREAKING',
+  kolye: '06_GRAFIK/kolye_muhur_resmi.png',
+  spiritsArt: '06_GRAFIK/ruh_4lu_sinematik.png',
+  map: {
+    kor:  { element: 'ates', animal: 'Tilki' },
+    baam: { element: 'su', animal: 'Balina' },
+    mand: { element: 'toprak', animal: 'Panda' },
+    zepy: { element: 'hava', animal: 'Tavşan' },
+  },
+  rule: 'Stonebreaker taş kırar; ruh rehberlik eder; kolye mühürleri taşır; hayvan kolyede, tablet tahtada.',
 };
 
 const CHAPTERS = [
