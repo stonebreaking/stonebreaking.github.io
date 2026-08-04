@@ -400,10 +400,11 @@ class StonebreakingGame {
     this.level = level;
     this.endless = level > 12; // Sonsuz Mod: 12. bölüm sonrası
     this.tiles = [];
-
+    this.tray = []; // v1.30: Yeniden oyna / yeni bölüm — kolye tepsi sıfır
     this.history = [];
-
-    this.particles = []; this.selectedTile = null;
+    this.particles = [];
+    this.selectedTile = null;
+    this._failed = false;
     this.hintIds.clear();
     this.feedback = null;
     this.locked = false;
