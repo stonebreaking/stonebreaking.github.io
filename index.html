@@ -1473,7 +1473,33 @@
       color: #fff;
     }
     #victory-overlay.show { display: flex; animation: fadeIn 0.4s ease-out; }
-    #victory-overlay .v-title {
+    /* v9.26 Vita-style tutorial — STONEBREAKING evreni */
+    #tutorial-overlay {
+      position: fixed; inset: 0; z-index: 9990;
+      background: rgba(4,8,12,0.82);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #tutorial-overlay.show { display: flex; }
+    .tut-card {
+      max-width: 340px; width: 100%;
+      background: linear-gradient(160deg, #1a2430, #0e141c);
+      border: 1px solid rgba(255,209,148,0.25);
+      border-radius: 16px; padding: 22px 20px 18px;
+      text-align: center; color: #eee;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .tut-card h3 {
+      font-size: 1.05rem; color: #ffd194; letter-spacing: 1px; margin: 0 0 12px;
+    }
+    .tut-card p {
+      font-size: 0.88rem; line-height: 1.55; color: #c8c8d0; margin: 0 0 16px;
+    }
+    .tut-card .tut-step {
+      font-size: 0.7rem; color: #7CFFB2; letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .tut-card .btn-seal { width: 100%; margin-top: 4px; }
+        #victory-overlay .v-title {
       font-size: clamp(2rem, 8vw, 3rem);
       font-weight: 900;
       letter-spacing: 2px;
@@ -1899,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.25 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.26 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2370,6 +2396,18 @@
   <script src="js/game.js?v=72"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
+
+  <div id="tutorial-overlay" aria-label="Nasıl oynanır">
+    <div class="tut-card">
+      <div class="tut-step" id="tut-step-label">1 / 4</div>
+      <h3 id="tut-title">Aynı mühürden iki taş seç</h3>
+      <p id="tut-body">Serbest iki taşın yüzü aynıysa dokun — mühür kırılır, kolyeye gömülür.</p>
+      <button class="btn-seal primary" type="button" id="btn-tut-next">
+        <span class="bs-rune">◈</span><span class="bs-label">Devam</span><span class="bs-rune">◈</span>
+      </button>
+    </div>
+  </div>
+
   <script>
     // =========================================================
     // STONEBREAKING App Controller v6.3 — Sonsuz mod + 12 bölüm sinematik + ses
@@ -3614,6 +3652,7 @@
       } catch (_) {}
       game.resize();
       game.startLoop();
+      showTutorialIfNeeded();
       await playChapterTransition(startCh);
     }
 
@@ -3897,6 +3936,7 @@
 
       $('#btn-shuffle')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.shuffle(); game && game.shuffle(); });
       $('#btn-hint')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.hint(); game && game.hint(); });
+      $('#btn-tut-next')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.tap(); advanceTutorial(); });
       $('#btn-undo')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.undo(); game && game.undo(); });
       // v9.9: Ayarlar butonu
       $('#btn-settings')?.addEventListener('click', () => {
@@ -4116,6 +4156,44 @@
           }
         }
       };
+    }
+
+
+    // v9.26: Vita tutorial → STONEBREAKING
+    const TUT_STEPS = [
+      { t: 'Aynı mühürden iki taş seç', b: 'Serbest iki taşın yüzü aynıysa dokun — mühür kırılır, kolyeye gömülür.' },
+      { t: 'Üsttekileri kır, altı uyanır', b: 'Üst katmandaki taşları eşleştir. Alttakilerin kilidi açılır.' },
+      { t: 'Üstü kapalı taş kilitli', b: 'Üstünde başka taş varsa seçemezsin. Önce üstü temizle.' },
+      { t: 'Sol ve sağ doluysa kilitli', b: 'Bir taşın hem solu hem sağı doluysa kilitlidir. Yanları aç.' },
+    ];
+    let tutIdx = 0;
+    function showTutorialIfNeeded() {
+      try {
+        if (localStorage.getItem('stonebreaking_tut_v1') === '1') return;
+      } catch (_) {}
+      tutIdx = 0;
+      renderTutStep();
+      $('#tutorial-overlay')?.classList.add('show');
+    }
+    function renderTutStep() {
+      const s = TUT_STEPS[tutIdx];
+      const lab = $('#tut-step-label');
+      const title = $('#tut-title');
+      const body = $('#tut-body');
+      const btn = $('#btn-tut-next');
+      if (lab) lab.textContent = (tutIdx + 1) + ' / ' + TUT_STEPS.length;
+      if (title) title.textContent = s.t;
+      if (body) body.textContent = s.b;
+      if (btn) btn.querySelector('.bs-label').textContent = tutIdx >= TUT_STEPS.length - 1 ? 'Maceraya Gir' : 'Devam';
+    }
+    function advanceTutorial() {
+      if (tutIdx < TUT_STEPS.length - 1) {
+        tutIdx++;
+        renderTutStep();
+        return;
+      }
+      try { localStorage.setItem('stonebreaking_tut_v1', '1'); } catch (_) {}
+      $('#tutorial-overlay')?.classList.remove('show');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
