@@ -316,6 +316,7 @@ class StonebreakingGame {
         { key: 'hava_5',    color: '#aed6f1', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_1.png', mark: 'II' },
         { key: 'hava_6',    color: '#85c1e9', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_2.png', mark: 'III' },
         { key: 'hava_7',    color: '#5dade2', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_3.png', mark: 'IV' },
+        { key: 'hava_8', color: '#7fdbff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_v2.png', mark: '' },
       ],
     };
 
