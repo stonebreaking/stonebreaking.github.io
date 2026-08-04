@@ -1314,6 +1314,14 @@
       background: rgba(255,107,53,0.25);
       border-color: rgba(255,209,148,0.45);
       box-shadow: 0 0 12px rgba(255,107,53,0.35);
+      color: #ffd194;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .seal-track i.done {
+      background: rgba(124,255,178,0.18);
+      border-color: rgba(124,255,178,0.45);
+      color: #7CFFB2;
     }
 
     /* Victory overlay */
@@ -1921,7 +1929,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.11</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.12</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2195,7 +2203,7 @@
         <div class="ps"><div class="l">Sonsuz Rekor</div><div class="v" id="prof-endless-level">-</div></div>
       </div>
       <div style="margin-top:14px;font-size:0.75rem;color:#888;letter-spacing:1px">12 MÜHÜR YOLU</div>
-      <div style="font-size:0.7rem;color:#888;margin:8px 0 4px;letter-spacing:0.5px;">Bölüm Seç (açık olanlara tıkla)</div>
+      <div style="font-size:0.7rem;color:#888;margin:8px 0 4px;letter-spacing:0.5px;">Bölüm Seç — açık mühürlere dokun, yeniden oyna</div>
       <div class="seal-track" id="prof-seal-track"></div>
       <div style="font-size:0.7rem;color:#888;margin:14px 0 4px;letter-spacing:0.5px;">Sonsuz · Son 5 Rekor</div>
       <div id="prof-endless-history" style="font-size:0.75rem;color:#ccc;line-height:1.6;min-height:1.2em;"></div>
@@ -3358,18 +3366,20 @@
       if (pel) pel.textContent = p.endlessLevel ? '∞' + p.endlessLevel : '-';
       const track = $('#prof-seal-track');
       track.innerHTML = '';
-      const maxCh = Math.max(1, p.chapter || 1);
+      const opened = p.sealsOpened || [];
+      const maxCh = Math.max(1, p.chapter || 1, ...(opened.length ? opened : [0]));
       for (let i = 1; i <= 12; i++) {
         const el = document.createElement('i');
-        const unlocked = i <= maxCh || (p.sealsOpened || []).includes(i);
-        el.textContent = unlocked ? '◆' : '·';
+        const unlocked = i <= maxCh || opened.includes(i);
+        const done = opened.includes(i);
+        el.textContent = done ? '◆' : (unlocked ? String(i) : '·');
         if (unlocked) el.classList.add('on');
-        el.title = unlocked ? ('Bölüm ' + i + ' — oynamak için tıkla') : ('Bölüm ' + i + ' kilitli');
+        if (done) el.classList.add('done');
+        el.title = unlocked ? ('Bölüm ' + i + ' — tekrar oyna') : ('Bölüm ' + i + ' kilitli');
+        el.setAttribute('aria-label', el.title);
         el.style.cursor = unlocked ? 'pointer' : 'default';
         if (unlocked) {
-          el.addEventListener('click', () => {
-            startChapterFromProfile(i);
-          });
+          el.addEventListener('click', () => startChapterFromProfile(i));
         }
         track.appendChild(el);
       }
@@ -3567,17 +3577,17 @@
     let game = null;
 
     async function startChapterFromProfile(ch) {
-      // İstenen bölümden başlat (kilit kontrolü openProfile'da yapıldı)
-      state.chapter = ch;
-      state.profile.chapter = Math.max(state.profile.chapter || 1, ch);
-      saveProfile();
-      // Ruh eşlemesi: bölüm hangi ruha aitse onu seç
+      // v1.12: Kilit açılmış bölümü TEKRAR oyna — ilerleme şişmesin
+      const chNum = Number(ch) || 1;
+      state.chapter = chNum;
+      // progress chapter sadece ileri gider; replay düşürmez / zorla yükseltmez
+      // Ruh eşlemesi
       const spiritMap = {1:'kor',2:'kor',3:'kor',4:'baam',5:'baam',6:'baam',7:'mand',8:'mand',9:'mand',10:'zepy',11:'zepy',12:'zepy'};
-      state.spirit = spiritMap[ch] || state.spirit || 'kor';
+      state.spirit = spiritMap[chNum] || state.spirit || 'kor';
       state.profile.spirit = state.spirit;
       saveProfile();
-      goScreen('screen-game');
-      await startGame({ forceChapter: ch });
+      showToast('Bölüm ' + chNum + ' · yeniden mühürleniyor');
+      await startGame({ forceChapter: chNum, replay: true });
     }
 
     async function startGame(opts) {
@@ -3658,6 +3668,10 @@
       state.chapter = startCh;
       state.profile.spirit = state.spirit;
       state.profile.mascot = state.mascot;
+      // replay: ilerlemeyi şişirme
+      if (!(opts && opts.replay)) {
+        state.profile.chapter = Math.max(state.profile.chapter || 1, Math.min(12, startCh));
+      }
       saveProfile();
       if (sp.scene) game.setScene(sp.scene);
 
