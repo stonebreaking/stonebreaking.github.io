@@ -283,6 +283,7 @@ class StonebreakingGame {
         { key: 'ates_5',    color: '#ff6347', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_1.png', mark: 'II' },
         { key: 'ates_6',    color: '#ff7f50', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_2.png', mark: 'III' },
         { key: 'ates_7',    color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_3.png', mark: 'IV' },
+        { key: 'ates_8',    color: '#ff1a1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_v2.png', mark: '' },
       ],
       su: [
         { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_core.png', mark: '' },
