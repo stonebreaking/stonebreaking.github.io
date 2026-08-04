@@ -427,7 +427,7 @@ class StonebreakingGame {
     this.startedAt = performance.now();
     // v1.20: Tahta arka plan — karakter seçim anime tapınak (yoksa)
     if (!this.sceneImg) {
-      this.setScene('06_GRAFIK/sinematik_01_ikili_tapinak.png'); // karakter seçim evreni
+      this.setScene('06_GRAFIK/tahta_arka_plan_muhur.jpg'); // v1.33 mühürlü anime masa
     }
     try {
       if (localStorage.getItem('sb_intro_toast') !== '1') {
