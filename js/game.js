@@ -937,12 +937,12 @@ class StonebreakingGame {
     if (!best) best = free[0];
 
     this.hintIds.add(best.id);
-    best.glow = 2.2;
+    best.glow = 3.2;
     this.hintsLeft--;
     if (typeof this.onPowerUse === 'function') this.onPowerUse('hint');
     this.emitAll();
     this.toast(trayTypes.has(best.type) ? '💡 Kolyeye uyan mühür' : '💡 Bu taşı kolyeye al');
-    setTimeout(() => { if (best) best.glow = 0; this.hintIds.delete(best.id); }, 1800);
+    setTimeout(() => { if (best) best.glow = 0; this.hintIds.delete(best.id); }, 2800);
     return true;
   }
 

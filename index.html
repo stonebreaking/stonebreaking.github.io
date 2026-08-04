@@ -185,6 +185,10 @@
       gap: 0;
     }
     /* v1.15 MOBİL: logo TAM görünsün — cover kırpmasın */
+    @keyframes kolyePulse {
+      0%, 100% { filter: brightness(1) saturate(1); transform: scale(1); }
+      50% { filter: brightness(1.08) saturate(1.12); transform: scale(1.015); }
+    }
     #screen-splash::before {
       content: '';
       position: absolute;
@@ -195,12 +199,17 @@
       background-position: center 18%;
       background-size: contain;
       z-index: 0;
+      animation: kolyePulse 3.6s ease-in-out infinite;
+      transform-origin: center 40%;
     }
     @media (min-width: 768px) {
       #screen-splash::before {
         background-size: cover;
         background-position: center center;
       }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #screen-splash::before { animation: none !important; }
     }
     @media (max-width: 767px) {
       #screen-splash {
@@ -1965,7 +1974,7 @@
       style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(58vw,240px);height:min(58vw,240px);border-radius:50%;border:0;background:radial-gradient(circle,rgba(255,209,148,0.08) 0%,transparent 70%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:12vh;transform:translateX(-50%);z-index:6;font-size:0.7rem;letter-spacing:2.5px;color:rgba(255,209,148,0.75);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.18</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.19</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2693,13 +2702,13 @@
           container.appendChild(s);
         }
       }
-      // v1.10: Kısa BATUPIA mühür (0.9s) → hemen STONEBREAKING madalyon
-      await wait(900);
+      // v1.19: BATUPIA marka ritmi — ekip değerlendirmesi için yeterli süre
+      await wait(2400);
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(250);
+      await wait(450);
       goScreen('screen-splash');
       playSplashCinematic();
     }
@@ -2870,14 +2879,17 @@
 
       const sh = $('#btn-shuffle');
       if (sh) {
-        const locked = h.shufflesLeft <= 0;
+        const locked = (h.shufflesLeft || 0) <= 0;
         sh.classList.toggle('locked', locked);
-        sh.disabled = locked;
+        sh.disabled = false; // tıklanabilir — 0 ise toast
       }
       const hi = $('#btn-hint');
-      if (hi) hi.disabled = h.hintsLeft <= 0;
+      if (hi) {
+        hi.disabled = false;
+        hi.classList.toggle('locked', (h.hintsLeft || 0) <= 0);
+      }
       const un = $('#btn-undo');
-      if (un) un.disabled = h.undosLeft <= 0;
+      if (un) un.disabled = true;
     }
 
     function renderAchievements() {
@@ -4056,26 +4068,29 @@
         startGame({ forceChapter: startCh });
       });
 
-      $('#btn-shuffle')?.addEventListener('click', () => {
-        StoneSound.unlock();
-        if (game && game.shufflesLeft <= 0) {
-          showToast('Reklam sonrası 🔄 Karıştır');
-          game.shufflesLeft = (game.shufflesLeft || 0) + 1;
-          game.emitAll && game.emitAll();
+      $('#btn-shuffle')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        try { StoneSound.unlock(); } catch(_){}
+        if (!game) { showToast('Oyun yükleniyor…'); return; }
+        if ((game.shufflesLeft || 0) <= 0) {
+          showToast('🔄 Karıştır yok · reklamla +1');
           return;
         }
-        StoneSound.shuffle(); game && game.shuffle();
+        try { StoneSound.shuffle && StoneSound.shuffle(); } catch(_){}
+        const ok = game.shuffle();
+        if (ok) showToast('🔄 Karıştırıldı');
       });
-      $('#btn-hint')?.addEventListener('click', () => {
-        StoneSound.unlock();
-        if (game && game.hintsLeft <= 0) {
-          // Reklam getirisi iskeleti — gerçek SDK sonra
-          showToast('Reklam sonrası 💡 İpucu');
-          game.hintsLeft = (game.hintsLeft || 0) + 1;
-          game.emitAll && game.emitAll();
+      $('#btn-hint')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        try { StoneSound.unlock(); } catch(_){}
+        if (!game) { showToast('Oyun yükleniyor…'); return; }
+        if ((game.hintsLeft || 0) <= 0) {
+          showToast('💡 İpucu yok · reklamla +1');
           return;
         }
-        StoneSound.hint(); game && game.hint();
+        try { StoneSound.hint && StoneSound.hint(); } catch(_){}
+        const ok = game.hint();
+        if (!ok) showToast('💡 Uygun taş yok');
       });
       $('#btn-tut-next')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.tap(); advanceTutorial(); });
       $('#btn-fail-retry')?.addEventListener('click', () => {
