@@ -3844,7 +3844,7 @@
       $('#kolye-start-hit')?.addEventListener('click', () => enterFromKolye(false));
       // Eski butonlar yedek (gizli)
       $('#btn-start')?.addEventListener('click', () => enterFromKolye(false));
-      $('#btn-endless')?.addEventListener('click', () => runeGateEnter('#btn-endless', true));
+      $('#btn-endless')?.addEventListener('click', () => enterFromKolye(true));
 
       // Ses aç/kapat düğmesi (tercih localStorage'da)
       (function initSoundToggle() {
