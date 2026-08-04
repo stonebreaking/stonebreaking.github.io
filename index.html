@@ -2502,15 +2502,13 @@
           container.appendChild(s);
         }
       }
-      // Bekle: logo + yazı animasyonları oynansın
-      await wait(3000);
-      // Çıkış — fade out
+      // Profesyonel tempo: 2.2s göster, 0.4s çıkış
+      await wait(2200);
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(500);
-      // SAHNE 0'a geç — goScreen kullan
+      await wait(400);
       goScreen('screen-splash');
       playSplashCinematic();
     }
