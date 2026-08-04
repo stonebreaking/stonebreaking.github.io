@@ -1899,7 +1899,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.16 · DEMO</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">v9.17 · DEMO</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2424,7 +2424,7 @@
     }
 
     const STONE_REMINDERS = [
-      "Nefes al... sakinleş...",
+      "Nefes Al... ritim tut...",
       "Su iç... ayakta kal...",
       "Bir taş daha... nefes ver...",
       "Taşları dinle... ritmi hisset...",
@@ -2600,7 +2600,7 @@
       const ch = (typeof window.STONE_getChapter === 'function')
         ? window.STONE_getChapter(chapterNum)
         : ((window.STONE_CHAPTERS || []).find((c) => c.n === chapterNum)
-          || { n: chapterNum, spirit: state.spirit || 'kor', title: 'Sonsuz Nefes', region: 'Sonsuz Mühür Yolu', lines: [] });
+          || { n: chapterNum, spirit: state.spirit || 'kor', title: 'Sonsuz Dalga', region: 'Sonsuz Mühür Yolu', lines: [] });
       const sp = (window.STONE_SPIRITS || {})[ch.spirit] || {};
       const el = (window.STONE_ELEMENTS || {})[sp.element] || { emoji: '◆', color: '#ff6b35' };
       const ov = $('#chapter-overlay');
@@ -2702,7 +2702,7 @@
         { icon: '◆', name: 'Evren Mührü', desc: '12. bölümü tamamla', unlocked: (p.chapter || 1) >= 12 },
         { icon: '∞', name: 'Sonsuz Mod', desc: 'Sonsuz moda gir', unlocked: !!p.endlessUnlocked },
         { icon: '🧠', name: 'Zihin Ustası', desc: 'IQ 120+', unlocked: (p.bestIq || 0) >= 120 },
-        { icon: '⚡', name: 'Nefes Fırtınası', desc: '10+ combo', unlocked: (p.bestBreath || 0) >= 10 },
+        { icon: '⚡', name: 'Evren Ritmi', desc: 'Kombo 10+ (Nefes Al)', unlocked: (p.bestBreath || 0) >= 10 },
       ];
       const list = $('#achievements-list');
       if (!list) return;
@@ -2760,7 +2760,7 @@
       const sealName = (typeof window.STONE_getChapter === 'function')
         ? (window.STONE_getChapter(lv).seal || '')
         : '';
-      $('#v-title').textContent = lv === 12 ? 'EVREN MÜHRÜ' : (endless ? 'SONSUZ NEFES' : 'EFSANE MÜHÜR');
+      $('#v-title').textContent = lv === 12 ? 'EVREN MÜHRÜ' : (endless ? 'SONSUZ DALGA' : 'EFSANE MÜHÜR');
       $('#v-sub-text').textContent = lv === 12
         ? 'Evren Mührü Kırıldı!'
         : (endless ? `Sonsuz Dalga ${lv - 12} · ${sealName}` : (sealName ? `Mühür Açıldı! · ${sealName}` : 'Mühür Açıldı!'));
@@ -3176,7 +3176,7 @@
             `<div style="display:flex;gap:10px;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);padding:3px 0;">
               <span style="color:#ffd194">#${i+1} · Dalga ${h.wave}</span>
               <span>IQ ${h.iq}</span>
-              <span>Nefes ${h.breath}</span>
+              <span>Kombo ${h.breath}</span>
             </div>`
           ).join('');
         }
