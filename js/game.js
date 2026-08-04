@@ -725,7 +725,7 @@ class StonebreakingGame {
   spawnComboFx(fx, color) {
     const W = this.viewW;
     const cx = W / 2;
-    const cy = (this.boardTop || 80) + 28;
+    const cy = (this.trayH || 64) * 0.55;
     const n = fx === 'nefes' ? 10 : fx === 'ak' ? 8 : fx === 'dur' ? 6 : 7;
     for (let i = 0; i < n; i++) {
       const a = (Math.PI * 2 * i) / n + Math.random() * 0.4;
@@ -786,6 +786,8 @@ class StonebreakingGame {
     if (typeof this.onBreath === 'function') {
       this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
     }
+    if (typeof this.onMatchFx === 'function') this.onMatchFx({ type, combo: this.combo, iq: this.iq });
+    this.emitAll();
   }
 
   onPair(type) {

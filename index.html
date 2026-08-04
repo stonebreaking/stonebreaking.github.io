@@ -1925,7 +1925,7 @@
       </button>
     </div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.2</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.3</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -3588,6 +3588,10 @@
         game.onHUD = renderHUD;
         game.onTray = renderTray;
         game.onPick = () => { StoneSound.pick(); };
+        game.onMatchFx = () => {
+          try { StoneSound.pick && StoneSound.pick(); } catch(_){}
+          try { StoneSound.vibrate && StoneSound.vibrate(22); } catch(_){}
+        };
         game.onBreath = (b) => {
           const currentSpirit = state.spirit || 'kor';
           const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
