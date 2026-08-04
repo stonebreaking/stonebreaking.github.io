@@ -162,48 +162,48 @@ class StonebreakingGame {
     // v9.28 MÜHÜRLÜ TAŞ SETİ — sembol yüzleri (okunabilir)
     this.elementSets = {
       ates: [
-        { key: 'ates_core', color: '#e63946', emoji: '◆', img: '06_GRAFIK/tas_sembol_ates_core.png' },
-        { key: 'ates_1',    color: '#ff6b35', emoji: '◆', img: '06_GRAFIK/tas_sembol_ates_1.png' },
-        { key: 'ates_2',    color: '#ff8c1a', emoji: '◆', img: '06_GRAFIK/tas_sembol_ates_2.png' },
-        { key: 'ates_3',    color: '#ff5722', emoji: '◆', img: '06_GRAFIK/tas_sembol_ates_3.png' },
-        { key: 'ates_4',    color: '#ff6b35', emoji: '◆', img: '06_GRAFIK/tas_ates_4.png' },
-        { key: 'ates_5',    color: '#ff8c1a', emoji: '◆', img: '06_GRAFIK/tas_ates_5.png' },
-        { key: 'ates_6',    color: '#ffb300', emoji: '◆', img: '06_GRAFIK/tas_ates_6.png' },
-        { key: 'ates_alev', color: '#ff5722', emoji: '◆', img: '06_GRAFIK/tas_ates_alev.png' },
-        { key: 'ates_volkan', color: '#e63946', emoji: '◆', img: '06_GRAFIK/tas_ates_volkan.png' },
+        { key: 'ates_core', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_core.png' },
+        { key: 'ates_1',    color: '#ff6b35', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_1.png' },
+        { key: 'ates_2',    color: '#ff8c1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_2.png' },
+        { key: 'ates_3',    color: '#ff5722', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_3.png' },
+        { key: 'ates_4',    color: '#ff6b35', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_4.png' },
+        { key: 'ates_5',    color: '#ff8c1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_5.png' },
+        { key: 'ates_6',    color: '#ffb300', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_6.png' },
+        { key: 'ates_alev', color: '#ff5722', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_alev.png' },
+        { key: 'ates_volkan', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_volkan.png' },
       ],
       su: [
-        { key: 'su_core', color: '#1d8cf8', emoji: '◆', img: '06_GRAFIK/tas_sembol_su_core.png' },
-        { key: 'su_1',    color: '#4ecdc4', emoji: '◆', img: '06_GRAFIK/tas_sembol_su_1.png' },
-        { key: 'su_2',    color: '#3fd4ff', emoji: '◆', img: '06_GRAFIK/tas_sembol_su_2.png' },
-        { key: 'su_3',    color: '#1d8cf8', emoji: '◆', img: '06_GRAFIK/tas_sembol_su_3.png' },
-        { key: 'su_4',    color: '#4ecdc4', emoji: '◆', img: '06_GRAFIK/tas_su_4.png' },
-        { key: 'su_5',    color: '#3fd4ff', emoji: '◆', img: '06_GRAFIK/tas_su_5.png' },
-        { key: 'su_6',    color: '#a8e6ff', emoji: '◆', img: '06_GRAFIK/tas_su_6.png' },
-        { key: 'su_damla', color: '#1d8cf8', emoji: '◆', img: '06_GRAFIK/tas_su_damla.png' },
-        { key: 'su_buz',  color: '#4ecdc4', emoji: '◆', img: '06_GRAFIK/tas_su_buz.png' },
+        { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_core.png' },
+        { key: 'su_1',    color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_1.png' },
+        { key: 'su_2',    color: '#3fd4ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_2.png' },
+        { key: 'su_3',    color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_3.png' },
+        { key: 'su_4',    color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_4.png' },
+        { key: 'su_5',    color: '#3fd4ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_5.png' },
+        { key: 'su_6',    color: '#a8e6ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_6.png' },
+        { key: 'su_damla', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_damla.png' },
+        { key: 'su_buz',  color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_buz.png' },
       ],
       toprak: [
-        { key: 'toprak_core', color: '#2ecc71', emoji: '◆', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
-        { key: 'toprak_1',    color: '#50c878', emoji: '◆', img: '06_GRAFIK/tas_sembol_toprak_1.png' },
-        { key: 'toprak_2',    color: '#7fdb6a', emoji: '◆', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
-        { key: 'toprak_3',    color: '#2ecc71', emoji: '◆', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
-        { key: 'toprak_4',    color: '#c4a35a', emoji: '◆', img: '06_GRAFIK/tas_toprak_4.png' },
-        { key: 'toprak_5',    color: '#50c878', emoji: '◆', img: '06_GRAFIK/tas_toprak_5.png' },
-        { key: 'toprak_6',    color: '#7fdb6a', emoji: '◆', img: '06_GRAFIK/tas_toprak_6.png' },
-        { key: 'toprak_run',  color: '#2ecc71', emoji: '◆', img: '06_GRAFIK/tas_toprak_run.png' },
-        { key: 'toprak_kristal', color: '#50c878', emoji: '◆', img: '06_GRAFIK/tas_toprak_kristal.png' },
+        { key: 'toprak_core', color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
+        { key: 'toprak_1',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_1.png' },
+        { key: 'toprak_2',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
+        { key: 'toprak_3',    color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
+        { key: 'toprak_4',    color: '#c4a35a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_4.png' },
+        { key: 'toprak_5',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_5.png' },
+        { key: 'toprak_6',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_6.png' },
+        { key: 'toprak_run',  color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_run.png' },
+        { key: 'toprak_kristal', color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kristal.png' },
       ],
       hava: [
-        { key: 'hava_core', color: '#f0f0f0', emoji: '◆', img: '06_GRAFIK/tas_sembol_hava_core.png' },
-        { key: 'hava_1',    color: '#a8d8ea', emoji: '◆', img: '06_GRAFIK/tas_sembol_hava_1.png' },
-        { key: 'hava_2',    color: '#e8f4ff', emoji: '◆', img: '06_GRAFIK/tas_sembol_hava_2.png' },
-        { key: 'hava_3',    color: '#b3e5fc', emoji: '◆', img: '06_GRAFIK/tas_sembol_hava_3.png' },
-        { key: 'hava_4',    color: '#a8d8ea', emoji: '◆', img: '06_GRAFIK/tas_hava_4.png' },
-        { key: 'hava_5',    color: '#e8f4ff', emoji: '◆', img: '06_GRAFIK/tas_hava_5.png' },
-        { key: 'hava_6',    color: '#f5f9ff', emoji: '◆', img: '06_GRAFIK/tas_hava_6.png' },
-        { key: 'hava_spiral', color: '#a8d8ea', emoji: '◆', img: '06_GRAFIK/tas_hava_spiral.png' },
-        { key: 'hava_simsek', color: '#f0f0f0', emoji: '◆', img: '06_GRAFIK/tas_hava_simsek.png' },
+        { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_core.png' },
+        { key: 'hava_1',    color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_1.png' },
+        { key: 'hava_2',    color: '#e8f4ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_2.png' },
+        { key: 'hava_3',    color: '#b3e5fc', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_3.png' },
+        { key: 'hava_4',    color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_4.png' },
+        { key: 'hava_5',    color: '#e8f4ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_5.png' },
+        { key: 'hava_6',    color: '#f5f9ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_6.png' },
+        { key: 'hava_spiral', color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_spiral.png' },
+        { key: 'hava_simsek', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_simsek.png' },
       ],
     };
         this.karaSet = [
@@ -1280,7 +1280,8 @@ class StonebreakingGame {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = meta.color;
     ctx.shadowBlur = selected ? 16 : 8;
-    // v9.24: PNG varsa SADECE görsel — emoji üstüne basılmaz (okunabilir Mahjong yüzü)
+    // v1.13: Ruh mührü — PNG yoksa büyük sigil; varsa köşe mühürü
+    const sig = meta.emoji || meta.sigil || '◆';
     if (!img) {
       ctx.fillStyle = meta.color;
       ctx.font = `bold ${Math.floor(Math.min(w, h) * 0.42)}px system-ui,sans-serif`;
@@ -1288,8 +1289,16 @@ class StonebreakingGame {
       ctx.textBaseline = 'middle';
       ctx.shadowColor = meta.color;
       ctx.shadowBlur = 8;
-      ctx.fillText(meta.emoji || '◆', x + w / 2, y + h / 2 + 1);
+      ctx.fillText(sig, x + w / 2, y + h / 2 + 1);
       ctx.shadowBlur = 0;
+    } else {
+      // Köşe ruh mührü — kolye/tahta bütünlüğü
+      ctx.font = `${Math.max(10, Math.floor(Math.min(w, h) * 0.22))}px system-ui,sans-serif`;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.globalAlpha = dim ? 0.45 : 0.9;
+      ctx.fillText(sig, x + w - 4, y + h - 3);
+      ctx.globalAlpha = 1;
     }
     ctx.restore();
 
