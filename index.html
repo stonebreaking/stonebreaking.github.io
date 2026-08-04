@@ -2104,7 +2104,8 @@
 
   <!-- ========== 5. PROFİL ========== -->
   <section id="screen-profile" class="screen" aria-label="Profil">
-    <div class="screen-header">
+    <div class="screen-header" style="position:relative;">
+      <button class="btn-ui" type="button" id="btn-prof-back-top" style="position:absolute;left:0;top:0;padding:8px 12px;font-size:0.85rem;z-index:5;">← Geri</button>
       <div class="brand-logo sm">STONEBREAKING</div>
       <h1>Mühür Profili</h1>
       <p>Yolculuğun · ruhun · nefesin</p>
@@ -3852,13 +3853,15 @@
       $('#spirit-chip')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProf(); }
       });
-      $('#btn-prof-back')?.addEventListener('click', () => {
+      const goBackFromProfile = () => {
         goScreen(state.returnScreen || 'screen-splash');
         if (state.returnScreen === 'screen-game' && game) {
           game.startLoop();
           requestAnimationFrame(() => game.resize());
         }
-      });
+      };
+      $('#btn-prof-back')?.addEventListener('click', goBackFromProfile);
+      $('#btn-prof-back-top')?.addEventListener('click', goBackFromProfile);
       $('#btn-prof-save')?.addEventListener('click', saveProfileFromUI);
       $('#prof-name-input')?.addEventListener('change', saveProfileFromUI);
       $('#btn-google-login')?.addEventListener('click', () => {
