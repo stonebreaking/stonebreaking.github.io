@@ -757,6 +757,7 @@ class StonebreakingGame {
         vy = Math.sin(a) * (1.2 + Math.random());
         size = 1.8 + Math.random() * 2.2;
       }
+      if (this.particles.length > 100) this.particles.splice(0, 20);
       this.particles.push({
         x: cx + (Math.random() - 0.5) * 20,
         y: cy + (Math.random() - 0.5) * 10,
@@ -832,7 +833,8 @@ class StonebreakingGame {
   }
 
   spawnShatter(x, y, color) {
-    for (let i = 0; i < 18; i++) {
+    if (this.particles.length > 90) this.particles.splice(0, 30);
+    for (let i = 0; i < 14; i++) {
       this.particles.push({
         x, y,
         vx: (Math.random() - 0.5) * 9,
