@@ -65,42 +65,41 @@ const ENDLESS_LINES = [
 // Mahjong Solitaire — TRAY_MAX yok
 const COMBO_WINDOW_MS = 4000;
 
-// Hikaye nefesleri — Good/Great/Perfect YOK
+// v9.16 PATRON BT — Combo = element söylemleri (Yan / Ak / Dur / Nefes Al)
+// Nefes Büyüsü kaldırıldı. Good/Great/Perfect YOK.
 const SEAL_BREATHS = {
-  spark: [
-    { text: 'Kıvılcım',  sub: 'Taş uyandı' },
-    { text: 'Dokunuş',  sub: 'Mühür titredi' },
-    { text: 'İlk Nefes', sub: 'Evren fark etti' },
+  // 1-2: Ateş — Yan
+  yan: [
+    { text: 'Yan',     sub: 'Kor: Kıvılcım düştü' },
+    { text: 'Yan',     sub: 'Alev uyandı' },
+    { text: 'Yan',     sub: 'Taş ısınıyor' },
   ],
-  breath: [
-    { text: 'Nefes Al',    sub: 'Ritim tutuldu' },
-    { text: 'Nabız',       sub: 'Taşlar konuşuyor' },
-    { text: 'Derin Nefes', sub: 'Mühür ısınıyor' },
+  // 3-5: Su — Ak
+  ak: [
+    { text: 'Ak',      sub: 'Baam: Akışı tut' },
+    { text: 'Ak',      sub: 'Dalga hizalandı' },
+    { text: 'Ak',      sub: 'Ritim süzülüyor' },
   ],
-  awaken: [
-    { text: 'Uyanış',     sub: 'Ruh seni gördü' },
-    { text: 'Çatlak',     sub: 'Mühür aralandı' },
-    { text: 'Alev Dansı', sub: 'Elementler hizalandı' },
+  // 6-9: Toprak — Dur
+  dur: [
+    { text: 'Dur',     sub: 'Mand: Sabır taşı kırar' },
+    { text: 'Dur',     sub: 'Zemin sağlam' },
+    { text: 'Dur',     sub: 'Mühür oturdu' },
   ],
-  seal: [
-    { text: 'Mühür Kır',   sub: 'Zincir koptu' },
-    { text: 'Taş Fısıltı', sub: 'Kadim söz duyuldu' },
-    { text: 'Ruh Yankısı', sub: 'Kor · Baam · Mand · Zepy' },
-  ],
-  legend: [
-    { text: 'Evren Nefesi',     sub: 'Dört ruh bir arada' },
-    { text: 'Efsane Mühür',     sub: 'Kader senin elinde' },
-    { text: 'Sonsuz Kıvılcım',  sub: 'STONEBREAKING' },
+  // 10+: Hava — Nefes Al
+  nefes: [
+    { text: 'Nefes Al', sub: 'Zepy: Hafif ol' },
+    { text: 'Nefes Al', sub: 'Dört ruh duydu' },
+    { text: 'Nefes Al', sub: 'Evren seninle' },
   ],
 };
 
 function breathForCombo(n) {
-  let pool = SEAL_BREATHS.spark;
-  let color = '#ffb088';
-  if (n >= 15) { pool = SEAL_BREATHS.legend; color = '#FFD700'; }
-  else if (n >= 10) { pool = SEAL_BREATHS.seal; color = '#C77DFF'; }
-  else if (n >= 6) { pool = SEAL_BREATHS.awaken; color = '#4ecdc4'; }
-  else if (n >= 3) { pool = SEAL_BREATHS.breath; color = '#7CFFB2'; }
+  let pool = SEAL_BREATHS.yan;
+  let color = '#e63946'; // Ateş kırmızı
+  if (n >= 10) { pool = SEAL_BREATHS.nefes; color = '#f0f0f0'; }      // Hava beyaz
+  else if (n >= 6) { pool = SEAL_BREATHS.dur; color = '#2ecc71'; }    // Toprak yeşil
+  else if (n >= 3) { pool = SEAL_BREATHS.ak; color = '#1d8cf8'; }     // Su mavi
   const pick = pool[Math.floor(Math.random() * pool.length)];
   return { ...pick, color };
 }
@@ -724,7 +723,7 @@ class StonebreakingGame {
       combo: this.combo,
       life: 1.35,
     };
-    this.toast(`${breath.text} · Nefes x${this.combo}`);
+    this.toast(`${breath.text} · x${this.combo}`);
     if (typeof this.onBreath === 'function') {
       this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
     }
@@ -752,7 +751,7 @@ class StonebreakingGame {
       combo: this.combo,
       life: 1.35,
     };
-    this.toast(`${breath.text} · Nefes x${this.combo}`);
+    this.toast(`${breath.text} · x${this.combo}`);
     if (typeof this.onBreath === 'function') {
       this.onBreath({ ...breath, combo: this.combo, seals: this.seals, iq: this.iq });
     }
@@ -1001,7 +1000,7 @@ class StonebreakingGame {
         if (this.feedback.sub) ctx.fillText(this.feedback.sub, W / 2, fy + 18);
         ctx.font = `bold ${Math.max(12, Math.floor(W * 0.032))}px system-ui, sans-serif`;
         ctx.fillStyle = '#ffd194';
-        ctx.fillText(`Nefes x${this.feedback.combo}`, W / 2, fy + 36);
+        ctx.fillText(`x${this.feedback.combo}`, W / 2, fy + 36);
         ctx.restore();
       }
     }
