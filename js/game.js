@@ -305,6 +305,7 @@ class StonebreakingGame {
         { key: 'toprak_5',    color: '#1e8449', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_1.png', mark: 'II' },
         { key: 'toprak_6',    color: '#27ae60', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_2.png', mark: 'III' },
         { key: 'toprak_7',    color: '#58d68d', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_3.png', mark: 'IV' },
+        { key: 'toprak_8', color: '#1a8f4a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_v2.png', mark: '' },
       ],
       hava: [
         { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_core.png', mark: '' },
