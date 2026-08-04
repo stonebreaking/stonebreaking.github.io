@@ -162,7 +162,7 @@ class StonebreakingGame {
     // v9.28 MÜHÜRLÜ TAŞ SETİ — sembol yüzleri (okunabilir)
     this.elementSets = {
       ates: [
-        { key: 'ates_core', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_core.png' },
+        { key: 'ates_core', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tile_fire_ref.png' },
         { key: 'ates_1',    color: '#ff6b35', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_1.png' },
         { key: 'ates_2',    color: '#ff8c1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_2.png' },
         { key: 'ates_3',    color: '#ff5722', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_3.png' },
@@ -173,7 +173,7 @@ class StonebreakingGame {
         { key: 'ates_volkan', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_volkan.png' },
       ],
       su: [
-        { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_core.png' },
+        { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tile_water_ref.png' },
         { key: 'su_1',    color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_1.png' },
         { key: 'su_2',    color: '#3fd4ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_2.png' },
         { key: 'su_3',    color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_3.png' },
@@ -184,7 +184,7 @@ class StonebreakingGame {
         { key: 'su_buz',  color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_buz.png' },
       ],
       toprak: [
-        { key: 'toprak_core', color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_core.png' },
+        { key: 'toprak_core', color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tile_earth_ref.png' },
         { key: 'toprak_1',    color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_1.png' },
         { key: 'toprak_2',    color: '#7fdb6a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_2.png' },
         { key: 'toprak_3',    color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_3.png' },
@@ -195,7 +195,7 @@ class StonebreakingGame {
         { key: 'toprak_kristal', color: '#50c878', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kristal.png' },
       ],
       hava: [
-        { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_core.png' },
+        { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tile_air_ref.png' },
         { key: 'hava_1',    color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_1.png' },
         { key: 'hava_2',    color: '#e8f4ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_2.png' },
         { key: 'hava_3',    color: '#b3e5fc', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_3.png' },
