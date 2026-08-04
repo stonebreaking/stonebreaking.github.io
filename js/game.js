@@ -425,8 +425,12 @@ class StonebreakingGame {
     while (layout.length % 2 !== 0) layout.pop();
 
     // v9.9: ELEMENT İZOLASYONU — hikâye bölümlerinde her level SADECE 1 elementin taşlarını kullanır
-    const ELEM_ORDER = ['ates', 'su', 'toprak', 'hava'];
-    const elementKey = ELEM_ORDER[(level - 1) % 4];
+    const elementKey = (function (lv) {
+      if (lv <= 3) return 'ates';   // 1-3 Kor
+      if (lv <= 6) return 'su';     // 4-6 Baam
+      if (lv <= 9) return 'toprak'; // 7-9 Mand
+      return 'hava';                 // 10-12 Zepy
+    })(level);
     // v9.12.0 · M-018 (Patron emri 04.08): SONSUZ MOD = TÜM ELEMENTLER bir arada
     this.currentElement = this.endless ? 'karma' : elementKey;
     // v9.11.0 · Bölüm 11 "Kara Taşlar": izolasyon BİLEREK bozulur (mühürlü 4 element karışık)
