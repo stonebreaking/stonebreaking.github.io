@@ -3989,7 +3989,7 @@
         StoneSound.unlock(); StoneSound.tap();
         const fo = document.getElementById('fail-overlay');
         if (fo) fo.style.display = 'none';
-        startGame({ chapter: state.chapter || (game && game.level) || 1, force: true });
+        startGame({ forceChapter: state.chapter || (game && game.level) || 1 });
       });
       $('#btn-fail-home')?.addEventListener('click', () => {
         StoneSound.unlock(); StoneSound.tap();
