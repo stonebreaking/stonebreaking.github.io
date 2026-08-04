@@ -132,7 +132,7 @@ class StonebreakingGame {
 
     this.tiles = [];
     this.history = []; // geri al için
-    this.particles = []; this.selectedTile = null; this.tray = [];
+    this.particles = []; this.selectedTile = null; this.tray = []; this._failed = false; this.locked = false;
     this.tileImages = {};
     this.sceneImg = null;
     this.sceneKey = '';
@@ -714,7 +714,8 @@ class StonebreakingGame {
   }
 
   failTray() {
-    // v9.27: Evren dili — Yer Kalmadı YOK
+    if (this._failed) return;
+    this._failed = true;
     this.toast('Kolye taşıyamadı · Mühürler taştı');
     this.locked = true;
     if (typeof this.onTrayFull === 'function') this.onTrayFull({ tray: this.tray.slice() });
@@ -947,8 +948,19 @@ class StonebreakingGame {
     this.shufflesLeft--;
     if (typeof this.onPowerUse === 'function') this.onPowerUse('shuffle');
     this.updateFree();
+    // Serbest taş yoksa bir kez daha karıştır
+    if (!this.tiles.some((t) => t.active && t.free)) {
+      const active = this.tiles.filter((t) => t.active);
+      const types = active.map((t) => t.type);
+      for (let i = types.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [types[i], types[j]] = [types[j], types[i]];
+      }
+      active.forEach((t, i) => { t.type = types[i]; });
+      this.updateFree();
+    }
     this.emitAll();
-    this.toast('🔄 Karıştırıldı');
+    this.toast('🔄 Taşlar yeniden mühürlendi');
     return true;
   }
 
