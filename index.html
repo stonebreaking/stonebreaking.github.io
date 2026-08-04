@@ -201,13 +201,20 @@
       0%, 100% { filter: drop-shadow(0 0 18px rgba(255,180,80,0.35)) brightness(1); transform: scale(1); }
       50% { filter: drop-shadow(0 0 32px rgba(255,180,80,0.55)) brightness(1.06); transform: scale(1.02); }
     }
+    /* madalyon-mobile */
+    @media (max-width: 600px) {
+      #screen-splash::before {
+        background-size: contain !important;
+        background-position: center 42% !important;
+      }
+    }
     #screen-splash::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 50% 40%, #15121f 0%, #05050c 72%);
-      background-image: url('06_GRAFIK/splash_logo_kolye_birlesik.png?v=131');
-      background-size: contain;
+      background-color: #05050c;
+      background-image: url('06_GRAFIK/splash_madalyon_muhur.png?v=137');
+      background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
       z-index: 0;
@@ -2002,10 +2009,10 @@
       </button>
     </div>
     <button type="button" id="kolye-start-hit" aria-label="Kolyeye dokun"
-      style="position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:min(55vw,260px);height:min(55vw,260px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
+      style="position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:min(48vw,240px);height:min(48vw,240px);border-radius:50%;border:0;background:transparent;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;"></button>
     <div id="kolye-hint" style="position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font-size:0.72rem;letter-spacing:2.5px;color:rgba(255,209,148,0.85);pointer-events:none;white-space:nowrap;">KOLYEYE DOKUN</div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.36</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.37</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2478,7 +2485,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
-  <script src="js/game.js?v=136"></script>
+  <script src="js/game.js?v=137"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
 
