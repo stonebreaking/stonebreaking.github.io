@@ -288,7 +288,7 @@ class StonebreakingGame {
     // Mahjong Solitaire — tahta doğrudan üstten başlar
     this.slotGap = 6;
 
-    this.slotH = this.slotW; // v6.2: kare taş gövdesi (PNG kare → slot kare)
+    // v9.24: dikey tablet taş — slot kare zorunluluğu kalktı
     this.boardTop = 8;
 
     this.fitTilesToView();
@@ -307,17 +307,19 @@ class StonebreakingGame {
       maxR = Math.max(maxR, t.row);
       maxZ = Math.max(maxZ, t.z);
     }
-    const cols = (maxC - minC) + 1;
-    const rows = (maxR - minR) + 1;
-    const tw = Math.floor((W - 12 - maxZ * 4) / (cols + 0.15));
-    const th = Math.floor((H - 8 + maxZ * 6) / (rows * 0.52 + 0.55));
-    // KARE TAŞ — PNG kare olduğundan yüzey de kare
-    let tileW = Math.max(42, Math.min(80, tw - 2));
-    let tileH = tileW;
-    if (tileH > th) {
-      tileH = Math.max(42, th - 2);
-      tileW = tileH;
+    const cols = Math.max(1, (maxC - minC) + 1);
+    const rows = Math.max(1, (maxR - minR) + 1);
+    // v9.24 PATRON: Vita tarzı BÜYÜK okunabilir taş — dikey tablet (w/h ≈ 0.72)
+    const tw = Math.floor((W - 16 - maxZ * 4) / (cols + 0.2));
+    const th = Math.floor((H - 10 + maxZ * 5) / (rows * 0.55 + 0.5));
+    let tileW = Math.max(48, Math.min(92, tw - 2));
+    let tileH = Math.floor(tileW / 0.72);
+    if (tileH > th - 2) {
+      tileH = Math.max(56, th - 2);
+      tileW = Math.floor(tileH * 0.72);
     }
+    tileW = Math.max(44, tileW);
+    tileH = Math.max(58, tileH);
     this.tileW = tileW;
     this.tileH = tileH;
     this.gapX = Math.max(2, Math.floor(tileW * 0.04));
@@ -1177,19 +1179,17 @@ class StonebreakingGame {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = meta.color;
     ctx.shadowBlur = selected ? 16 : 8;
-    ctx.fillStyle = meta.color;
-    ctx.fillText(meta.emoji, x + w / 2, y + h / 2 + 1);
-    ctx.shadowBlur = 0;
-    ctx.restore();
-
-    // ◆ MÜHÜR rozeti — sağ alt köşe
-    ctx.save();
-    const muhurSize = Math.floor(w * 0.18);
-    ctx.font = `bold ${muhurSize}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'rgba(255,209,148,0.6)';
-    ctx.fillText('◆', x + w - muhurSize, y + h - muhurSize * 0.5);
+    // v9.24: PNG varsa SADECE görsel — emoji üstüne basılmaz (okunabilir Mahjong yüzü)
+    if (!img) {
+      ctx.fillStyle = meta.color;
+      ctx.font = `bold ${Math.floor(Math.min(w, h) * 0.42)}px system-ui,sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = meta.color;
+      ctx.shadowBlur = 8;
+      ctx.fillText(meta.emoji || '◆', x + w / 2, y + h / 2 + 1);
+      ctx.shadowBlur = 0;
+    }
     ctx.restore();
 
     // Rim light
