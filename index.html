@@ -268,6 +268,81 @@
       #splash-title-logo { max-height: 16vh; }
       #splash-kolye { width: min(66vw, 220px); max-height: 42vh; }
     }
+    /* v1.71 KUSURSUZ YÜKLEME — tek sahne + BATUPIA logo + tek bar */
+    #screen-studio-intro {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #06060c;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    #screen-studio-intro.exit {
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      pointer-events: none;
+    }
+    #loading-scene-bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      z-index: 0;
+      filter: brightness(0.72) saturate(1.05);
+    }
+    #loading-vignette {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 45%, transparent 30%, rgba(0,0,0,0.62) 100%);
+    }
+    #loading-batupia-logo {
+      position: absolute;
+      left: 50%; top: 40%;
+      transform: translate(-50%, -50%);
+      width: min(58vw, 280px);
+      height: auto;
+      z-index: 2;
+      filter: drop-shadow(0 10px 32px rgba(0,0,0,0.7));
+      animation: loadingLogoIn 0.9s ease-out both, loadingLogoPulse 2.8s ease-in-out 1s infinite;
+      pointer-events: none;
+    }
+    @keyframes loadingLogoIn {
+      from { opacity: 0; transform: translate(-50%, -46%) scale(0.92); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    @keyframes loadingLogoPulse {
+      0%, 100% { filter: drop-shadow(0 10px 32px rgba(0,0,0,0.7)) drop-shadow(0 0 18px rgba(255,209,148,0.25)); }
+      50% { filter: drop-shadow(0 10px 32px rgba(0,0,0,0.7)) drop-shadow(0 0 28px rgba(255,209,148,0.45)); }
+    }
+    #loading-ui {
+      position: absolute;
+      left: 50%;
+      bottom: max(11%, env(safe-area-inset-bottom, 16px));
+      transform: translateX(-50%);
+      z-index: 3;
+      width: min(68vw, 320px);
+      pointer-events: none;
+    }
+    #loading-track {
+      height: 7px;
+      border-radius: 99px;
+      background: rgba(8,6,4,0.55);
+      border: 1px solid rgba(232,201,144,0.32);
+      overflow: hidden;
+      box-shadow: 0 0 14px rgba(255,209,148,0.12);
+    }
+    #loading-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #7a5a28, #e8c990, #ffe6b0);
+      box-shadow: 0 0 10px rgba(255,209,148,0.45);
+      transition: width 0.05s linear;
+    }
+    #loading-pct { display: none !important; }
+    #screen-studio-intro .studio-particles { display: none !important; }
+    #screen-studio-intro .studio-bg,
+    #screen-studio-intro .studio-content,
+    #screen-studio-intro .studio-name,
+    #screen-studio-intro .studio-sub,
+    #screen-studio-intro .studio-muhur { display: none !important; }
+
     /* v1.50 soft invite pulse — buton değil, hafif nefes */
     @keyframes kolyePulse {
       0%, 100% { opacity: 0.15; transform: translate(-50%,-50%) scale(1); }
@@ -1961,22 +2036,17 @@
 <body>
 
   <!-- ========== 0. BATUPIA STUDIOS INTRO (SAHNE -1) — STONEBREAKING EVRENİ ========== -->
-  <section id="screen-studio-intro" class="screen active" aria-label="STONEBREAKING Yükleniyor">
-    <!-- TEK sahne arka plan (çubuk yok, % yok) -->
-    <img id="loading-scene-bg" src="06_GRAFIK/loading_anime_koridor.jpg?v=170" alt=""
-      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;background:#06060c;z-index:0;" />
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.55) 100%);z-index:1;pointer-events:none;"></div>
-    <!-- BATUPIA logo ortada -->
-    <img id="loading-batupia-logo" src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png?v=170" alt="BATUPIA"
-      style="position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:min(62vw,300px);height:auto;z-index:2;filter:drop-shadow(0 8px 28px rgba(0,0,0,0.65));pointer-events:none;" />
-    <!-- TEK yükleme çubuğu -->
-    <div id="loading-ui" style="position:absolute;left:50%;bottom:max(10%,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:3;width:min(64vw,300px);text-align:center;pointer-events:none;">
-      <div style="height:8px;border-radius:99px;background:rgba(12,10,8,0.55);border:1px solid rgba(232,201,144,0.35);overflow:hidden;box-shadow:0 0 16px rgba(255,209,148,0.15);">
-        <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#8a6a30,#e8c990,#ffd194);border-radius:99px;transition:width 0.06s linear;"></div>
+    <section id="screen-studio-intro" class="screen active" aria-label="STONEBREAKING Yükleniyor">
+    <img id="loading-scene-bg" src="06_GRAFIK/loading_stonebreaking_temiz.png?v=171" alt="" />
+    <div id="loading-vignette" aria-hidden="true"></div>
+    <img id="loading-batupia-logo" src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png?v=171" alt="BATUPIA Studios" />
+    <div id="loading-ui">
+      <div id="loading-track">
+        <div id="loading-bar"></div>
       </div>
-      <div id="loading-pct" style="display:none!important" aria-hidden="true"></div>
+      <div id="loading-pct" aria-hidden="true"></div>
     </div>
-    <div class="studio-particles" id="studio-particles" style="display:none"></div>
+    <div class="studio-particles" id="studio-particles" hidden></div>
   </section>
 
   <!-- ========== 1. AÇILIŞ — STONEBREAKING EVRENİ SİNEMATİK ========== -->
@@ -2031,7 +2101,7 @@
     <!-- v1.50: metinsiz dokunma — yazı yok, buton görünümü yok -->
     <div id="kolye-hint" aria-hidden="true" style="display:none!important"></div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.70</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.71</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2505,7 +2575,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
-  <script src="js/game.js?v=170?v=165?v=165"></script>
+  <script src="js/game.js?v=171?v=165?v=165"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/mindmap.js?v=155"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
@@ -2745,29 +2815,26 @@
 
     async function playStudioIntro() {
       const intro = $('#screen-studio-intro');
-      const pctEl = $('#loading-pct');
       const barEl = $('#loading-bar');
-      // v1.28: Gerçek yüzde + bar (görseldeki sabit % kapalı)
-      const total = 2600;
+      // v1.71: tek çubuk, % yok, sahne + BATUPIA logo
+      const total = 2400;
       const t0 = performance.now();
       await new Promise((resolve) => {
         const tick = () => {
-          const p = Math.min(100, Math.floor(((performance.now() - t0) / total) * 100));
-          if (pctEl) pctEl.textContent = p + '%';
-          if (barEl) barEl.style.width = p + '%';
+          const p = Math.min(100, ((performance.now() - t0) / total) * 100);
+          if (barEl) barEl.style.width = p.toFixed(1) + '%';
           if (p >= 100) resolve();
           else requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
       });
-      if (pctEl) pctEl.textContent = '100%';
       if (barEl) barEl.style.width = '100%';
-      await wait(280);
+      await wait(220);
       if (intro) {
         intro.classList.add('exit');
         intro.classList.remove('active');
       }
-      await wait(380);
+      await wait(420);
       goScreen('screen-splash');
       playSplashCinematic();
     }
