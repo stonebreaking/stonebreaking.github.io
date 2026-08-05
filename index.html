@@ -3165,47 +3165,84 @@
       saveProfile();
     }
 
-    // v7.4: ANİME ŞÖLENİ — 12 bölüm tamamlandığında 4 ruh sinematik sahnesi
+    // v7.4: ANİME ŞÖLENİ — 12 bölüm tamamlandığında sinematik final
     function showAnimeFinale() {
       const scenes = [
-        { img: '06_GRAFIK/ruh_kor_ates_sinematik.png', text: 'Kor: İlk kıvılcımı ben yaktım. Cesaretinle geldin.', color: '#ff6b35' },
-        { img: '06_GRAFIK/ruh_baam_su_sinematik.png', text: 'Baam: Acele etmedin. Akışı dinledin.', color: '#4ecdc4' },
-        { img: '06_GRAFIK/ruh_mand_toprak_sinematik.png', text: 'Mand: Sabır taşı kırdı. Sen bekledin.', color: '#c4a35a' },
-        { img: '06_GRAFIK/ruh_zepy_hava_sinematik.png', text: 'Zepy: Hafif oldun. Görünmeyeni gördün.', color: '#a8d8ea' },
-        { img: '06_GRAFIK/ruh_4lu_sinematik.png', text: 'Dört Ruh Bir Arada — Evren Mührü Kırıldı!', color: '#ffd194' },
+        { type:'title', text:'On İki Mühür Kırıldı', sub:'Dört ruh bir arada — Evren titreşti', color:'#ffd194', dur:3000 },
+        { type:'scene', img:'06_GRAFIK/ruh_kor_ates_sinematik.png', text:'Kor: "İlk kıvılcımı ben yaktım. Cesaretinle geldin."', seal:'Alev Mühürü ✦', color:'#ff6b35', dur:4000 },
+        { type:'scene', img:'06_GRAFIK/sinematik_kor_vadisi.jpg', text:'Ateş Vadisi\'nin son alevi söndü. Kor mühürlendi.', seal:'', color:'#ff6b35', dur:3000 },
+        { type:'scene', img:'06_GRAFIK/ruh_baam_su_sinematik.png', text:'Baam: "Acele etmedin. Akışı dinledin."', seal:'Dalgacık Mühürü ✦', color:'#4ecdc4', dur:4000 },
+        { type:'scene', img:'06_GRAFIK/sinematik_baam_okyanus.jpg', text:'Derinlikler\'in son dalgası çekildi. Baam mühürlendi.', seal:'', color:'#4ecdc4', dur:3000 },
+        { type:'scene', img:'06_GRAFIK/ruh_mand_toprak_sinematik.png', text:'Mand: "Sabır taşı kırdı. Sen bekledin."', seal:'Kristal Mühür ✦', color:'#c4a35a', dur:4000 },
+        { type:'scene', img:'06_GRAFIK/sinematik_mand_orman.jpg', text:'Kristal Mağara\'nın son nabzı attı. Mand mühürlendi.', seal:'', color:'#c4a35a', dur:3000 },
+        { type:'scene', img:'06_GRAFIK/ruh_zepy_hava_sinematik.png', text:'Zepy: "Hafif oldun. Görünmeyeni gördün."', seal:'Rüzgar Mühürü ✦', color:'#a8d8ea', dur:4000 },
+        { type:'scene', img:'06_GRAFIK/sinematik_zepy_gokyuzu.jpg', text:'Gökyüzü Tapınağı\'nın son rüzgarı esti. Zepy mühürlendi.', seal:'', color:'#a8d8ea', dur:3000 },
+        { type:'scene', img:'06_GRAFIK/ruh_4lu_sinematik.png', text:'Dört Ruh Bir Arada', seal:'Evren Mührü ✦✦✦', color:'#ffd194', dur:4500 },
+        { type:'scene', img:'06_GRAFIK/sinematik_dort_ruh_birlesim.jpg', text:'Kolye on iki mührü taşıdı. Evren Mührü kırıldı.', seal:'', color:'#ffd194', dur:4000 },
+        { type:'title', text:'SONSUZ YOL AÇILDI', sub:'Zihin Haritası · Sonsuz Mühür · Günün Mührü', color:'#ffd194', dur:3500 },
       ];
       let idx = 0;
       const overlay = document.createElement('div');
       overlay.id = 'anime-finale';
-      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease;';
       document.body.appendChild(overlay);
       
       function showNext() {
         if (idx >= scenes.length) {
-          // Final bitti — sonsuz mod veya ana menü
-          overlay.innerHTML = `
-            <div style="text-align:center;padding:20px;">
-              <div style="font-size:1.5rem;color:#ffd194;letter-spacing:3px;margin-bottom:20px;text-shadow:0 0 20px rgba(255,209,148,0.5)">EVREN MÜHRÜ KIRILDI</div>
-              <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:30px;">12 mühür kolyeye gömüldü. Sonsuz yol açıldı.</div>
-              <button onclick="document.getElementById('anime-finale').remove(); goScreen('screen-splash');" style="background:linear-gradient(135deg,#7a5a28,#e8c990);color:#000;border:none;padding:12px 24px;border-radius:8px;font-size:0.9rem;cursor:pointer;letter-spacing:1px;">◆ Ana Menü</button>
-            </div>
-          `;
+          // Final bitti — seçenek ekranı
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.opacity = '1';
+            overlay.innerHTML = `
+              <div style="text-align:center;padding:20px;max-width:360px;">
+                <div style="font-size:1.6rem;color:#ffd194;letter-spacing:3px;margin-bottom:8px;text-shadow:0 0 24px rgba(255,209,148,0.6);">EVREN MÜHRÜ</div>
+                <div style="font-size:0.85rem;color:rgba(255,209,148,0.7);margin-bottom:6px;letter-spacing:1px;">KIRILDI</div>
+                <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,#ffd194,transparent);margin:16px auto;"></div>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:24px;line-height:1.6;">12 mühür kolyeye gömüldü.<br>Dört ruh seninle — sonsuz yol açık.</div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                  <button id="finale-endless" style="background:linear-gradient(135deg,#7a5a28,#e8c990);color:#000;border:none;padding:14px 24px;border-radius:10px;font-size:0.95rem;cursor:pointer;letter-spacing:1px;font-weight:700;">∞ Sonsuz Moda Gir</button>
+                  <button id="finale-home" style="background:rgba(255,255,255,0.08);color:#ffd194;border:1px solid rgba(255,209,148,0.2);padding:12px 24px;border-radius:10px;font-size:0.85rem;cursor:pointer;letter-spacing:1px;">◆ Ana Menü</button>
+                </div>
+              </div>
+            `;
+            document.getElementById('finale-endless')?.addEventListener('click', () => {
+              overlay.remove();
+              state.profile.endlessUnlocked = true;
+              saveProfile();
+              startGame({ endless: true });
+            });
+            document.getElementById('finale-home')?.addEventListener('click', () => {
+              overlay.remove();
+              state.profile.endlessUnlocked = true;
+              saveProfile();
+              goScreen('screen-splash');
+            });
+          }, 600);
           return;
         }
         const s = scenes[idx];
         overlay.style.opacity = '0';
         setTimeout(() => {
-          overlay.innerHTML = `
-            <img src="${s.img}" style="width:100%;height:70%;object-fit:contain;opacity:0.85;" />
-            <div style="position:absolute;bottom:15%;left:50%;transform:translateX(-50%);text-align:center;padding:0 20px;">
-              <div style="font-size:1rem;color:${s.color};text-shadow:0 0 16px ${s.color}88;letter-spacing:1px;line-height:1.5;">${s.text}</div>
-            </div>
-          `;
+          if (s.type === 'title') {
+            overlay.innerHTML = `
+              <div style="text-align:center;padding:0 24px;">
+                <div style="font-size:1.5rem;color:${s.color};letter-spacing:4px;text-shadow:0 0 30px ${s.color}88;margin-bottom:12px;font-weight:700;">${s.text}</div>
+                <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);letter-spacing:1px;line-height:1.5;">${s.sub || ''}</div>
+              </div>
+            `;
+          } else {
+            overlay.innerHTML = `
+              <img src="${s.img}" style="width:100%;height:65%;object-fit:contain;opacity:0.9;" onerror="this.style.display='none'" />
+              <div style="position:absolute;bottom:18%;left:50%;transform:translateX(-50%);text-align:center;padding:0 24px;max-width:380px;">
+                <div style="font-size:0.95rem;color:${s.color};text-shadow:0 0 20px ${s.color}88, 0 2px 8px #000;letter-spacing:0.5px;line-height:1.6;margin-bottom:8px;">${s.text}</div>
+                ${s.seal ? `<div style="font-size:0.7rem;color:rgba(255,209,148,0.6);letter-spacing:2px;">${s.seal}</div>` : ''}
+              </div>
+            `;
+          }
           overlay.style.opacity = '1';
-          overlay.style.transition = 'opacity 0.8s ease';
           idx++;
-          setTimeout(showNext, 3500);
-        }, 400);
+          setTimeout(showNext, s.dur);
+        }, 500);
       }
       showNext();
     }
@@ -4372,6 +4409,18 @@
         const selSpirit = state.spirit;
         const ranges = { kor:[1,3], baam:[4,6], mand:[7,9], zepy:[10,12] };
         const rg = ranges[selSpirit] || [1,12];
+        
+        // v7.4.1: Ruh bazlı arka plan sahnesi (sönük)
+        const sceneMap = {
+          kor: '06_GRAFIK/ruh_kor_ates_sinematik.png',
+          baam: '06_GRAFIK/ruh_baam_su_sinematik.png',
+          mand: '06_GRAFIK/ruh_mand_toprak_sinematik.png',
+          zepy: '06_GRAFIK/ruh_zepy_hava_sinematik.png'
+        };
+        const bg = document.querySelector('#screen-chapter .chapter-bg');
+        if (bg) {
+          bg.style.backgroundImage = "url('" + (sceneMap[selSpirit] || '06_GRAFIK/ruh_secim_ortak_sahne_hd.png') + "')";
+        }
         
         // SADECE seçilen ruhun bölümlerini göster
         const chapters = allChapters.filter(ch => ch.spirit === selSpirit);
