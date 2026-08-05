@@ -3165,6 +3165,51 @@
       saveProfile();
     }
 
+    // v7.4: ANİME ŞÖLENİ — 12 bölüm tamamlandığında 4 ruh sinematik sahnesi
+    function showAnimeFinale() {
+      const scenes = [
+        { img: '06_GRAFIK/ruh_kor_ates_sinematik.png', text: 'Kor: İlk kıvılcımı ben yaktım. Cesaretinle geldin.', color: '#ff6b35' },
+        { img: '06_GRAFIK/ruh_baam_su_sinematik.png', text: 'Baam: Acele etmedin. Akışı dinledin.', color: '#4ecdc4' },
+        { img: '06_GRAFIK/ruh_mand_toprak_sinematik.png', text: 'Mand: Sabır taşı kırdı. Sen bekledin.', color: '#c4a35a' },
+        { img: '06_GRAFIK/ruh_zepy_hava_sinematik.png', text: 'Zepy: Hafif oldun. Görünmeyeni gördün.', color: '#a8d8ea' },
+        { img: '06_GRAFIK/ruh_4lu_sinematik.png', text: 'Dört Ruh Bir Arada — Evren Mührü Kırıldı!', color: '#ffd194' },
+      ];
+      let idx = 0;
+      const overlay = document.createElement('div');
+      overlay.id = 'anime-finale';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+      document.body.appendChild(overlay);
+      
+      function showNext() {
+        if (idx >= scenes.length) {
+          // Final bitti — sonsuz mod veya ana menü
+          overlay.innerHTML = `
+            <div style="text-align:center;padding:20px;">
+              <div style="font-size:1.5rem;color:#ffd194;letter-spacing:3px;margin-bottom:20px;text-shadow:0 0 20px rgba(255,209,148,0.5)">EVREN MÜHRÜ KIRILDI</div>
+              <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:30px;">12 mühür kolyeye gömüldü. Sonsuz yol açıldı.</div>
+              <button onclick="document.getElementById('anime-finale').remove(); goScreen('screen-splash');" style="background:linear-gradient(135deg,#7a5a28,#e8c990);color:#000;border:none;padding:12px 24px;border-radius:8px;font-size:0.9rem;cursor:pointer;letter-spacing:1px;">◆ Ana Menü</button>
+            </div>
+          `;
+          return;
+        }
+        const s = scenes[idx];
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.innerHTML = `
+            <img src="${s.img}" style="width:100%;height:70%;object-fit:contain;opacity:0.85;" />
+            <div style="position:absolute;bottom:15%;left:50%;transform:translateX(-50%);text-align:center;padding:0 20px;">
+              <div style="font-size:1rem;color:${s.color};text-shadow:0 0 16px ${s.color}88;letter-spacing:1px;line-height:1.5;">${s.text}</div>
+            </div>
+          `;
+          overlay.style.opacity = '1';
+          overlay.style.transition = 'opacity 0.8s ease';
+          idx++;
+          setTimeout(showNext, 3500);
+        }, 400);
+      }
+      showNext();
+    }
+
     function showVictory(stats) {
       state.lastStats = stats;
       applyProfileToWin(stats);
@@ -3208,7 +3253,10 @@
       msg += ' · 💡+1  🔄+1';
       $('#v-msg').textContent = msg;
       const nxt = $('#btn-next-level');
-      if (lv === 12) nxt.textContent = 'Sonsuz Moda Gir';
+      if (lv === 12) {
+        nxt.textContent = '🎬 Anime Şöleni';
+        nxt.onclick = () => showAnimeFinale();
+      }
       else if (endless) nxt.textContent = `Devam · Sonsuz ${lv + 1 - 12}`;
       else nxt.textContent = `Bölüm ${lv + 1}`;
       // M-012: zihin taşı ödülü (bölüm/sonsuz dedup kurallı)
@@ -4307,7 +4355,7 @@
         const opened = Array.isArray(p.sealsOpened) ? p.sealsOpened : [];
         const highest = opened.length ? Math.max(...opened) : 0;
         const nextCh = Math.min(12, Math.max(1, highest + 1));
-        const chapters = [
+        const allChapters = [
           { n:1,  spirit:'kor',  title:'Alev Uyanışı',    region:'Ateş Vadisi',      seal:'Alev Mühürü',    emoji:'🔥', color:'#ff6b35' },
           { n:2,  spirit:'kor',  title:'Magma Köprüsü',   region:'Ateş Vadisi',      seal:'Alev Mühürü',    emoji:'🔥', color:'#ff6b35' },
           { n:3,  spirit:'kor',  title:'Volkan Mührü',    region:'Ateş Vadisi',      seal:'Alev Mühürü',    emoji:'🔥', color:'#ff6b35' },
@@ -4324,44 +4372,56 @@
         const selSpirit = state.spirit;
         const ranges = { kor:[1,3], baam:[4,6], mand:[7,9], zepy:[10,12] };
         const rg = ranges[selSpirit] || [1,12];
+        
+        // SADECE seçilen ruhun bölümlerini göster
+        const chapters = allChapters.filter(ch => ch.spirit === selSpirit);
+        
         const title = $('#chapter-title');
         if (title) {
           const spiritNames = { kor:'Kor · Ateş Yolu', baam:'Baam · Su Yolu', mand:'Mand · Toprak Yolu', zepy:'Zepy · Hava Yolu' };
-          title.textContent = spiritNames[selSpirit] || '12 BÖLÜM';
+          title.textContent = spiritNames[selSpirit] || 'BÖLÜMLER';
         }
+        
+        // Grid'i tek sütun yap (sadece 3 bölüm)
+        grid.style.gridTemplateColumns = '1fr';
+        
         chapters.forEach((ch) => {
           const completed = opened.includes(ch.n);
           const unlocked = ch.n <= nextCh;
-          const isSpirit = ch.spirit === selSpirit;
           const isCurrent = ch.n === nextCh;
+          
+          // Kilitli bölümleri GİZLE
+          if (!unlocked) return;
+          
           const card = document.createElement('div');
-          let cls = 'chapter-card';
-          if (unlocked) cls += ' unlocked'; else cls += ' locked';
+          let cls = 'chapter-card unlocked';
           if (completed) cls += ' completed';
           if (isCurrent) cls += ' current';
-          if (isSpirit && unlocked) cls += ' spirit-match';
+          cls += ' spirit-match';
           card.className = cls;
-          if (isSpirit && unlocked) { card.style.borderColor = ch.color + '88'; card.style.boxShadow = '0 0 12px ' + ch.color + '22'; }
-          if (isCurrent) { card.style.borderColor = ch.color; card.style.boxShadow = '0 0 20px ' + ch.color + '44, inset 0 0 12px ' + ch.color + '11'; }
-          if (!isSpirit) card.style.opacity = unlocked ? '0.65' : '0.35';
+          
+          card.style.borderColor = ch.color + '88';
+          card.style.boxShadow = '0 0 12px ' + ch.color + '22';
+          if (isCurrent) {
+            card.style.borderColor = ch.color;
+            card.style.boxShadow = '0 0 20px ' + ch.color + '44, inset 0 0 12px ' + ch.color + '11';
+          }
+          
           card.innerHTML = `
             <div class="ch-num">Bölüm ${ch.n}${isCurrent ? ' ◈' : ''}</div>
-            <div class="ch-title" style="color:${unlocked ? ch.color : '#666'}">${ch.title}</div>
+            <div class="ch-title" style="color:${ch.color}">${ch.title}</div>
             <div class="ch-region">${ch.region}</div>
             <div class="ch-spirit" style="color:${ch.color}">${ch.emoji}</div>
             <div class="ch-seal">${completed ? '✦ Tamamlandı' : ch.seal}</div>
-            ${!unlocked ? '<div class="ch-lock">🔒</div>' : ''}
             ${isCurrent ? '<div style="position:absolute;bottom:4px;right:8px;font-size:0.5rem;color:' + ch.color + ';letter-spacing:1px">SIRADAKİ</div>' : ''}
-            ${completed && unlocked ? '<div style="position:absolute;bottom:4px;right:8px;font-size:0.5rem;color:' + ch.color + ';letter-spacing:1px;opacity:0.7">TEKRAR</div>' : ''}
+            ${completed ? '<div style="position:absolute;bottom:4px;right:8px;font-size:0.5rem;color:' + ch.color + ';letter-spacing:1px;opacity:0.7">TEKRAR</div>' : ''}
           `;
-          if (unlocked) {
-            card.addEventListener('click', () => { try { StoneSound.tap(); } catch(_){} startGame({ forceChapter: ch.n }); });
-          } else {
-            card.addEventListener('click', () => {
-              if (ch.n >= rg[0] && ch.n <= rg[1] && nextCh < rg[0]) showToast('🔒 Önce önceki ruhun mühürlerini kır');
-              else showToast('🔒 Bölüm ' + ch.n + ' kilitli — Önce bölüm ' + nextCh + "'i tamamla");
-            });
-          }
+          
+          card.addEventListener('click', () => {
+            try { StoneSound.tap(); } catch(_){}
+            startGame({ forceChapter: ch.n });
+          });
+          
           grid.appendChild(card);
         });
       }
