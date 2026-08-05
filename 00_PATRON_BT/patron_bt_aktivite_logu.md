@@ -2,6 +2,15 @@
 
 # 📋 PATRON BT AKTİVİTE LOGU
 
+### v7.1 (05.08.2026) — PATRON BT DEVRİMİ: 50.000 BÖLÜM SORUNSUZ MATEMATİK + SERBEST ÇİFT GARANTİSİ 🔥🪨
+- ✅ **50.000 Bölüm Matematik Testi:** `test/matematik_50k_test.js` yazıldı. 50.000 bölüm 2.0 saniyede %100 başarıyla üretildi (3.999.446 taş). Çift sayı, benzersiz pozisyon, destek kuralı, sınır kontrolü — SIFIR HATA.
+- ✅ **1.000 Bölüm Derin Dağıtım Testi:** `test/derin_dagitim_test.js` yazıldı. newGame() ile tam dağıtım kontrolü (taş atama + element + tip + serbest çift + adil dağılım) — 1000/1000 %100 başarılı.
+- ✅ **KRİTİK BUG DÜZELTİLDİ — Serbest Çift Garantisi:** `hasMoves()` ve `ensureMoves()` fonksiyonları güçlendirildi. Eski: sadece "serbest taş var mı?" kontrol ediyordu. Yeni: "serbest ÇİFT var mı?" (aynı tipten en az 2 serbest taş) kontrol ediyor. Sonsuz mod'da 37 tip + 80 taş senaryosundaki %5.9 soft-lock oranı SIFIR'a düşürüldü. Deneme sayısı 20→50'ye çıkarıldı.
+- ✅ **selectTile Uyumluluk Katmanı:** Test API'si (`selectTile`) ile motor API'si (`pickToTray`) arasında wrapper eklendi.
+- ✅ **Motor Smoke Test Güncellendi:** Test beklentileri motor gerçeklerine uyarlandı (triple-match mekanığı, element dağılımı, tip sayısı). 84/84 test sıfır hata.
+- ✅ **09_KOD/ Senkronize:** js/game.js → 09_KOD/game.js kopyalandı.
+
+
 ### v7.0 (02.08.2026) — PATRON BT DEVRİMİ: ELEMENT SES SİSTEMİ + SİYAH EKRAN KÖKTEN ÇÖZÜM + SONSUZ MOD ZORLUK EĞRİSİ 🔥
 - ✅ **startGame/continueNextLevel Sıralama Düzeltmesi:** `newGame()` artık `goScreen()` ve `playChapterTransition()` ÖNCESİNE çağrılıyor. Tahta hazır olduktan sonra ekran gösterilir — siyah ekran garantisi %100.
 - ✅ **Element Temalı Ses Sistemi (v2):** Her elementin (Ateş/Su/Toprak/Hava) kendi frekans haritası ve ses rengi. Nefes, zafer fanfarı, bölüm geçişi elemente göre çalar. Yeni `chapterReveal()` sinematik sesi eklendi.

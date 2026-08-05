@@ -9,3 +9,7 @@ node_modules/
 # Video raw + frame dump (analiz md + contact sheet commitlenir)
 uploads/*.mp4
 17_REFERANSLAR/video_analiz/frames/
+
+# Gizli dosyalar
+01_GIZLI/.env
+.env

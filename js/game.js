@@ -791,6 +791,11 @@ class StonebreakingGame {
     }
   }
 
+  // Test uyumluluk katmanı (v6.8.0+)
+  selectTile(t) {
+    this.pickToTray(t);
+  }
+
   pickToTray(t) {
     if (!t || !t.active || !t.free) return;
     if (this.tray.length >= TRAY_MAX) {
@@ -1164,10 +1169,16 @@ class StonebreakingGame {
     return true;
   }
 
-  // v9.32: Tepsi model — hamle = serbest taş var ve kolyede yer var
+  // v9.32: Tepsi model — hamle = serbest çift var ve kolyede yer var
   hasMoves() {
     if ((this.tray && this.tray.length) >= TRAY_MAX) return false;
-    return this.tiles.some((t) => t.active && t.free);
+    // Serbest taş var mı?
+    const free = this.tiles.filter((t) => t.active && t.free);
+    if (!free.length) return false;
+    // Serbest ÇİFT var mı? (aynı tipten en az 2 serbest taş)
+    const byType = {};
+    for (const t of free) (byType[t.type] = (byType[t.type] || 0) + 1);
+    return Object.values(byType).some((c) => c >= 2);
   }
 
   ensureMoves(secenek = {}) {
@@ -1177,9 +1188,10 @@ class StonebreakingGame {
     try {
       this.updateFree();
       let tries = 0;
-      while (!this.hasMoves() && tries < 20) {
+      while (!this.hasMoves() && tries < 50) {
         const active = this.tiles.filter((t) => t.active);
         const types = active.map((t) => t.type);
+        // Fisher-Yates karıştırma
         for (let i = types.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [types[i], types[j]] = [types[j], types[i]];
