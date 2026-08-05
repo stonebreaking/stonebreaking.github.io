@@ -283,13 +283,13 @@
     #loading-scene-bg {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover; object-position: center;
+      object-fit: cover; object-position: center top;
       z-index: 0;
-      filter: brightness(0.72) saturate(1.05);
+      filter: brightness(0.85) saturate(1.05);
     }
     #loading-vignette {
       position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      background: radial-gradient(ellipse at 50% 45%, transparent 30%, rgba(0,0,0,0.62) 100%);
+      background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(0,0,0,0.4) 100%);
     }
     #loading-batupia-logo {
       position: absolute;
@@ -313,26 +313,24 @@
     #loading-ui {
       position: absolute;
       left: 50%;
-      bottom: max(11%, env(safe-area-inset-bottom, 16px));
+      bottom: max(8%, env(safe-area-inset-bottom, 12px));
       transform: translateX(-50%);
       z-index: 3;
-      width: min(68vw, 320px);
+      width: min(56vw, 260px);
       pointer-events: none;
     }
     #loading-track {
-      height: 7px;
+      height: 4px;
       border-radius: 99px;
-      background: rgba(8,6,4,0.55);
-      border: 1px solid rgba(232,201,144,0.32);
+      background: rgba(8,6,4,0.4);
       overflow: hidden;
-      box-shadow: 0 0 14px rgba(255,209,148,0.12);
     }
     #loading-bar {
       height: 100%;
       width: 0%;
       border-radius: 99px;
-      background: linear-gradient(90deg, #7a5a28, #e8c990, #ffe6b0);
-      box-shadow: 0 0 10px rgba(255,209,148,0.45);
+      background: linear-gradient(90deg, #c4a35a, #ffe6b0);
+      box-shadow: 0 0 6px rgba(255,209,148,0.3);
       transition: width 0.05s linear;
     }
     #loading-pct { display: none !important; }
@@ -2079,11 +2077,11 @@
 
     <!-- M-009: Macera kapısı — metinsiz rune taşları (dokun → mühür kırılır) -->
     <!-- v1.13 Ruh mühürleri — logo element sembolleri -->
-    <div id="spirit-sigil-bar" aria-hidden="true" style="position:relative;z-index:5;display:flex;gap:14px;justify-content:center;margin-bottom:14px;pointer-events:none;">
-      <span title="Kor · Ateş" style="font-size:1.35rem;filter:drop-shadow(0 0 8px #e63946)">🔥</span>
-      <span title="Baam · Su" style="font-size:1.35rem;filter:drop-shadow(0 0 8px #1d8cf8)">💧</span>
-      <span title="Mand · Toprak" style="font-size:1.35rem;filter:drop-shadow(0 0 8px #2ecc71)">🌿</span>
-      <span title="Zepy · Hava" style="font-size:1.35rem;filter:drop-shadow(0 0 8px #e8f4ff)">🌬</span>
+    <div id="spirit-sigil-bar" aria-hidden="true" style="position:relative;z-index:5;display:flex;gap:18px;justify-content:center;align-items:center;margin-bottom:14px;pointer-events:none;">
+      <img src="06_GRAFIK/element_fire_rune.png?v=730" alt="Kor · Ateş" title="Kor · Ateş" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #ff6b35)" />
+      <img src="06_GRAFIK/element_water_rune.png?v=730" alt="Baam · Su" title="Baam · Su" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #4ecdc4)" />
+      <img src="06_GRAFIK/element_earth_rune.png?v=730" alt="Mand · Toprak" title="Mand · Toprak" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #c4a35a)" />
+      <img src="06_GRAFIK/element_air_rune.png?v=730" alt="Zepy · Hava" title="Zepy · Hava" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #a8d8ea)" />
     </div>
     <div id="spirit-sigil-bar" style="display:none"></div>
     <div class="rune-gate" id="rune-gate" style="display:none !important">
@@ -2256,6 +2254,92 @@
   </section>
 
   <!-- ========== 4. OYUN ========== -->
+  <!-- ========== BÖLÜM SEÇİM EKRANI ========== -->
+  <section id="screen-chapter" class="screen" aria-label="Bölüm Seçimi">
+    <div class="chapter-bg" aria-hidden="true"></div>
+    <div class="char-header" style="padding:max(12px,env(safe-area-inset-top)) 16px 8px;">
+      <button class="btn-back" id="btn-chapter-back" type="button" aria-label="Geri">◆ Geri</button>
+      <div style="text-align:center;flex:1">
+        <div style="font-size:0.65rem;color:rgba(255,209,148,0.5);letter-spacing:2px;text-transform:uppercase">Mühür Yolu</div>
+        <div style="font-size:1.1rem;font-weight:700;color:#ffe6b0;letter-spacing:1px;margin-top:2px" id="chapter-title">12 BÖLÜM</div>
+      </div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="chapter-grid" id="chapter-grid"></div>
+    <div style="text-align:center;padding:8px 0 max(12px,env(safe-area-inset-bottom));font-size:0.55rem;color:rgba(255,209,148,0.35);letter-spacing:1px">by BATUPIA Studios</div>
+  </section>
+
+  <style>
+    #screen-chapter {
+      background: #050510;
+      display: flex; flex-direction: column;
+      height: 100%; height: 100dvh;
+      overflow: hidden; position: relative;
+    }
+    #screen-chapter .chapter-bg {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: url('06_GRAFIK/ruh_secim_ortak_sahne_hd.png?v=720') center/cover no-repeat;
+      opacity: 0.18; filter: blur(3px) brightness(0.5);
+    }
+    #screen-chapter > * { position: relative; z-index: 1; }
+    .chapter-grid {
+      flex: 1; overflow-y: auto; padding: 8px 12px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; align-content: start;
+    }
+    .chapter-card {
+      background: rgba(10,10,20,0.7);
+      border: 1.5px solid rgba(255,209,148,0.12);
+      border-radius: 12px; padding: 10px;
+      cursor: pointer; transition: all 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .chapter-card:active { transform: scale(0.97); }
+    .chapter-card.unlocked {
+      border-color: rgba(255,209,148,0.3);
+    }
+    .chapter-card.unlocked:active {
+      border-color: rgba(255,209,148,0.6);
+      box-shadow: 0 0 16px rgba(255,209,148,0.15);
+    }
+    .chapter-card.locked {
+      opacity: 0.45; cursor: not-allowed;
+    }
+    .chapter-card .ch-num {
+      font-size: 0.6rem; color: rgba(255,209,148,0.5);
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .chapter-card .ch-title {
+      font-size: 0.85rem; font-weight: 700; color: #ffe6b0;
+      margin: 2px 0; line-height: 1.2;
+    }
+    .chapter-card .ch-region {
+      font-size: 0.6rem; color: rgba(255,255,255,0.4);
+      letter-spacing: 0.5px;
+    }
+    .chapter-card .ch-spirit {
+      position: absolute; top: 8px; right: 8px;
+      font-size: 1.1rem; filter: drop-shadow(0 0 4px currentColor);
+    }
+    .chapter-card .ch-seal {
+      display: inline-block; margin-top: 4px;
+      font-size: 0.55rem; color: rgba(255,209,148,0.6);
+      letter-spacing: 0.5px;
+    }
+    .chapter-card.locked .ch-lock {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: rgba(255,209,148,0.2);
+    }
+    .chapter-card .ch-element-bar {
+      display: flex; gap: 4px; margin-top: 6px;
+    }
+    .chapter-card .ch-element-bar img {
+      width: 18px; height: 18px; object-fit: contain;
+      opacity: 0.7;
+    }
+  </style>
+
   <section id="screen-game" class="screen" aria-label="Oyun">
     <div class="game-top">
       <!-- SOL: Profil + Enerji Barı -->
@@ -4203,33 +4287,73 @@
         const endless = state.endlessRequested;
         state.endlessRequested = false;
         if (endless) { startGame({ endless: true }); return; }
-        // v1.17: Sıralı bölüm — en yüksek biten+1, ruh aralığına sıkıştır
+        // v7.3: BÖLÜM SEÇİM EKRANI — ruh seçtikten sonra bölüm haritası
+        buildChapterGrid();
+        goScreen('screen-chapter');
+      });
+
+      // v7.3: Bölüm seçim ekranı — 12 bölüm haritası
+      function buildChapterGrid() {
+        const grid = $('#chapter-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
         const p = state.profile || {};
         const opened = Array.isArray(p.sealsOpened) ? p.sealsOpened : [];
         const highest = opened.length ? Math.max(...opened) : 0;
-        let next = Math.min(12, Math.max(1, highest + 1));
-        // İlerleme chapter de dikkate
-        next = Math.max(next, Math.min(12, p.chapter || 1));
-        const ranges = { kor:[1,3], baam:[4,6], mand:[7,9], zepy:[10,12] };
-        const rg = ranges[state.spirit] || [1,12];
-        // Seçilen ruhun aralığında oynanabilir ilk bölüm
-        let startCh = next;
-        if (startCh < rg[0]) startCh = rg[0];
-        if (startCh > rg[1]) startCh = rg[0]; // ruh tamam, baştan tekrar
-        // Kilit: next henüz açılmadıysa ve ruh aralığı dışındaysa
-        if (startCh > next && next < rg[0]) {
-          showToast('Önce önceki mühürleri kır');
-          return;
+        const nextCh = Math.min(12, Math.max(1, highest + 1));
+        const chapters = [
+          { n:1,  spirit:'kor',  title:'Alev Uyanışı',    region:'Ateş Vadisi',      seal:'Alev Mühürü',    emoji:'🔥', color:'#ff6b35' },
+          { n:2,  spirit:'kor',  title:'Magma Köprüsü',   region:'Ateş Vadisi',      seal:'Alev Mühürü',    emoji:'🔥', color:'#ff6b35' },
+          { n:3,  spirit:'kor',  title:'Volkan Mührü',    region:'Ateş Vadisi',      seal:'Alev Mühürü',    emoji:'🔥', color:'#ff6b35' },
+          { n:4,  spirit:'baam', title:'Dalga Çağrısı',   region:'Derinlikler',      seal:'Dalgacık Mühürü',emoji:'💧', color:'#4ecdc4' },
+          { n:5,  spirit:'baam', title:'Mercan Labirent', region:'Derinlikler',      seal:'Dalgacık Mühürü',emoji:'💧', color:'#4ecdc4' },
+          { n:6,  spirit:'baam', title:'İnci Tahtı',      region:'Derinlikler',      seal:'Dalgacık Mühürü',emoji:'💧', color:'#4ecdc4' },
+          { n:7,  spirit:'mand', title:'Granit Kapı',     region:'Kristal Mağara',   seal:'Kristal Mühür',  emoji:'🌿', color:'#c4a35a' },
+          { n:8,  spirit:'mand', title:'Kristal Nabız',   region:'Kristal Mağara',   seal:'Kristal Mühür',  emoji:'🌿', color:'#c4a35a' },
+          { n:9,  spirit:'mand', title:'Dağ Mührü',       region:'Kristal Mağara',   seal:'Kristal Mühür',  emoji:'🌿', color:'#c4a35a' },
+          { n:10, spirit:'zepy', title:'Rüzgar Merdiveni',region:'Gökyüzü Tapınağı', seal:'Rüzgar Mühürü',  emoji:'🌬', color:'#a8d8ea' },
+          { n:11, spirit:'zepy', title:'Bulut Labirenti', region:'Gökyüzü Tapınağı', seal:'Rüzgar Mühürü',  emoji:'🌬', color:'#a8d8ea' },
+          { n:12, spirit:'zepy', title:'Evren Mührü',     region:'Gökyüzü Tapınağı', seal:'Evren Mührü',    emoji:'🌬', color:'#a8d8ea' },
+        ];
+        // Ruh filtresi — seçilen ruhun bölümleri vurgulu
+        const selSpirit = state.spirit;
+        const title = $('#chapter-title');
+        if (title) {
+          const spiritNames = { kor:'Kor · Ateş', baam:'Baam · Su', mand:'Mand · Toprak', zepy:'Zepy · Hava' };
+          title.textContent = spiritNames[selSpirit] || '12 BÖLÜM';
         }
-        startCh = Math.min(startCh, next);
-        if (startCh < rg[0]) startCh = rg[0];
-        if (startCh > rg[1]) startCh = rg[1];
-        // Sadece açılmış veya sıradaki
-        if (startCh > next) {
-          showToast('Bölüm ' + next + ' henüz kilitli değil — sıradaki: ' + next);
-          startCh = next;
-        }
-        startGame({ forceChapter: startCh });
+        chapters.forEach((ch) => {
+          const unlocked = ch.n <= nextCh;
+          const completed = opened.includes(ch.n);
+          const isSpirit = ch.spirit === selSpirit;
+          const card = document.createElement('div');
+          card.className = 'chapter-card' + (unlocked ? ' unlocked' : ' locked') + (completed ? ' completed' : '');
+          if (isSpirit) card.style.borderColor = ch.color + '55';
+          card.innerHTML = `
+            <div class="ch-num">Bölüm ${ch.n}</div>
+            <div class="ch-title" style="color:${unlocked ? ch.color : '#888'}">${ch.title}</div>
+            <div class="ch-region">${ch.region}</div>
+            <div class="ch-spirit" style="color:${ch.color}">${ch.emoji}</div>
+            <div class="ch-seal">${completed ? '✦ ' : ''}${ch.seal}</div>
+            ${!unlocked ? '<div class="ch-lock">🔒</div>' : ''}
+          `;
+          if (unlocked) {
+            card.addEventListener('click', () => {
+              try { StoneSound.tap(); } catch(_){}
+              startGame({ forceChapter: ch.n });
+            });
+          } else {
+            card.addEventListener('click', () => {
+              showToast('🔒 Bölüm ' + ch.n + ' kilitli — Önce bölüm ' + nextCh + '\'i tamamla');
+            });
+          }
+          grid.appendChild(card);
+        });
+      }
+
+      // Bölüm seçim geri butonu
+      $('#btn-chapter-back')?.addEventListener('click', () => {
+        goScreen('screen-spirit');
       });
 
       $('#btn-shuffle')?.addEventListener('click', (e) => {
