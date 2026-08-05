@@ -2102,12 +2102,7 @@
     <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.72</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
-    <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
-      <div class="studios-stamp" aria-hidden="true"></div>
-      <img class="studios-seal" src="06_GRAFIK/batupia_intro_opt2.png" alt="BATUPIA Studios" />
-      <div class="studios-touch" aria-hidden="true"></div>
-      <!-- v9.11.1 Patron 03.08: byline KALDIRILDI — mühürlü logoda isim yazıyor -->
-    </div>
+    <!-- Studios phase KALDIRILDI v7.5.1 — splash direkt açılır -->
   </section>
 
   <!-- ========== 2. KARAKTER SEÇİMİ v6.7 — YAN YANA Anime Portre ========== -->
@@ -4155,14 +4150,8 @@
         $('#btn-zihin')?.addEventListener('click', zhAc);
         $('#btn-prof-zihin')?.addEventListener('click', zhAc);
       } catch (_) {}
-      // v1.10: İkinci BATUPIA katmanı otomatik kalkar — madalyon sahne açık
-      (function initStudiosPhase() {
-        const studios = $('#studios-phase');
-        if (!studios) return;
-        studios.classList.add('sealed');
-        studios.classList.add('gone');
-        state.splashPlayed = true;
-      })();
+      // v7.5.1: Studios phase kaldırıldı — splash direkt açılır
+      state.splashPlayed = true;
 
       // M-009: rune taşa dokun → mühür kırılma parlaması → karakter seçimi
       function enterFromKolye(endless) {
