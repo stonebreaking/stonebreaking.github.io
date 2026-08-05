@@ -34,12 +34,12 @@
       justify-content: center;
       overflow: hidden;
     }
-    #screen-studio-intro #loading-batupia-img {
+    #screen-studio-intro #loading-batupia-img, #screen-studio-intro #loading-scene-bg {
       object-fit: contain;
       background: #05050c;
     }
     @media (max-width: 480px) {
-      #screen-studio-intro #loading-batupia-img {
+      #screen-studio-intro #loading-batupia-img, #screen-studio-intro #loading-scene-bg {
         object-fit: contain;
         object-position: center center;
       }
@@ -1962,13 +1962,19 @@
 
   <!-- ========== 0. BATUPIA STUDIOS INTRO (SAHNE -1) — STONEBREAKING EVRENİ ========== -->
   <section id="screen-studio-intro" class="screen active" aria-label="STONEBREAKING Yükleniyor">
-    <img id="loading-batupia-img" src="06_GRAFIK/loading_anime_koridor.jpg?v=138" alt="STONEBREAKING"
-      style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#08080e;z-index:1;" />
-    <div id="loading-ui" style="position:absolute;left:50%;bottom:max(8%,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:3;width:min(58vw,280px);text-align:center;pointer-events:none;">
-      <div style="height:10px;border-radius:8px;background:rgba(20,16,12,0.5);border:1px solid rgba(200,170,100,0.45);overflow:hidden;">
-        <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#8a6a30,#e8c990,#ffd194);border-radius:8px;transition:width 0.07s linear;"></div>
+    <!-- TEK sahne arka plan (çubuk yok, % yok) -->
+    <img id="loading-scene-bg" src="06_GRAFIK/loading_anime_koridor.jpg?v=170" alt=""
+      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;background:#06060c;z-index:0;" />
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.55) 100%);z-index:1;pointer-events:none;"></div>
+    <!-- BATUPIA logo ortada -->
+    <img id="loading-batupia-logo" src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png?v=170" alt="BATUPIA"
+      style="position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:min(62vw,300px);height:auto;z-index:2;filter:drop-shadow(0 8px 28px rgba(0,0,0,0.65));pointer-events:none;" />
+    <!-- TEK yükleme çubuğu -->
+    <div id="loading-ui" style="position:absolute;left:50%;bottom:max(10%,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:3;width:min(64vw,300px);text-align:center;pointer-events:none;">
+      <div style="height:8px;border-radius:99px;background:rgba(12,10,8,0.55);border:1px solid rgba(232,201,144,0.35);overflow:hidden;box-shadow:0 0 16px rgba(255,209,148,0.15);">
+        <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#8a6a30,#e8c990,#ffd194);border-radius:99px;transition:width 0.06s linear;"></div>
       </div>
-      <div id="loading-pct" style="display:none!important">0%</div>
+      <div id="loading-pct" style="display:none!important" aria-hidden="true"></div>
     </div>
     <div class="studio-particles" id="studio-particles" style="display:none"></div>
   </section>
@@ -2025,7 +2031,7 @@
     <!-- v1.50: metinsiz dokunma — yazı yok, buton görünümü yok -->
     <div id="kolye-hint" aria-hidden="true" style="display:none!important"></div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
-    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.69</div>
+    <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v1.70</div>
 
     <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
     <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
@@ -2499,7 +2505,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="js/ses.js?v=72"></script>
-  <script src="js/game.js?v=169?v=165?v=165"></script>
+  <script src="js/game.js?v=170?v=165?v=165"></script>
   <script src="js/ruh_cagri.js?v=72"></script>
   <script src="js/mindmap.js?v=155"></script>
   <script src="js/zihin_haritasi.js?v=72"></script>
