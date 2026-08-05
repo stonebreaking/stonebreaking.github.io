@@ -2302,6 +2302,12 @@
       border-color: rgba(255,209,148,0.6);
       box-shadow: 0 0 16px rgba(255,209,148,0.15);
     }
+    .chapter-card.current { animation: chapterPulse 2s ease-in-out infinite; }
+    @keyframes chapterPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(255,209,148,0.15); }
+      50% { box-shadow: 0 0 24px rgba(255,209,148,0.3); }
+    }
+    .chapter-card.spirit-match { background: rgba(20,18,30,0.8); }
     .chapter-card.locked {
       opacity: 0.45; cursor: not-allowed;
     }
@@ -4315,36 +4321,45 @@
           { n:11, spirit:'zepy', title:'Bulut Labirenti', region:'Gökyüzü Tapınağı', seal:'Rüzgar Mühürü',  emoji:'🌬', color:'#a8d8ea' },
           { n:12, spirit:'zepy', title:'Evren Mührü',     region:'Gökyüzü Tapınağı', seal:'Evren Mührü',    emoji:'🌬', color:'#a8d8ea' },
         ];
-        // Ruh filtresi — seçilen ruhun bölümleri vurgulu
         const selSpirit = state.spirit;
+        const ranges = { kor:[1,3], baam:[4,6], mand:[7,9], zepy:[10,12] };
+        const rg = ranges[selSpirit] || [1,12];
         const title = $('#chapter-title');
         if (title) {
-          const spiritNames = { kor:'Kor · Ateş', baam:'Baam · Su', mand:'Mand · Toprak', zepy:'Zepy · Hava' };
+          const spiritNames = { kor:'Kor · Ateş Yolu', baam:'Baam · Su Yolu', mand:'Mand · Toprak Yolu', zepy:'Zepy · Hava Yolu' };
           title.textContent = spiritNames[selSpirit] || '12 BÖLÜM';
         }
         chapters.forEach((ch) => {
-          const unlocked = ch.n <= nextCh;
           const completed = opened.includes(ch.n);
+          const unlocked = ch.n <= nextCh;
           const isSpirit = ch.spirit === selSpirit;
+          const isCurrent = ch.n === nextCh;
           const card = document.createElement('div');
-          card.className = 'chapter-card' + (unlocked ? ' unlocked' : ' locked') + (completed ? ' completed' : '');
-          if (isSpirit) card.style.borderColor = ch.color + '55';
+          let cls = 'chapter-card';
+          if (unlocked) cls += ' unlocked'; else cls += ' locked';
+          if (completed) cls += ' completed';
+          if (isCurrent) cls += ' current';
+          if (isSpirit && unlocked) cls += ' spirit-match';
+          card.className = cls;
+          if (isSpirit && unlocked) { card.style.borderColor = ch.color + '88'; card.style.boxShadow = '0 0 12px ' + ch.color + '22'; }
+          if (isCurrent) { card.style.borderColor = ch.color; card.style.boxShadow = '0 0 20px ' + ch.color + '44, inset 0 0 12px ' + ch.color + '11'; }
+          if (!isSpirit) card.style.opacity = unlocked ? '0.65' : '0.35';
           card.innerHTML = `
-            <div class="ch-num">Bölüm ${ch.n}</div>
-            <div class="ch-title" style="color:${unlocked ? ch.color : '#888'}">${ch.title}</div>
+            <div class="ch-num">Bölüm ${ch.n}${isCurrent ? ' ◈' : ''}</div>
+            <div class="ch-title" style="color:${unlocked ? ch.color : '#666'}">${ch.title}</div>
             <div class="ch-region">${ch.region}</div>
             <div class="ch-spirit" style="color:${ch.color}">${ch.emoji}</div>
-            <div class="ch-seal">${completed ? '✦ ' : ''}${ch.seal}</div>
+            <div class="ch-seal">${completed ? '✦ Tamamlandı' : ch.seal}</div>
             ${!unlocked ? '<div class="ch-lock">🔒</div>' : ''}
+            ${isCurrent ? '<div style="position:absolute;bottom:4px;right:8px;font-size:0.5rem;color:' + ch.color + ';letter-spacing:1px">SIRADAKİ</div>' : ''}
+            ${completed && unlocked ? '<div style="position:absolute;bottom:4px;right:8px;font-size:0.5rem;color:' + ch.color + ';letter-spacing:1px;opacity:0.7">TEKRAR</div>' : ''}
           `;
           if (unlocked) {
-            card.addEventListener('click', () => {
-              try { StoneSound.tap(); } catch(_){}
-              startGame({ forceChapter: ch.n });
-            });
+            card.addEventListener('click', () => { try { StoneSound.tap(); } catch(_){} startGame({ forceChapter: ch.n }); });
           } else {
             card.addEventListener('click', () => {
-              showToast('🔒 Bölüm ' + ch.n + ' kilitli — Önce bölüm ' + nextCh + '\'i tamamla');
+              if (ch.n >= rg[0] && ch.n <= rg[1] && nextCh < rg[0]) showToast('🔒 Önce önceki ruhun mühürlerini kır');
+              else showToast('🔒 Bölüm ' + ch.n + ' kilitli — Önce bölüm ' + nextCh + "'i tamamla");
             });
           }
           grid.appendChild(card);
