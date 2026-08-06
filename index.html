@@ -3012,7 +3012,7 @@
       if (portrait) {
         // spirit 'all' (sonsuz) → mühür logosu portre
         portrait.src = (ch.spirit === 'all')
-          ? '06_GRAFIK/logo_stonebreaking_muhur.png'
+          ? '06_GRAFIK/logo_stonebreaking_muhur_new.png'
           : (sp.portrait || '06_GRAFIK/kor_ates_ruhu.png');
         portrait.style.setProperty('--glow', ch.endless ? '#ffd194' : (el.color || '#ff6b35'));
       }
@@ -3316,17 +3316,17 @@
       1: { img: '06_GRAFIK/koleksiyon_karti_kor.png', badge: '★ HİKÂYE', desc: '🔥 Alev Uyanışı · Kor seni tanıdı. İlk mühür kolyeye gömüldü.' },
       2: { img: '06_GRAFIK/koleksiyon_karti_kor.png', badge: '★ HİKÂYE', desc: '🔥 Magma Köprüsü · Cesaret sınandı. Ateş yolu açılıyor.' },
       3: { img: '06_GRAFIK/kart_ates_tamam.png', badge: '★ ULTRA NADİR · KOR', desc: '🔥 Ateş tamam · Koleksiyon: Kor kartı! Sular çağırıyor… 💧' },
-      4: { img: '06_GRAFIK/koleksiyon_karti_baam.png', badge: '★ HİKÂYE', desc: '💧 Dalga Çağrısı · Baam derinlerde seni bekliyor.' },
-      5: { img: '06_GRAFIK/koleksiyon_karti_baam.png', badge: '★ HİKÂYE', desc: '💧 Mercan Labirent · Akışı dinledin.' },
+      4: { img: '06_GRAFIK/baam_su_ruhu.png', badge: '★ HİKÂYE', desc: '💧 Dalga Çağrısı · Baam derinlerde seni bekliyor.' },
+      5: { img: '06_GRAFIK/baam_su_ruhu.png', badge: '★ HİKÂYE', desc: '💧 Mercan Labirent · Akışı dinledin.' },
       6: { img: '06_GRAFIK/kart_su_tamam.png', badge: '★ ULTRA NADİR · BAAM', desc: '💧 Su tamam · Koleksiyon: Baam kartı! Toprak uyanıyor… 🌿' },
-      7: { img: '06_GRAFIK/koleksiyon_karti_mand.png', badge: '★ HİKÂYE', desc: '🌿 Kristal yol · Mand sabırla izliyor.' },
-      8: { img: '06_GRAFIK/koleksiyon_karti_mand.png', badge: '★ HİKÂYE', desc: '🌿 Mağara yankısı · Toprak mührü güçleniyor.' },
+      7: { img: '06_GRAFIK/mand_toprak_ruhu_erkek.png', badge: '★ HİKÂYE', desc: '🌿 Kristal yol · Mand sabırla izliyor.' },
+      8: { img: '06_GRAFIK/mand_toprak_ruhu_erkek.png', badge: '★ HİKÂYE', desc: '🌿 Mağara yankısı · Toprak mührü güçleniyor.' },
       9: { img: '06_GRAFIK/kart_toprak_tamam.png', badge: '★ ULTRA NADİR · MAND', desc: '🌿 Toprak tamam · Koleksiyon: Mand kartı! Rüzgar esiyor… 🌬' },
       10: { img: '06_GRAFIK/koleksiyon_karti_zepy.png', badge: '★ HİKÂYE', desc: '🌬 Gökyüzü Tapınağı · Zepy fısıldıyor.' },
       11: { img: '06_GRAFIK/koleksiyon_karti_zepy.png', badge: '★ HİKÂYE', desc: '🌬 Kara taşlar · Son nefesten önce.' },
       12: { img: '06_GRAFIK/kart_hava_tamam.png', badge: '★★ LEGENDARY · ZEPY', desc: '🌬 Hava tamam · Evren Mührü · Sonsuz açık ∞' },
     };
-    const VIRAL_CARD = { img: '06_GRAFIK/kart_viral_stonebreaking.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONEBREAKING' };
+    const VIRAL_CARD = { img: '06_GRAFIK/kart_ates_tamam.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONEBREAKING' };
 
     function showCard(stats) {
       const lv = stats?.level || state.lastStats?.level || 0;
@@ -3371,9 +3371,9 @@
     // 3 aşama (desen hafızası · refleks avcısı · sıra tahmini) · ~60-75 sn · taş görselleriyle
     const IQ_PADS = [
       { k: 'ates',   img: '06_GRAFIK/tas_ates_core.png',   bg: '#3a1408' },
-      { k: 'su',     img: '06_GRAFIK/tas_su_core.png',     bg: '#08283a' },
+      { k: 'su',     img: '06_GRAFIK/tas_su_damla.png',     bg: '#08283a' },
       { k: 'toprak', img: '06_GRAFIK/tas_toprak_core.png', bg: '#1c2a12' },
-      { k: 'hava',   img: '06_GRAFIK/tas_hava_core.png',   bg: '#232a34' },
+      { k: 'hava',   img: '06_GRAFIK/tas_sembol_hava_core.png',   bg: '#232a34' },
     ];
 
     function playIqTest(stats, done) {
@@ -4813,7 +4813,7 @@
       // SAHNE -1 → SAHNE 0 akışı
       playStudioIntro();
       const warm = new Image();
-      warm.src = '06_GRAFIK/tas_sembol_su_2.png';
+      warm.src = '06_GRAFIK/tas_su_2.png';
     });
   </script>
 </body>
