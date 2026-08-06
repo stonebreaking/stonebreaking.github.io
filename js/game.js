@@ -276,47 +276,47 @@ class StonebreakingGame {
     this.elementSets = {
       ates: [
         { key: 'ates_core', color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_core.png', mark: '◆' },
-        { key: 'ates_1',    color: '#ff6b35', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_1.png', mark: 'I' },
-        { key: 'ates_2',    color: '#ff8c1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_8.png', mark: 'II' },
-        { key: 'ates_3',    color: '#ff5722', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_v2.png', mark: 'III' },
-        { key: 'ates_4',    color: '#ff4500', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_alev.png', mark: 'IV' },
-        { key: 'ates_5',    color: '#ff6347', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_koz.png', mark: 'V' },
-        { key: 'ates_6',    color: '#ff7f50', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_volkan.png', mark: 'VI' },
-        { key: 'ates_7',    color: '#e63946', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_core.png', mark: 'VII' },
-        { key: 'ates_8',    color: '#ff1a1a', emoji: '🔥', spirit: 'kor', img: '06_GRAFIK/tas_ates_2.png', mark: 'VIII' },
+        { key: 'ates_1',    color: '#ff6b35', emoji: '🌋', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_1.png', mark: 'I' },
+        { key: 'ates_2',    color: '#ff8c1a', emoji: '☄️', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_8.png', mark: 'II' },
+        { key: 'ates_3',    color: '#ff5722', emoji: '💥', spirit: 'kor', img: '06_GRAFIK/tas_sembol_ates_v2.png', mark: 'III' },
+        { key: 'ates_4',    color: '#ff4500', emoji: '🕯️', spirit: 'kor', img: '06_GRAFIK/tas_ates_alev.png', mark: 'IV' },
+        { key: 'ates_5',    color: '#ff6347', emoji: '⚡', spirit: 'kor', img: '06_GRAFIK/tas_ates_koz.png', mark: 'V' },
+        { key: 'ates_6',    color: '#ff7f50', emoji: '🌟', spirit: 'kor', img: '06_GRAFIK/tas_ates_volkan.png', mark: 'VI' },
+        { key: 'ates_7',    color: '#e63946', emoji: '💎', spirit: 'kor', img: '06_GRAFIK/tas_ates_core.png', mark: 'VII' },
+        { key: 'ates_8',    color: '#ff1a1a', emoji: '🏮', spirit: 'kor', img: '06_GRAFIK/tas_ates_2.png', mark: 'VIII' },
       ],
       su: [
         { key: 'su_core', color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_damla.png', mark: '◆' },
-        { key: 'su_1',    color: '#4ecdc4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_buz.png', mark: 'I' },
-        { key: 'su_2',    color: '#3fd4ff', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_sis.png', mark: 'II' },
-        { key: 'su_3',    color: '#1d8cf8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_2.png', mark: 'III' },
-        { key: 'su_4',    color: '#0096c7', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_3.png', mark: 'IV' },
-        { key: 'su_5',    color: '#00b4d8', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_4.png', mark: 'V' },
-        { key: 'su_6',    color: '#48cae4', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_5.png', mark: 'VI' },
-        { key: 'su_7',    color: '#90e0ef', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_su_6.png', mark: 'VII' },
-        { key: 'su_8', color: '#0077b6', emoji: '💧', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_v2.png', mark: 'VIII' },
+        { key: 'su_1',    color: '#4ecdc4', emoji: '🌊', spirit: 'baam', img: '06_GRAFIK/tas_su_buz.png', mark: 'I' },
+        { key: 'su_2',    color: '#3fd4ff', emoji: '❄️', spirit: 'baam', img: '06_GRAFIK/tas_su_sis.png', mark: 'II' },
+        { key: 'su_3',    color: '#1d8cf8', emoji: '🐚', spirit: 'baam', img: '06_GRAFIK/tas_su_2.png', mark: 'III' },
+        { key: 'su_4',    color: '#0096c7', emoji: '🐋', spirit: 'baam', img: '06_GRAFIK/tas_su_3.png', mark: 'IV' },
+        { key: 'su_5',    color: '#00b4d8', emoji: '🦈', spirit: 'baam', img: '06_GRAFIK/tas_su_4.png', mark: 'V' },
+        { key: 'su_6',    color: '#48cae4', emoji: '🫧', spirit: 'baam', img: '06_GRAFIK/tas_su_5.png', mark: 'VI' },
+        { key: 'su_7',    color: '#90e0ef', emoji: '🪸', spirit: 'baam', img: '06_GRAFIK/tas_su_6.png', mark: 'VII' },
+        { key: 'su_8', color: '#0077b6', emoji: '🧊', spirit: 'baam', img: '06_GRAFIK/tas_sembol_su_v2.png', mark: 'VIII' },
       ],
       toprak: [
         { key: 'toprak_core', color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_core.png', mark: '◆' },
-        { key: 'toprak_1',    color: '#27ae60', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kristal.png', mark: 'I' },
-        { key: 'toprak_2',    color: '#1e8449', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_2.png', mark: 'II' },
-        { key: 'toprak_3',    color: '#2ecc71', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kaya.png', mark: 'III' },
-        { key: 'toprak_4',    color: '#196f3d', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_run.png', mark: 'IV' },
-        { key: 'toprak_5',    color: '#1e8449', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_2.png', mark: 'V' },
-        { key: 'toprak_6',    color: '#27ae60', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_3.png', mark: 'VI' },
-        { key: 'toprak_7',    color: '#58d68d', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_toprak_4.png', mark: 'VII' },
-        { key: 'toprak_8', color: '#1a8f4a', emoji: '🌿', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_v2.png', mark: 'VIII' },
+        { key: 'toprak_1',    color: '#27ae60', emoji: '🪨', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kristal.png', mark: 'I' },
+        { key: 'toprak_2',    color: '#1e8449', emoji: '🌳', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_2.png', mark: 'II' },
+        { key: 'toprak_3',    color: '#2ecc71', emoji: '🍄', spirit: 'mand', img: '06_GRAFIK/tas_toprak_kaya.png', mark: 'III' },
+        { key: 'toprak_4',    color: '#196f3d', emoji: '💎', spirit: 'mand', img: '06_GRAFIK/tas_toprak_run.png', mark: 'IV' },
+        { key: 'toprak_5',    color: '#1e8449', emoji: '🌱', spirit: 'mand', img: '06_GRAFIK/tas_toprak_2.png', mark: 'V' },
+        { key: 'toprak_6',    color: '#27ae60', emoji: '🪵', spirit: 'mand', img: '06_GRAFIK/tas_toprak_3.png', mark: 'VI' },
+        { key: 'toprak_7',    color: '#58d68d', emoji: '🦎', spirit: 'mand', img: '06_GRAFIK/tas_toprak_4.png', mark: 'VII' },
+        { key: 'toprak_8', color: '#1a8f4a', emoji: '🐢', spirit: 'mand', img: '06_GRAFIK/tas_sembol_toprak_v2.png', mark: 'VIII' },
       ],
       hava: [
         { key: 'hava_core', color: '#f0f0f0', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_core.png', mark: '◆' },
-        { key: 'hava_1',    color: '#a8d8ea', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_1_new.png', mark: 'I' },
-        { key: 'hava_2',    color: '#cfe8f5', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_2.png', mark: 'II' },
-        { key: 'hava_3',    color: '#e8f4ff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_bulut.png', mark: 'III' },
-        { key: 'hava_4',    color: '#d6eaf8', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_simsek.png', mark: 'IV' },
-        { key: 'hava_5',    color: '#aed6f1', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_spiral.png', mark: 'V' },
-        { key: 'hava_6',    color: '#85c1e9', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_2.png', mark: 'VI' },
-        { key: 'hava_7',    color: '#5dade2', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_hava_3.png', mark: 'VII' },
-        { key: 'hava_8', color: '#7fdbff', emoji: '🌬', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_v2.png', mark: 'VIII' },
+        { key: 'hava_1',    color: '#a8d8ea', emoji: '☁️', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_1_new.png', mark: 'I' },
+        { key: 'hava_2',    color: '#cfe8f5', emoji: '⚡', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_2.png', mark: 'II' },
+        { key: 'hava_3',    color: '#e8f4ff', emoji: '🌪️', spirit: 'zepy', img: '06_GRAFIK/tas_hava_bulut.png', mark: 'III' },
+        { key: 'hava_4',    color: '#d6eaf8', emoji: '🦅', spirit: 'zepy', img: '06_GRAFIK/tas_hava_simsek.png', mark: 'IV' },
+        { key: 'hava_5',    color: '#aed6f1', emoji: '🪶', spirit: 'zepy', img: '06_GRAFIK/tas_hava_spiral.png', mark: 'V' },
+        { key: 'hava_6',    color: '#85c1e9', emoji: '🌀', spirit: 'zepy', img: '06_GRAFIK/tas_hava_2.png', mark: 'VI' },
+        { key: 'hava_7',    color: '#5dade2', emoji: '🕊️', spirit: 'zepy', img: '06_GRAFIK/tas_hava_3.png', mark: 'VII' },
+        { key: 'hava_8', color: '#7fdbff', emoji: '✨', spirit: 'zepy', img: '06_GRAFIK/tas_sembol_hava_v2.png', mark: 'VIII' },
       ],
     };
 
@@ -1508,18 +1508,16 @@ class StonebreakingGame {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = meta.color;
     ctx.shadowBlur = selected ? 16 : 8;
-    // v1.13: Ruh mührü — PNG yoksa büyük sigil; varsa köşe mühürü
+    // v7.11: BÜYÜK EMOJİ — PNG olsa bile her zaman çiz (ayırt edicilik)
     const sig = meta.emoji || meta.sigil || '◆';
-    if (!img) {
-      ctx.fillStyle = meta.color;
-      ctx.font = `bold ${Math.floor(Math.min(w, h) * 0.42)}px system-ui,sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.shadowColor = meta.color;
-      ctx.shadowBlur = 8;
-      ctx.fillText(sig, x + w / 2, y + h / 2 + 1);
-      ctx.shadowBlur = 0;
-    }
+    ctx.fillStyle = meta.color;
+    ctx.font = `bold ${Math.floor(Math.min(w, h) * 0.42)}px system-ui,sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = meta.color;
+    ctx.shadowBlur = 8;
+    ctx.fillText(sig, x + w / 2, y + h / 2 + 1);
+    ctx.shadowBlur = 0;
     // v1.25: PNG tablet zaten büyük sembol — köşe emoji yok
     // v1.59: mark (I/II/III/IV) — aynı taban PNG ayırt edilsin
     if (meta.mark) {
