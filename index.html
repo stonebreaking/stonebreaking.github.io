@@ -320,28 +320,28 @@
     #loading-ui {
       position: absolute;
       left: 50%;
-      bottom: max(12%, env(safe-area-inset-bottom, 16px));
+      bottom: max(3%, env(safe-area-inset-bottom, 8px));
       transform: translateX(-50%);
       z-index: 3;
-      width: min(72vw, 340px);
+      width: min(50vw, 220px);
       pointer-events: none;
     }
     #loading-track {
-      height: 8px;
+      height: 3px;
       border-radius: 99px;
-      background: rgba(5,5,12,0.6);
-      border: 1px solid rgba(255,209,148,0.2);
+      background: rgba(5,5,12,0.3);
+      border: none;
       overflow: hidden;
-      box-shadow: 0 0 16px rgba(255,209,148,0.08), inset 0 1px 3px rgba(0,0,0,0.4);
+      box-shadow: none;
     }
     #loading-bar {
       height: 100%;
       width: 0%;
       border-radius: 99px;
-      background: linear-gradient(90deg, #ff6b35, #4ecdc4, #c4a35a, #a8d8ea, #ffe6b0);
+      background: linear-gradient(90deg, #ff6b35, #1d8cf8, #c4a35a, #f0f0f0, #ffe6b0);
       background-size: 200% 100%;
       animation: loadingShimmer 2s ease-in-out infinite;
-      box-shadow: 0 0 12px rgba(255,107,53,0.4), 0 0 24px rgba(78,205,196,0.2);
+      box-shadow: 0 0 4px rgba(255,209,148,0.2);
       transition: width 0.08s linear;
     }
     @keyframes loadingShimmer {
