@@ -371,6 +371,28 @@
       animation: kolyePulse 2.8s ease-in-out infinite;
     }
     @media (prefers-reduced-motion: reduce) { #kolye-pulse-ring { animation: none; opacity: 0.2; } }
+    @keyframes kolyePulseRing {
+      0% { transform: translate(-50%,-50%) scale(0.8); opacity: 0.6; }
+      50% { transform: translate(-50%,-50%) scale(1.15); opacity: 0; }
+      100% { transform: translate(-50%,-50%) scale(0.8); opacity: 0.6; }
+    }
+    #kolye-pulse {
+      position: absolute; left: 50%; top: 48%;
+      width: min(40vw, 180px); height: min(40vw, 180px);
+      border-radius: 50%;
+      border: 2px solid rgba(255,209,148,0.4);
+      animation: kolyePulseRing 2.5s ease-in-out infinite;
+      pointer-events: none; z-index: 9;
+    }
+    #kolye-tap-hint {
+      position: absolute; left: 50%; top: calc(48% + min(22vw, 100px));
+      transform: translateX(-50%);
+      font-size: 0.7rem; color: rgba(255,209,148,0.6);
+      letter-spacing: 2px; text-transform: uppercase;
+      pointer-events: none; z-index: 9;
+      animation: kolyePulseRing 2.5s ease-in-out infinite;
+      text-shadow: 0 0 8px rgba(255,209,148,0.3);
+    }
     #screen-splash::after {
       content: '';
       position: absolute;
@@ -2093,6 +2115,8 @@
         <div class="splash-logo-text" id="muhur-logo" style="opacity:0;pointer-events:none" aria-hidden="true">
           <div class="splash-logo-muhur">◆</div>
         </div>
+    <div id="kolye-pulse" aria-hidden="true"></div>
+    <div id="kolye-tap-hint" aria-hidden="true">◈ Dokun ◈</div>
       </div>
     </div>
 
