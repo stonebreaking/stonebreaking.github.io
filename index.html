@@ -359,18 +359,6 @@
     #screen-studio-intro .studio-sub,
     #screen-studio-intro .studio-muhur { display: none !important; }
 
-    /* v1.50 soft invite pulse — buton değil, hafif nefes */
-    @keyframes kolyePulse {
-      0%, 100% { opacity: 0.15; transform: translate(-50%,-50%) scale(1); }
-      50% { opacity: 0.35; transform: translate(-50%,-50%) scale(1.04); }
-    }
-    #kolye-pulse-ring {
-      position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%);
-      width: min(42vw, 220px); height: min(42vw, 220px); border-radius: 50%;
-      border: 1px solid rgba(255,209,148,0.25); pointer-events: none; z-index: 5;
-      animation: kolyePulse 2.8s ease-in-out infinite;
-    }
-    @media (prefers-reduced-motion: reduce) { #kolye-pulse-ring { animation: none; opacity: 0.2; } }
     @keyframes kolyePulseRing {
       0% { transform: translate(-50%,-50%) scale(0.8); opacity: 0.6; }
       50% { transform: translate(-50%,-50%) scale(1.15); opacity: 0; }
@@ -2126,7 +2114,6 @@
       <img src="06_GRAFIK/element_earth_rune.png?v=730" alt="Mand · Toprak" title="Mand · Toprak" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #c4a35a)" />
       <img src="06_GRAFIK/element_air_rune.png?v=730" alt="Zepy · Hava" title="Zepy · Hava" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #a8d8ea)" />
     </div>
-    <div id="spirit-sigil-bar" style="display:none"></div>
     <div class="rune-gate" id="rune-gate" style="display:none !important">
       <button class="rune-stone primary" id="btn-start" type="button" aria-label="Maceraya başla" title="◆">
         <span class="rune-symbol">◆</span>
