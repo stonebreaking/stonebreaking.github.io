@@ -2068,57 +2068,15 @@
 
   <!-- ========== 1. AÇILIŞ — STONEBREAKING EVRENİ SİNEMATİK ========== -->
   <section id="screen-splash" class="screen" aria-label="Açılış">
-    <div class="seal-backdrop" aria-hidden="true"></div>
     <div class="particles" id="splash-particles"></div>
 
-    <!-- M-009 FAZ 2: STONEBREAKING SAHNE — mühürlü logo + metinsiz macera kapısı -->
-    <div class="splash-stage" id="splash-stage">
-      <div class="seal-aura" aria-hidden="true"></div>
-      <div class="seal-orbit" aria-hidden="true">
-        <i class="r ates"></i><i class="r su"></i><i class="r toprak"></i><i class="r hava"></i>
-      </div>
-      <div class="seal-frame">
-        <div class="seal-ring" aria-hidden="true"></div>
-        <div class="cin-orb ates" id="orb-ates"></div>
-        <div class="cin-orb su" id="orb-su"></div>
-        <div class="cin-orb toprak" id="orb-toprak"></div>
-        <div class="cin-orb hava" id="orb-hava"></div>
-        <!-- v1.9 MÜHÜR: kullanıcı madalyon/title referansı — element yazılı STONEBREAKING -->
-        <!-- v1.24 MÜHÜR KOLYE — dokunulacak merkez (birleşik arka plan kullanılıyor) -->
-        <img src="06_GRAFIK/kolye_tasit_erkek.png?v=710" alt="Kolye" id="splash-kolye" style="display:none!important" />
-          <div class="splash-logo-muhur">◆</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- M-009: Macera kapısı — metinsiz rune taşları (dokun → mühür kırılır) -->
-    <!-- v1.13 Ruh mühürleri — logo element sembolleri -->
-    <div id="spirit-sigil-bar" aria-hidden="true" style="position:relative;z-index:5;display:none;gap:18px;justify-content:center;align-items:center;margin-bottom:14px;pointer-events:none;">
-      <img src="06_GRAFIK/element_fire_rune.png?v=730" alt="Kor · Ateş" title="Kor · Ateş" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #ff6b35)" />
-      <img src="06_GRAFIK/element_water_rune.png?v=730" alt="Baam · Su" title="Baam · Su" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #4ecdc4)" />
-      <img src="06_GRAFIK/element_fire_rune.png?v=730" alt="Mand · Toprak" title="Mand · Toprak" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #c4a35a)" />
-      <img src="06_GRAFIK/element_air_rune.png?v=730" alt="Zepy · Hava" title="Zepy · Hava" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 10px #a8d8ea)" />
-    </div>
-    <div class="rune-gate" id="rune-gate" style="display:none !important">
-      <button class="rune-stone primary" id="btn-start" type="button" aria-label="Maceraya başla" title="◆">
-        <span class="rune-symbol">◆</span>
-        <span class="rune-pulse" aria-hidden="true"></span>
-      </button>
-      <button class="rune-stone endless" id="btn-endless" style="display:none" type="button" aria-label="Sonsuz mod" title="∞">
-        <span class="rune-symbol">∞</span>
-        <span class="rune-pulse" aria-hidden="true"></span>
-      </button>
-    </div>
+    <!-- Splash: Tek bütünlüklü görsel (CSS ::before ile splash_birlesik_v2.png) -->
+    <!-- Kolye dokunma mekanizması -->
     <div id="kolye-pulse" aria-hidden="true"></div>
     <div id="kolye-tap-hint" aria-hidden="true">◈ Dokun ◈</div>
     <button type="button" id="kolye-start-hit" aria-label="Maceraya başla" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:70vw;height:50vh;max-width:300px;max-height:350px;border-radius:20px;border:0;background:transparent;box-shadow:none;outline:none;z-index:10;cursor:pointer;-webkit-tap-highlight-color:transparent;appearance:none;-webkit-appearance:none;" />
-    <!-- v1.50: metinsiz dokunma — yazı yok, buton görünümü yok -->
-    <div id="kolye-hint" aria-hidden="true" style="display:none!important"></div>
     <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
     <div id="demo-build" style="position:absolute;bottom:10px;right:12px;font-size:0.55rem;letter-spacing:1px;color:rgba(255,209,148,0.45);z-index:20;pointer-events:none;">STONEBREAKING · v8.6</div>
-
-    <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
-    <!-- Studios phase KALDIRILDI v7.5.1 — splash direkt açılır -->
   </section>
 
   <!-- ========== 2. KARAKTER SEÇİMİ v6.7 — YAN YANA Anime Portre ========== -->
