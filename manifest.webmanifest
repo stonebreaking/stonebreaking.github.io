@@ -1,0 +1,15 @@
+{
+  "name": "STONEBREAKING — Universe",
+  "short_name": "STONEBREAKING",
+  "description": "Kırılan her mühür, ölçülen her zihin. BATUPIA Studios evreni.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07070f",
+  "theme_color": "#07070f",
+  "lang": "tr",
+  "icons": [
+    { "src": "06_GRAFIK/logo_stonebreaking_muhur_kare_v2.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "06_GRAFIK/logo_stonebreaking_muhur_kare_v2.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
+  ]
+}

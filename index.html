@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#07070f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="06_GRAFIK/logo_stonebreaking_muhur_new.png">
+<title>STONEBREAKING — Zihin Yolu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070f; --bg2:#0e0e1b; --bg3:#151526;
+  --stone:#191928; --stone-light:#29283e; --stone-edge:#3e3c5d;
+  --gold:#d4a86a; --gold-light:#ffe6b0; --gold-dim:#8a704a;
+  --ink:#f2efe6; --ink-dim:#a7a4bb; --ink-faint:#615f78;
+  --fire:#ff4422; --fire-dim:#7a2215;
+  --water:#00a8ff; --water-dim:#004c7a;
+  --earth:#2ed573; --earth-dim:#166838;
+  --air:#e0f7fa; --air-dim:#546e7a;
+  --accent: var(--gold); --accent-dim: var(--gold-dim);
+  --radius: 16px;
+  --font-display:'Cinzel', Georgia, serif;
+  --font-body:'Manrope', system-ui, -apple-system, sans-serif;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0;}
+html,body{width:100%; height:100%; height:100dvh; background:#07070f; color:var(--ink); font-family:var(--font-body); overflow:hidden; touch-action:manipulation; overscroll-behavior:none;}
+#app{position:relative; width:100%; height:100%; height:100dvh; max-width:min(100vw, 480px); max-height:100dvh; margin:0 auto; overflow:hidden; background:#07070f; display:flex; flex-direction:column;}
+
+/* SCENIC BACKGROUNDS & OVERLAYS */
+.screen{position:absolute; inset:0; width:100%; height:100%; height:100dvh; display:none; flex-direction:column; padding:max(12px, env(safe-area-inset-top)) 16px calc(max(12px, env(safe-area-inset-bottom)) + 20px); overflow-y:auto; -webkit-overflow-scrolling:touch; z-index:10; opacity:0; transition:opacity .25s ease; background-size:cover; background-position:center; background-repeat:no-repeat;}
+.screen.active{display:flex; opacity:1; z-index:20;}
+::-webkit-scrollbar{display:none;}
+
+/* COVER ARTWORK SCREENS (CONTAIN 100% VISIBLE & RESPONSIVE) */
+.screen-cover-art{
+  padding:0 !important;
+  background:#07070f;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  width:100%;
+  height:100%;
+  height:100dvh;
+}
+.artwork-frame{
+  position:relative;
+  height:100%;
+  max-height:100dvh;
+  aspect-ratio:9 / 16;
+  max-width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto;
+}
+.cover-art-img{
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  display:block;
+  user-select:none;
+  -webkit-user-drag:none;
+  filter:drop-shadow(0 0 25px rgba(0,0,0,0.9));
+}
+
+/* BATUPIA STUDIOS CENTER AMULET TOUCH ZONE */
+.amulet-touch-zone{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:46%;
+  aspect-ratio:1;
+  border-radius:50%;
+  cursor:pointer;
+  z-index:30;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.amulet-pulse-ring{
+  position:absolute;
+  inset:-4px;
+  border-radius:50%;
+  border:2px solid rgba(212,168,106,0.85);
+  box-shadow:0 0 35px rgba(212,168,106,0.8), inset 0 0 22px rgba(212,168,106,0.5);
+  animation:amuletRotatePulse 2.5s ease-in-out infinite;
+  pointer-events:none;
+}
+.amulet-pulse-ring-outer{
+  position:absolute;
+  inset:-16px;
+  border-radius:50%;
+  border:1px dashed rgba(255,230,176,0.6);
+  animation:ringExpandPulse 2s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes ringExpandPulse{
+  0%{transform:scale(0.9); opacity:0.85;}
+  100%{transform:scale(1.35); opacity:0;}
+}
+@keyframes amuletRotatePulse{
+  0%{transform:rotate(0deg) scale(0.96); opacity:0.6;}
+  50%{transform:rotate(180deg) scale(1.05); opacity:1; box-shadow:0 0 50px rgba(212,168,106,1), inset 0 0 28px rgba(212,168,106,0.6);}
+  100%{transform:rotate(360deg) scale(0.96); opacity:0.6;}
+}
+.tap-hint-beacon{
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:clamp(12px, 3.8vw, 15px);
+  letter-spacing:0.22em;
+  color:#fff;
+  background:rgba(10, 8, 14, 0.82);
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid var(--gold);
+  text-shadow:0 0 12px rgba(212,168,106,0.9), 0 2px 4px #000;
+  box-shadow:0 0 22px rgba(212,168,106,0.7);
+  animation:beaconBreath 1.8s ease-in-out infinite;
+  pointer-events:none;
+  user-select:none;
+  z-index:35;
+}
+@keyframes beaconBreath{
+  0%, 100%{transform:scale(0.95); opacity:0.85;}
+  50%{transform:scale(1.06); opacity:1; box-shadow:0 0 32px rgba(212,168,106,0.95);}
+}
+
+/* STONEBREAKING BOTTOM PEDESTAL TOUCH ZONE */
+.pedestal-touch-zone{
+  position:absolute;
+  bottom:6.8%;
+  left:50%;
+  transform:translateX(-50%);
+  width:58%;
+  height:7%;
+  border-radius:18px;
+  cursor:pointer;
+  z-index:30;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.pedestal-pulse-effect{
+  position:absolute;
+  inset:0;
+  border-radius:16px;
+  border:2px solid rgba(212,168,106,0.85);
+  box-shadow:0 0 28px rgba(212,168,106,0.65), inset 0 0 16px rgba(212,168,106,0.4);
+  animation:pedestalGlow 2s ease-in-out infinite;
+  pointer-events:none;
+}
+.pedestal-tap-hint{
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:clamp(11.5px, 3.5vw, 14px);
+  letter-spacing:0.22em;
+  color:#fff;
+  background:rgba(12, 10, 16, 0.85);
+  padding:5px 14px;
+  border-radius:999px;
+  border:1px solid var(--gold);
+  text-shadow:0 0 12px rgba(212,168,106,0.9), 0 2px 4px #000;
+  box-shadow:0 0 20px rgba(212,168,106,0.6);
+  animation:beaconBreath 1.8s ease-in-out infinite;
+  pointer-events:none;
+  user-select:none;
+  z-index:35;
+}
+@keyframes pedestalGlow{
+  0%,100%{opacity:0.4; transform:scale(0.98);}
+  50%{opacity:0.95; transform:scale(1.02); box-shadow:0 0 42px rgba(212,168,106,0.9), inset 0 0 20px rgba(212,168,106,0.5);}
+}
+.pedestal-touch-zone:active .pedestal-pulse-effect, .amulet-touch-zone:active .amulet-pulse-ring{
+  transform:scale(0.92);
+  box-shadow:0 0 60px rgba(212,168,106,1);
+}
+
+#screen-spirit{background-image:linear-gradient(180deg, rgba(7,7,15,0.75) 0%, rgba(7,7,15,0.95) 100%), url('06_GRAFIK/bg_ruh.jpg');}
+#screen-map{background-image:linear-gradient(180deg, rgba(7,7,15,0.85) 0%, rgba(7,7,15,0.95) 100%), url('06_GRAFIK/bg_harita.jpg');}
+#screen-profile{background-image:linear-gradient(180deg, rgba(7,7,15,0.8) 0%, rgba(7,7,15,0.95) 100%), url('06_GRAFIK/bg_profil.jpg');}
+#screen-birlesim{background-image:linear-gradient(180deg, rgba(7,7,15,0.75) 0%, rgba(7,7,15,0.95) 100%), url('06_GRAFIK/hikaye_H10_birlesim.jpg');}
+#screen-endless-gate{background-image:linear-gradient(180deg, rgba(7,7,15,0.75) 0%, rgba(7,7,15,0.95) 100%), url('06_GRAFIK/bg_sonsuz.jpg');}
+
+/* TYPOGRAPHY */
+.eyebrow{font-family:var(--font-body); font-weight:800; font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); opacity:.95; text-align:center; margin-bottom:3px;}
+h1.title{font-family:var(--font-display); font-weight:900; text-align:center; font-size:22px; letter-spacing:.04em; color:var(--ink); text-shadow:0 0 20px rgba(212,168,106,.5); margin-bottom:3px;}
+p.tagline{text-align:center; color:var(--ink-dim); font-size:12px; margin-bottom:14px; letter-spacing:.02em; line-height:1.4;}
+
+/* BUTTONS */
+.btn{font-family:var(--font-body); font-weight:800; font-size:13px; letter-spacing:.08em; border:1px solid var(--stone-edge); background:linear-gradient(180deg,var(--stone-light),var(--stone)); color:var(--ink); padding:12px 18px; border-radius:12px; cursor:pointer; text-align:center; transition:transform .15s ease, box-shadow .15s ease; text-transform:uppercase; display:inline-flex; align-items:center; justify-content:center; gap:8px; user-select:none;}
+.btn:active{transform:scale(.96);}
+.btn.primary{background:linear-gradient(180deg, var(--gold), var(--gold-dim)); border-color:transparent; color:#080605; box-shadow:0 8px 24px -8px var(--gold); font-weight:900;}
+.btn.ghost{background:rgba(255,255,255,.05); border-color:var(--stone-edge); color:var(--ink-dim);}
+.btn.sm{padding:7px 12px; font-size:11px; border-radius:9px;}
+.btn.block{width:100%;}
+.btn:disabled{opacity:.35; pointer-events:none;}
+
+/* CARDS & PANELS */
+.card{background:linear-gradient(180deg,rgba(25,25,40,.85),rgba(15,15,25,.92)); border:1px solid var(--stone-edge); border-radius:var(--radius); padding:14px; backdrop-filter:blur(8px); box-shadow:0 8px 24px -6px rgba(0,0,0,.6);}
+.spacer{flex:1;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:2px 0 8px; min-height:40px;}
+.topbar .brand{font-family:var(--font-display); font-weight:900; font-size:13.5px; letter-spacing:.22em; color:var(--gold); display:flex; align-items:center; gap:8px;}
+.iconbtn{width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(25,25,40,.9); border:1px solid var(--stone-edge); cursor:pointer; font-size:15px; color:var(--ink);}
+
+/* BOTTOM NAV: 1. Profil, 2. Hikâye, 3. Başarı, 4. Zihin Yolu */
+.bottomnav{display:flex; justify-content:space-around; padding:8px 4px calc(env(safe-area-inset-bottom, 0px) + 6px); border-top:1px solid var(--stone-edge); background:rgba(7,7,15,.96); position:sticky; bottom:0; margin:auto -16px -20px; backdrop-filter:blur(12px); z-index:30;}
+.navitem{display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink-faint); font-size:10px; font-weight:700; letter-spacing:.05em; cursor:pointer; padding:6px 10px; text-transform:uppercase; transition:color .2s ease;}
+.navitem.active{color:var(--gold);}
+.navitem .ic{font-size:17px;}
+
+/* STONEBREAKING GENDER TOGGLE */
+.stonebreaker-toggle{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;}
+.stonebreaker-tab{border:1px solid var(--stone-edge); border-radius:12px; padding:10px; text-align:center; background:rgba(25,25,40,.7); cursor:pointer; transition:all .2s ease;}
+.stonebreaker-tab.active{border-color:var(--gold); background:linear-gradient(160deg, rgba(212,168,106,.2), rgba(25,25,40,.9)); box-shadow:0 0 16px -4px var(--gold);}
+.stonebreaker-tab .sb-name{font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--ink);}
+.stonebreaker-tab .sb-role{font-size:9.5px; color:var(--gold); margin-top:2px;}
+
+/* SPIRIT SELECT */
+.spirit-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;}
+.spirit-card{border-radius:14px; padding:8px 6px; text-align:center; cursor:pointer; border:1px solid var(--stone-edge); background:rgba(25,25,40,.8); transition:all .2s ease; position:relative;}
+.spirit-card.chosen{border-color:var(--card-color, var(--gold)); box-shadow:0 0 16px -4px var(--card-color, var(--gold));}
+.spirit-card img{width:100%; aspect-ratio:1.45; object-fit:cover; border-radius:10px; margin-bottom:4px; display:block; background:#0b0b14;}
+.spirit-card .name{font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--ink);}
+.spirit-card .elem{font-size:9px; color:var(--card-color, var(--gold)); letter-spacing:.06em; margin-top:1px; text-transform:uppercase;}
+
+/* MAP & 2x2 CHAPTER COVERS */
+.stat-strip{display:flex; gap:8px; margin:4px 0 14px;}
+.stat-pill{flex:1; background:rgba(25,25,40,.85); border:1px solid var(--stone-edge); border-radius:12px; padding:8px 6px; text-align:center;}
+.stat-pill .v{font-family:var(--font-display); font-weight:900; font-size:16px; color:var(--gold);}
+.stat-pill .l{font-size:8.5px; color:var(--ink-faint); letter-spacing:.08em; text-transform:uppercase; margin-top:2px;}
+.element-group{margin-bottom:18px; border-radius:18px; padding:12px; background:rgba(15,15,28,.65); border:1px solid var(--stone-edge);}
+.element-head{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.element-head .dot{width:8px; height:8px; border-radius:50%; background:var(--el-color);}
+.element-head .name{font-family:var(--font-display); font-weight:700; font-size:13px; letter-spacing:.08em; color:var(--el-color);}
+.element-head .sub{font-size:10.5px; color:var(--ink-faint); margin-left:auto;}
+.chapter-grid-2x2{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;}
+.chapter-node{aspect-ratio:1.2; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--stone-edge); background:rgba(25,25,40,.85); cursor:pointer; position:relative; overflow:hidden; transition:all .2s ease;}
+.chapter-node.done{border-color:var(--el-color); background:linear-gradient(160deg, var(--el-color-dim), rgba(25,25,40,.9));}
+.chapter-node.done::after{content:'✓'; position:absolute; top:4px; right:8px; font-size:11px; color:var(--el-color); font-weight:900;}
+.chapter-node.current{border-color:var(--el-color); box-shadow:0 0 16px -4px var(--el-color);}
+.chapter-node.locked{opacity:.35; cursor:not-allowed;}
+.chapter-node .num{font-family:var(--font-display); font-weight:900; font-size:18px; color:var(--ink);}
+.chapter-node .ch-title{font-size:9.5px; color:var(--ink-dim); margin-top:2px;}
+
+/* GAMEPLAY & TOP 4-SLOT TRAY */
+#screen-game{padding-top:max(6px, env(safe-area-inset-top));}
+.game-top{display:flex; align-items:center; gap:6px; padding:4px 0 6px; flex-wrap:wrap;}
+.game-top .chip{background:rgba(25,25,40,.9); border:1px solid var(--stone-edge); border-radius:10px; padding:5px 9px; font-size:10.5px; font-weight:700; color:var(--ink-dim); display:flex; gap:4px; align-items:center; white-space:nowrap;}
+.game-top .chip b{color:var(--gold);}
+.tray-strip{display:flex; gap:8px; justify-content:center; padding:10px; margin-bottom:8px; background:rgba(25,25,40,.95); border-radius:16px; border:1px solid var(--stone-edge); max-width:400px; margin-left:auto; margin-right:auto; width:100%; transition:all .3s ease;}
+.tray-strip.tray-danger{border-color:#ff4422 !important; box-shadow:0 0 24px -2px rgba(255,68,34,0.7), inset 0 0 12px rgba(255,68,34,0.35) !important; animation:trayDangerPulse 1s ease-in-out infinite;}
+@keyframes trayDangerPulse{0%,100%{box-shadow:0 0 12px rgba(255,68,34,0.4);}50%{box-shadow:0 0 28px rgba(255,68,34,0.9);}}
+.tray-slot{width:52px; aspect-ratio:.64; border-radius:9px; background:rgba(255,255,255,.03); border:2px dashed var(--stone-edge); display:flex; align-items:center; justify-content:center; font-size:22px; transition:all .2s ease;}
+.tray-slot.filled{border-style:solid; border-color:var(--gold); background:linear-gradient(160deg,var(--stone-light),var(--stone)); box-shadow:0 0 14px -2px var(--gold);}
+.tray-slot.warning{border-color:#ff4422 !important; animation:trayWarningSlot 1s ease-in-out infinite;}
+@keyframes trayWarningSlot{0%,100%{border-color:rgba(255,68,34,0.4);}50%{border-color:rgba(255,68,34,1); background:rgba(255,68,34,0.15);}}
+
+.mj-wrap{flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:4px 0; min-height:280px;}
+.mj-board{position:relative;}
+.mj-tile{position:absolute; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; transition:transform .15s ease, opacity .25s ease, box-shadow .15s ease, filter .2s ease; border:1px solid rgba(255,255,255,.16); background:linear-gradient(160deg,var(--stone-light),var(--stone)); box-shadow:0 4px 0 rgba(0,0,0,.5), 0 8px 14px -2px rgba(0,0,0,.4); user-select:none;}
+.mj-tile.blocked{filter:brightness(.4) saturate(.35); cursor:not-allowed;}
+.mj-tile.matchflash{transform:scale(1.2); filter:brightness(1.8) saturate(1.4); box-shadow:0 0 28px 8px var(--gold); z-index:2000 !important; pointer-events:none;}
+.game-actions{display:flex; gap:10px; padding:6px 0 2px; justify-content:center;}
+
+/* SOCIAL FEED / GEZGİN FISILTILARI */
+.feed-input-box{display:flex; gap:8px; margin-bottom:12px;}
+.feed-input{flex:1; padding:8px 12px; border-radius:10px; background:rgba(25,25,40,.9); border:1px solid var(--stone-edge); color:var(--ink); font-family:var(--font-body); font-size:12px;}
+.feed-item{background:rgba(25,25,40,.75); border:1px solid var(--stone-edge); border-radius:12px; padding:10px 12px; margin-bottom:8px;}
+.feed-header{display:flex; justify-content:space-between; font-size:11px; color:var(--gold); font-weight:800; margin-bottom:4px;}
+.feed-text{font-size:12px; color:var(--ink-dim); line-height:1.5; margin-bottom:6px;}
+.feed-actions{display:flex; gap:12px; font-size:11px; color:var(--ink-faint); flex-wrap:wrap;}
+.feed-act-btn{cursor:pointer; transition:color .15s ease;}
+.feed-act-btn:hover, .feed-act-btn:active{color:var(--gold);}
+.feed-comments{margin-top:6px; padding-top:6px; border-top:1px dashed rgba(255,255,255,.08); font-size:11px; color:var(--ink-dim);}
+.feed-comment-item{margin-bottom:3px;}
+
+/* MODALS & MASTER CARD GALLERY */
+.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:100; display:none; align-items:flex-end; justify-content:center; backdrop-filter:blur(8px); opacity:0; transition:opacity .25s ease;}
+.modal-overlay.active{display:flex; opacity:1;}
+.modal-sheet{background:var(--bg2); border-top:1px solid var(--gold); border-radius:24px 24px 0 0; width:100%; max-width:480px; max-height:86vh; overflow-y:auto; padding:18px 16px calc(24px + env(safe-area-inset-bottom, 0px)); box-shadow:0 -10px 40px rgba(0,0,0,.8); animation:sheetUp .28s cubic-bezier(.2,1,.3,1);}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px; height:4px; border-radius:2px; background:var(--stone-edge); margin:0 auto 14px;}
+
+.gallery-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-bottom:16px;}
+.gallery-card{position:relative; border-radius:14px; overflow:hidden; border:1px solid var(--stone-edge); background:var(--stone); cursor:pointer; transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease; aspect-ratio:0.58; display:flex; flex-direction:column;}
+.gallery-card:active{transform:scale(0.97);}
+.gallery-card.unlocked{border-color:var(--card-color, var(--gold)); box-shadow:0 0 16px -4px var(--card-color, var(--gold));}
+.gallery-card img{width:100%; height:100%; object-fit:cover; display:block;}
+.gallery-card .lock-overlay{position:absolute; inset:0; background:rgba(7,7,15,0.88); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px; text-align:center;}
+.gallery-card .card-badge{position:absolute; bottom:0; left:0; right:0; background:linear-gradient(180deg, transparent, rgba(7,7,15,0.96)); padding:12px 6px 6px; text-align:center;}
+.gallery-card .card-title{font-family:var(--font-display); font-weight:700; font-size:11px; color:var(--ink);}
+.gallery-card .card-sub{font-size:9px; color:var(--card-color, var(--gold)); letter-spacing:.05em; text-transform:uppercase;}
+
+/* PROFILE & AVATAR */
+.avatar-wrap{display:flex; flex-direction:column; align-items:center; margin:8px 0 12px;}
+.avatar-ring{width:88px; height:88px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:38px; background:radial-gradient(circle at 35% 30%, var(--gold-dim), var(--stone)); border:2px solid var(--gold); box-shadow:0 0 26px -6px var(--gold);}
+.avatar-ring img{width:100%; height:100%; object-fit:cover;}
+.nick-input{width:100%; max-width:240px; padding:8px 12px; border-radius:12px; background:var(--stone); border:1px solid var(--stone-edge); color:var(--ink); font-family:var(--font-body); font-weight:800; text-align:center; font-size:14.5px; margin-top:8px;}
+.link-list .link-row{display:flex; align-items:center; justify-content:space-between; padding:12px 4px; border-bottom:1px solid rgba(255,255,255,.05); cursor:pointer; font-size:13px; font-weight:700; color:var(--ink);}
+.link-list .link-row:last-child{border-bottom:none;}
+#toast{position:fixed; left:50%; top:calc(env(safe-area-inset-top,0) + 18px); transform:translate(-50%,-16px); background:var(--stone-light); border:1px solid var(--gold); color:var(--ink); padding:10px 18px; border-radius:12px; font-size:12px; font-weight:700; z-index:120; opacity:0; transition:.25s; pointer-events:none; max-width:85%; text-align:center; box-shadow:0 10px 30px -8px rgba(0,0,0,.7);}
+#toast.show{opacity:1; transform:translate(-50%,0);}
+
+/* PREVIEW MODAL FOR MOBILE GALLERY DOWNLOAD */
+#modal-card-preview-img{width:100%; max-height:60vh; object-fit:contain; border-radius:14px; margin-bottom:12px; border:1px solid var(--gold);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- -1. BATUPIA STUDIOS MASTER ARTWORK SCREEN -->
+  <div class="screen screen-cover-art active" id="screen-studio-intro">
+    <div class="artwork-frame" onclick="advanceFromStudioCover()">
+      <img class="cover-art-img" src="06_GRAFIK/batupia_studios_master_artwork.webp" alt="BATUPIA STUDIOS">
+      <!-- ORTADAKİ KOLYEYE / GİRDAP AMBLEMİNE DOKUNMA ALANI -->
+      <div class="amulet-touch-zone" id="btn-studio-continue" title="Kolyeye Dokun">
+        <div class="amulet-pulse-ring"></div>
+        <div class="amulet-pulse-ring-outer"></div>
+        <div class="tap-hint-beacon">◈ DOKUN ◈</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 0. STONEBREAKING AKSİYONA BAŞLA SANAT ESERİ -->
+  <div class="screen screen-cover-art" id="screen-intro">
+    <div class="artwork-frame" onclick="advanceFromStoneCover()">
+      <img class="cover-art-img" src="06_GRAFIK/stone_breaking_aksiyona_basla.webp" alt="STONEBREAKING">
+      <!-- ALTTAKİ TAŞ KAİDEYE DOĞRUDAN DOKUNMA ALANI -->
+      <div class="pedestal-touch-zone" id="btn-intro-continue" title="Aksiyona Başla">
+        <div class="pedestal-pulse-effect"></div>
+        <div class="pedestal-tap-hint">◈ DOKUN ◈</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. REHBER RUH & STONEBREAKING SEÇİMİ (ZİHİN YOLU GİRİŞİ) -->
+  <div class="screen" id="screen-spirit">
+    <div class="topbar"><div class="iconbtn" onclick="showScreen('screen-intro')">←</div><div class="brand">STONEBREAKING</div><div style="width:36px"></div></div>
+    <div class="eyebrow">Karakter & Rehber Ruh</div>
+    <h1 class="title">Yolunu & Ruhunu Seç</h1>
+    <p class="tagline">Aynı Kader · Zihin Yolu · Taşın Çocukları</p>
+    
+    <!-- STONEBREAKING YOLU SEÇİMİ -->
+    <div class="stonebreaker-toggle">
+      <div class="stonebreaker-tab active" id="tab-sb-erkek" onclick="selectStonebreakerGender('erkek')">
+        <div class="sb-name">👦 Erkek Stonebreaking</div>
+        <div class="sb-role">Mühür Kırıcı</div>
+      </div>
+      <div class="stonebreaker-tab" id="tab-sb-kadin" onclick="selectStonebreakerGender('kadin')">
+        <div class="sb-name">👧 Kadın Stonebreaking</div>
+        <div class="sb-role">Mühür Dinleyici</div>
+      </div>
+    </div>
+
+    <!-- DÖRT REHBER RUH -->
+    <div class="spirit-grid" id="spirit-grid"></div>
+
+    <button class="btn primary block" id="btn-spirit-next" onclick="finishOnboarding()" style="margin-top:14px;">◈ Zihin Yoluna Gir ➜ ◈</button>
+  </div>
+
+  <!-- 2. DÜNYA HARİTASI (ZİHİN YOLU & 2x2 DÜZENİ) -->
+  <div class="screen" id="screen-map">
+    <div class="topbar"><div class="brand"><img src="06_GRAFIK/logo_stonebreaking_muhur_new.png" style="width:22px; height:22px; border-radius:6px;"><span>ZİHİN YOLU</span></div><div class="iconbtn" onclick="openModal('modal-settings')">⚙️</div></div>
+    <div class="stat-strip">
+      <div class="stat-pill"><div class="v" id="map-stat-iq">0</div><div class="l">En Yüksek IQ</div></div>
+      <div class="stat-pill"><div class="v" id="map-stat-seals">0/16</div><div class="l">Mühür</div></div>
+      <div class="stat-pill"><div class="v" id="map-stat-combo">0</div><div class="l">En Uzun Kombo</div></div>
+    </div>
+    <div class="card" id="daily-card" style="margin-bottom:12px; display:flex; align-items:center; gap:12px; border-color:var(--gold);">
+      <div style="font-size:24px;" id="daily-icon">🌅</div>
+      <div style="flex:1;">
+        <div style="font-weight:800; font-size:12.5px;">Günün Taşı</div>
+        <div style="font-size:10.5px; color:var(--ink-faint);" id="daily-subtitle">Her gün yeni bir zihin nefesi</div>
+      </div>
+      <button class="btn primary sm" id="btn-daily" onclick="startDaily()">Kır</button>
+    </div>
+
+    <div id="map-groups"></div>
+
+    <!-- BOTTOM NAV: 1. Profil, 2. Hikâye, 3. Başarı, 4. Zihin Yolu -->
+    <div class="bottomnav">
+      <div class="navitem" data-nav="screen-profile" onclick="navTo('screen-profile')"><span class="ic">👤</span><span>Profil</span></div>
+      <div class="navitem" onclick="openModal('modal-story')"><span class="ic">📖</span><span>Hikâye</span></div>
+      <div class="navitem" onclick="openModal('modal-achievements')"><span class="ic">🏆</span><span>Başarı</span></div>
+      <div class="navitem active" data-nav="screen-map" onclick="navTo('screen-map')"><span class="ic">🗺️</span><span>Zihin Yolu</span></div>
+    </div>
+  </div>
+
+  <!-- 3. MAHJONG OYUN TAHTASI & ÜST 4-SLOT TEPSİ -->
+  <div class="screen" id="screen-game">
+    <div class="game-top">
+      <div class="iconbtn" onclick="exitGame()">←</div>
+      <div class="chip">Bölüm <b id="game-chapter-num">1</b></div>
+      <div class="chip">Kalan <b id="game-remaining">0</b></div>
+      <div class="chip">Kombo <b id="game-combo">0</b></div>
+      <div class="chip">⏱ <b id="game-timer">00:00</b></div>
+    </div>
+    <!-- ÜST TEPSİ (4 SLOT) -->
+    <div class="tray-strip" id="chapter-tray-slots"></div>
+    <div class="mj-wrap" id="mj-wrap"><div class="mj-board" id="mj-board"></div></div>
+    <div class="game-actions">
+      <button class="btn ghost sm" onclick="useHint()">💡 İpucu Gör <span id="hint-count">(1)</span></button>
+      <button class="btn ghost sm" onclick="useUndo()">↩ Geri Al <span id="undo-count">(1)</span></button>
+    </div>
+  </div>
+
+  <!-- 4. MÜHÜR PROFİLİ & HUB (SONSUZLUK KAPISI, ZİHİN HARİTASI, KOLEKSİYON, FISILTILAR) -->
+  <div class="screen" id="screen-profile">
+    <div class="topbar"><div class="brand">MÜHÜR PROFİLİ</div><div class="iconbtn" onclick="openModal('modal-settings')">⚙️</div></div>
+    <div class="avatar-wrap">
+      <div class="avatar-ring" id="profile-avatar"></div>
+      <input class="nick-input" id="profile-nick" maxlength="16" placeholder="Nick / Oyuncu adı" oninput="saveState()">
+      <div style="font-size:11px; color:var(--gold); margin-top:6px; font-weight:800;" id="profile-role">Stonebreaking</div>
+      <div style="font-size:10.5px; color:var(--ink-faint); margin-top:2px;" id="profile-companion"></div>
+      <div id="profile-custom-aphorism" style="font-size:11px; font-style:italic; color:var(--gold-light); margin-top:4px; max-width:85%; text-align:center;"></div>
+    </div>
+
+    <!-- SONSUZLUK KAPISI KARTI (PROFİLDE MERKEZİ KONUM) -->
+    <div class="card" style="margin-bottom:12px; border-color:var(--gold); background:linear-gradient(160deg, rgba(212,168,106,.15), rgba(25,25,40,.9));">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:900; font-size:13.5px; color:var(--gold);">∞ Sonsuzluk Kapısı</div>
+          <div style="font-size:11px; color:var(--ink-dim); margin-top:2px;" id="profile-endless-sub">16 Bölüm Tamamlanınca Açılır</div>
+        </div>
+        <button class="btn primary sm" id="btn-profile-endless" onclick="startEndless()" disabled>∞ Başla</button>
+      </div>
+    </div>
+
+    <!-- GEZGİN FISILTILARI / TOPLULUK ETKİLEŞİMİ & YORUM YAPMA -->
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:10px; font-weight:800; color:var(--gold); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;">💬 Gezgin Fısıltıları & Meclis</div>
+      <div class="feed-input-box">
+        <input type="text" id="feed-post-input" class="feed-input" placeholder="Zihninden bir fısıltı bırak..." maxlength="80">
+        <button class="btn primary sm" onclick="postToFeed()">Paylaş</button>
+      </div>
+      <div id="feed-list"></div>
+    </div>
+
+    <div class="card link-list">
+      <div class="link-row" onclick="openModal('modal-collection')"><span>🎴 Koleksiyon (8K Efsane Kartları)</span><span>›</span></div>
+      <div class="link-row" onclick="openModal('modal-mindmap')"><span>🧠 Zihin Haritası & Kadim Kitabe</span><span>›</span></div>
+      <div class="link-row" onclick="openModal('modal-today')"><span>🔔 Günün Burcu & Fısıltısı</span><span>›</span></div>
+      <div class="link-row" onclick="openModal('modal-account')"><span>👤 Hesap & Doğrulama Kodu</span><span>›</span></div>
+      <div class="link-row" onclick="openModal('modal-achievements')"><span>🏆 Başarılar & Unvanlar</span><span>›</span></div>
+    </div>
+
+    <!-- BOTTOM NAV: 1. Profil, 2. Hikâye, 3. Başarı, 4. Zihin Yolu -->
+    <div class="bottomnav">
+      <div class="navitem active" data-nav="screen-profile" onclick="navTo('screen-profile')"><span class="ic">👤</span><span>Profil</span></div>
+      <div class="navitem" onclick="openModal('modal-story')"><span class="ic">📖</span><span>Hikâye</span></div>
+      <div class="navitem" onclick="openModal('modal-achievements')"><span class="ic">🏆</span><span>Başarı</span></div>
+      <div class="navitem" data-nav="screen-map" onclick="navTo('screen-map')"><span class="ic">🗺️</span><span>Zihin Yolu</span></div>
+    </div>
+  </div>
+
+  <!-- 5. BİRLEŞİM SİNEMATİK -->
+  <div class="screen" id="screen-birlesim">
+    <div class="spacer"></div>
+    <div class="eyebrow">Kadim Birleşim</div>
+    <h1 class="title" style="font-size:24px;">Dört Element, Tek Kolye</h1>
+    <p class="tagline" style="line-height:1.6;">Yüzyıllardır bir Avatar'ın bile başaramadığı şey ellerinde gerçekleşti: Ateş, Su, Toprak, Hava ilk kez savaşmadan aynı kolyede buluştu.</p>
+    <div class="card" style="text-align:center; padding:16px 12px; margin:12px 0;">
+      <div style="font-size:12px; color:var(--ink-dim); line-height:1.7;">"Yan. Ak. Dur. Nefes al." Savaş bitti ama yaralar açık. Şimdi kendi zihnini geliştirme ve Sonsuzlukta iyileşme zamanı.</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn primary block" onclick="showEndlessGate()">∞ Sonsuzluk Kapısına Adım At ➜</button>
+  </div>
+
+  <!-- 6. SONSUZLUK KAPISI TÖRENİ -->
+  <div class="screen" id="screen-endless-gate">
+    <div class="spacer"></div>
+    <div class="eyebrow">Sonsuzluk Kapısı</div>
+    <h1 class="title">On Altı Mühür Tamamlandı</h1>
+    <img src="06_GRAFIK/kart_efsane_birlesim.webp" style="width:170px; border-radius:14px; margin:10px auto; display:block; box-shadow:0 10px 40px rgba(212,168,106,.5); border:1px solid var(--gold);">
+    <p class="tagline" style="line-height:1.6;">Kapı aralandı. Sonsuz Mod'da 20, 50 ve 100. Seviyelere ulaşarak kimsede olmayan efsanevi unvan ve kartları kazan!</p>
+    <div class="spacer"></div>
+    <button class="btn primary block" onclick="closeEndlessGateAndGo(true)">∞ Sonsuzlukta Kırmaya Başla</button>
+    <button class="btn ghost block" onclick="closeEndlessGateAndGo(false)">⌂ Profile Dön</button>
+  </div>
+
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-result">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="eyebrow">Mühür Tamamlandı</div>
+    <h1 class="title" style="font-size:20px;">Mühür Açıldı!</h1>
+    <p class="tagline" id="result-quote" style="font-style:italic; margin-bottom:10px;"></p>
+    <div class="stat-strip">
+      <div class="stat-pill"><div class="v" id="result-time">00:00</div><div class="l">Süre</div></div>
+      <div class="stat-pill"><div class="v" id="result-iq">0</div><div class="l">IQ</div></div>
+      <div class="stat-pill"><div class="v" id="result-combo">0</div><div class="l">Kombo</div></div>
+    </div>
+    <div class="row" style="margin-top:12px; display:flex; gap:8px;">
+      <button class="btn ghost block" onclick="downloadShareCard()">⬇ Galeriye Kaydet</button>
+      <button class="btn primary block" id="btn-next-chapter" onclick="goNextChapter()">Sonraki Bölüm ➜</button>
+    </div>
+    <canvas id="share-canvas" width="1080" height="1920" style="display:none;"></canvas>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-collection">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="eyebrow">Özel Lazer Kazımalı</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:4px;">🎴 Kart Koleksiyonu</h1>
+    <p style="font-size:11px; color:var(--ink-dim); margin-bottom:12px; text-align:center;">Kazanılan her kart oyuncunun Nick'i ve kriptografik mühür ID'si ile lazerle taşa işlenir.</p>
+    <div id="collection-content"></div>
+    <button class="btn ghost block" style="margin-top:10px;" onclick="closeModal('modal-collection')">Kapat</button>
+  </div>
+</div>
+
+<!-- KART ÖNİZLEME & DİREKT GALERİYE KAYDETME MODALI -->
+<div class="modal-overlay" id="modal-card-preview">
+  <div class="modal-sheet" style="text-align:center;">
+    <div class="modal-handle"></div>
+    <div class="eyebrow" id="preview-card-eyebrow">8K Başyapıt Kartı</div>
+    <h1 class="title" id="preview-card-title" style="font-size:18px; margin-bottom:8px;">Kart Önizleme</h1>
+    <img id="modal-card-preview-img" src="" alt="Stonebreaking Card">
+    <p style="font-size:11px; color:var(--ink-dim); margin-bottom:12px;">Mobilde görselin üzerine basılı tutarak doğrudan fotoğraflarınıza/galerinize kaydedebilirsiniz.</p>
+    <div class="row" style="display:flex; gap:8px;">
+      <button class="btn primary block" id="btn-card-direct-download" onclick="triggerDirectDownload()">⬇ Doğrudan İndir</button>
+      <button class="btn ghost block" onclick="closeModal('modal-card-preview')">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ZİHİN HARİTASI & KADİM KİTABE (BİRLEŞİK DENEYİM) -->
+<div class="modal-overlay" id="modal-mindmap">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="eyebrow">4 Boyutlu Zihinsel Gelişim</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:6px;">🧠 Zihin Haritası & Kitabe</h1>
+    <div id="mindmap-content"></div>
+    <div style="margin-top:14px; border-top:1px solid var(--stone-edge); padding-top:12px;">
+      <div style="font-size:11px; font-weight:800; color:var(--gold); letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px;">📖 Kadim Kitabe ve Evren</div>
+      <div id="mindmap-story-list"></div>
+    </div>
+    <button class="btn ghost block" style="margin-top:12px;" onclick="closeModal('modal-mindmap')">Kapat</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-account">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="eyebrow">Hesap & Güvenlik</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:10px;">👤 Oyuncu Girişi</h1>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="font-size:11px; font-weight:800; color:var(--gold); margin-bottom:6px;">📧 E-Posta ile Doğrulama Kodu</div>
+      <input type="email" id="acc-email-input" placeholder="ornek@gmail.com" style="width:100%; padding:8px 12px; border-radius:10px; background:var(--stone); border:1px solid var(--stone-edge); color:var(--ink); font-size:13px; margin-bottom:6px;">
+      <button class="btn primary sm block" onclick="sendAuthCode()">Doğrulama Kodu Gönder</button>
+      <div id="auth-code-box" style="display:none; margin-top:8px;">
+        <input type="text" id="acc-code-input" placeholder="6 Haneli Kod (123456)" maxlength="6" style="width:100%; padding:8px 12px; border-radius:10px; background:var(--stone); border:1px solid var(--gold); color:var(--gold); font-weight:800; font-size:14px; text-align:center; margin-bottom:6px;">
+        <button class="btn primary sm block" onclick="verifyAuthCode()">Onayla ve Bağla</button>
+      </div>
+    </div>
+    <div class="card" style="text-align:center; padding:12px;">
+      <button class="btn ghost sm block" onclick="toast('Google OAuth Patron Client ID hazır olduğunda açılacak.')">G Google ile Giriş Yap</button>
+    </div>
+    <button class="btn ghost block" style="margin-top:10px;" onclick="closeModal('modal-account')">Kapat</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="eyebrow">Ayarlar & Sistem</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:12px;">⚙️ Tercihler</h1>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05);">
+        <div><div style="font-weight:800; font-size:13px;">Ses Efektleri</div><div style="font-size:10.5px; color:var(--ink-faint);">Taş tıklama, eşleşme ve zafer sesleri</div></div>
+        <button class="btn ghost sm" id="btn-toggle-sound" onclick="toggleSound()">🔊 Açık</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05);">
+        <div><div style="font-weight:800; font-size:13px;">Zen Modu</div><div style="font-size:10.5px; color:var(--ink-faint);">Süresiz, rahat taş kırma deneyimi</div></div>
+        <button class="btn ghost sm" id="btn-toggle-zen" onclick="toggleZen()">Kapalı</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+        <div><div style="font-weight:800; font-size:13px;">İlerlemeyi Yedekle</div><div style="font-size:10.5px; color:var(--ink-faint);">Kayıt dosyanı JSON olarak indir</div></div>
+        <button class="btn ghost sm" onclick="exportSaveJSON()">⬇ İndir</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:10px; text-align:center;">
+      <button class="btn ghost sm block" style="color:#ff6b6b; border-color:rgba(255,107,107,.3);" onclick="resetAllProgress()">⚠️ Tüm İlerlemeyi Sıfırla</button>
+      <div style="font-size:9.5px; color:var(--ink-faint); margin-top:6px; letter-spacing:.08em;">STONEBREAKING UNIVERSE v9.15 · BATUPIA STUDIOS</div>
+    </div>
+    <button class="btn ghost block" onclick="closeModal('modal-settings')">Kapat</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-story">
+  <div class="modal-sheet"><div class="modal-handle"></div>
+    <div class="eyebrow">Kadim Evren</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:12px;">📖 Taşın Hikâyesi</h1>
+    <div id="story-list"></div>
+    <button class="btn ghost block" style="margin-top:10px;" onclick="closeModal('modal-story')">Kapat</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-achievements">
+  <div class="modal-sheet"><div class="modal-handle"></div>
+    <div class="eyebrow">Unvanlar</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:12px;">🏆 Başarılar</h1>
+    <div id="ach-list"></div>
+    <button class="btn ghost block" style="margin-top:10px;" onclick="closeModal('modal-achievements')">Kapat</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-today">
+  <div class="modal-sheet"><div class="modal-handle"></div>
+    <div class="eyebrow">Günlük Ruh Rehberliği</div>
+    <h1 class="title" style="font-size:19px; margin-bottom:12px;">🔔 Günün Fısıltısı</h1>
+    <div class="card" id="daily-horoscope-card">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <img id="horoscope-icon" src="06_GRAFIK/portre_kor_closeup.png" style="width:44px; height:44px; border-radius:50%; border:2px solid var(--gold); object-fit:cover;">
+        <div style="flex:1;">
+          <div style="font-size:9.5px; color:var(--gold); font-weight:800; text-transform:uppercase;">Ruhunun Mesajı</div>
+          <div style="font-weight:800; font-size:13.5px;" id="horoscope-title">Günün Burcu: Kor</div>
+        </div>
+      </div>
+      <p id="horoscope-text" style="font-size:12.5px; color:var(--ink-dim); line-height:1.6;"></p>
+    </div>
+    <button class="btn ghost block" style="margin-top:10px;" onclick="closeModal('modal-today')">Kapat</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-chapter-gameover">
+  <div class="modal-sheet"><div class="modal-handle"></div>
+    <div style="text-align:center; padding:10px 0;">
+      <div style="font-size:38px; margin-bottom:4px;">💔</div>
+      <h1 class="title" style="font-size:20px;">Tepsi Doldu</h1>
+      <p style="font-size:12.5px; color:var(--ink-dim); line-height:1.6; margin-bottom:14px;">4. taş eşleşmeden tepsiye girdi. Mühür sarsıldı — ama taşlar seni bekliyor.</p>
+      <button class="btn primary block" style="margin-bottom:8px;" onclick="closeModal('modal-chapter-gameover'); restartChapter();">↻ Yeniden Dene</button>
+      <button class="btn ghost block" onclick="closeModal('modal-chapter-gameover'); exitGame();">⌂ Zihin Yoluna Dön</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+/* ==================== DATA & CONSTANTS ==================== */
+const ELEMENTS = [
+  {id:'ates', name:'Ateş', spirit:'Kor', img:'KOR', totem:'TOTEM_KOR', companion:'Fenn · Alev Tilki', color:'#ff4422', dim:'#7a2215', quote:'İlk kıvılcımı ben yakarım. Cesaretinle gel.'},
+  {id:'su', name:'Su', spirit:'Baam', img:'BAAM', totem:'TOTEM_BAAM', companion:'Luma · Yıldız Balina', color:'#00a8ff', dim:'#004c7a', quote:'Acele etme. Akışı dinle.'},
+  {id:'toprak', name:'Toprak', spirit:'Mand', img:'MAND', totem:'TOTEM_MAND', companion:'Taro · Evren Pandası', color:'#2ed573', dim:'#166838', quote:'Sabır taşı kırar. Ben beklerim.'},
+  {id:'hava', name:'Hava', spirit:'Zepy', img:'ZEPY', totem:'TOTEM_ZEPY', companion:'Sora · Rüzgar Tavşanı', color:'#e0f7fa', dim:'#546e7a', quote:'Hafif ol. Görünmeyeni gör.'}
+];
+
+const STAGES = [
+  {id:'kor', name:'Kor · Ateş', chapters:[1,2,3,4], color:'#ff4422', dim:'#7a2215', glyph:'🔥', img:'KOR',
+   quote:'Beni yalnız bırakma, yoksa yine yakarım.', symbols:['🔥','🌋','🕯️','☄️','🐉','🧨','⚡','🔺']},
+  {id:'baam', name:'Baam · Su', chapters:[5,6,7,8], color:'#00a8ff', dim:'#004c7a', glyph:'💧', img:'BAAM',
+   quote:'Akış geri döndü, sakin ol.', symbols:['💧','🌊','🐋','❄️','🫧','🐚','🌀','🔷']},
+  {id:'mand', name:'Mand · Toprak (Evren Pandası)', chapters:[9,10,11,12], color:'#2ed573', dim:'#166838', glyph:'🌿', img:'MAND',
+   quote:'Hep durdum, kimse bakmadı.', symbols:['🌿','🗿','🐼','🪨','🍃','🌾','🦔','🟢']},
+  {id:'zepy', name:'Zepy · Hava', chapters:[13,14,15,16], color:'#e0f7fa', dim:'#546e7a', glyph:'🌬️', img:'ZEPY',
+   quote:'Her yerdeyim ama kimse beni görmüyor.', symbols:['🌬️','🐇','🕊️','🌪️','☁️','🎐','🦋','⚪']}
+];
+
+const STORY = [
+  {roman:'I · YÜZYILLARIN SAVAŞI', unlockChapter:0, text:'Yüzyıllardır dört element birbirine düşmandı: Ateş, Su, Toprak, Hava. Bir Avatar bile barışı getiremedi. Koruyucular güçlerini taşlara gömüp saklandılar.'},
+  {roman:'II · ŞANS ESERİ', unlockChapter:1, text:'Sen bir kahraman değilsin. STONEBREAKING\'sin — sıradan biri. İlk taşı kırdığında bir ses yükseldi: "…bizi duyuyor musun… kır…"'},
+  {roman:'III · KOR UYANDI', unlockChapter:4, text:'"Kır beni" dedi kıvılcım. Kırdın ve ateş geri döndü. Kolyende ilk kızıl mühür yandı.'},
+  {roman:'IV · BAAM GELDİ', unlockChapter:8, text:'Baam suyun bilgeliğini getirdi. Kor ile yan yana durmayı öğrendi.'},
+  {roman:'V · MAND BEKLEDİ', unlockChapter:12, text:'"Hep durdum, kimse bakmadı." Sabır taşı kırdı; yeşil kök kolyene işlendi.'},
+  {roman:'VI · ZEPY ESTİ', unlockChapter:16, text:'"Görünmeyeni gör." Rüzgar kolyede dördüncü ışık oldu. Dört element birleşti: Yan. Ak. Dur. Nefes al.'}
+];
+
+const HOROSCOPES = {
+  ates: ["Günde 30 dakika odaklanmak yeter — fazla yanmak seni de tüketir.", "Cesaretinle başla, kıvılcım karanlığı deler.", "Öfkeyle değil, güvenle mühürle."],
+  su: ["Su içmeyi unutma. Ben bile buharlaşmamak için akmaya devam ediyorum.", "Akışa direnme, suyun hafızası yolunu bulur.", "Derin nefes al, dinginlik gücündür."],
+  toprak: ["Toprak gibi dinlen bu gece — yarın yeniden büyürsün.", "Sabır en sert kayayı bile kırar.", "Köklerin ne kadar derindeyse rüzgar o kadar vız gelir."],
+  hava: ["Bir an dur. Nefes al. Bana yardım et — ben de sana yardım edeyim.", "Hafif ol, yüklerini taşa bırak.", "Görünmeyeni görmek için zihnini arındır."]
+};
+
+const ACHIEVEMENTS = [
+  {id:'first_seal', name:'İlk Kırılış', desc:'İlk mührünü aç.', check:s=>s.chaptersCompleted.length>=1},
+  {id:'fire_done', name:'Ateş Ustası', desc:'Kor bölümlerini bitir (1-4).', check:s=>[1,2,3,4].every(c=>s.chaptersCompleted.includes(c))},
+  {id:'water_done', name:'Akış Efendisi', desc:'Baam bölümlerini bitir (5-8).', check:s=>[5,6,7,8].every(c=>s.chaptersCompleted.includes(c))},
+  {id:'earth_done', name:'Sabır Taşı', desc:'Mand bölümlerini bitir (9-12).', check:s=>[9,10,11,12].every(c=>s.chaptersCompleted.includes(c))},
+  {id:'air_done', name:'Görünmeyen', desc:'Zepy bölümlerini bitir (13-16).', check:s=>[13,14,15,16].every(c=>s.chaptersCompleted.includes(c))},
+  {id:'legend', name:'Birleşim Efsanesi', desc:'Tüm 16 mühürü topla.', check:s=>s.chaptersCompleted.length>=16}
+];
+
+/* ==================== STATE MANAGEMENT ==================== */
+const DEFAULT_STATE = {
+  character: 'erkek', spiritAvatar: 'ates', nickname: 'Gezgin', birthDate: null, email: null,
+  chaptersCompleted: [], currentChapter: 1, highestIQ: 100, longestCombo: 0, customAphorism: '',
+  endlessLevel: 0, cardCollection: [], onboarded: false, sound: true, zenMode: false,
+  feedPosts: [
+    { id:1, nick: 'Batuhan (BATUPIA)', text: 'Evrenin ilk taşı kırıldı. Taş konuşur, kolyeye gömerim.', time: 'Bugün', likes: 14, comments: ['Mührün gücü bizimle!'] },
+    { id:2, nick: 'MühürUstası', text: 'Buhar kombosunu yakaladım! Baam ve Kor yan yana durunca harika hissettiriyor.', time: 'Dün', likes: 9, comments: [] }
+  ],
+  dimensionHistory: { mantik: [80], hafiza: [85], hiz: [75], refleks: [90] }
+};
+
+let state = loadState();
+function loadState(){
+  try{ const raw = localStorage.getItem('stonebreaking_save_v9'); if(raw) return Object.assign({}, DEFAULT_STATE, JSON.parse(raw)); }catch(e){}
+  return Object.assign({}, DEFAULT_STATE);
+}
+function saveState(){
+  try{ localStorage.setItem('stonebreaking_save_v9', JSON.stringify(state)); }catch(e){}
+}
+
+/* ==================== SOUND SYNTHESIZER ==================== */
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){}
+  }
+  if(audioCtx && audioCtx.state === 'suspended'){ audioCtx.resume(); }
+  return audioCtx;
+}
+
+function playSound(type){
+  if(state.sound === false) return;
+  const ctx = getAudioCtx();
+  if(!ctx) return;
+  const now = ctx.currentTime;
+
+  if(type==='tap'){
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(380, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.07);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(now); osc.stop(now + 0.07);
+  } else if(type==='match'){
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine'; osc2.type = 'triangle';
+    osc.frequency.setValueAtTime(523.25, now);
+    osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.16);
+    osc2.frequency.setValueAtTime(659.25, now);
+    osc2.frequency.exponentialRampToValueAtTime(1318.5, now + 0.16);
+    gain.gain.setValueAtTime(0.22, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
+    osc.start(now); osc2.start(now);
+    osc.stop(now + 0.2); osc2.stop(now + 0.2);
+  } else if(type==='victory'){
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i)=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i*0.08);
+      gain.gain.setValueAtTime(0.2, now + i*0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i*0.08 + 0.3);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(now + i*0.08); osc.stop(now + i*0.08 + 0.3);
+    });
+  }
+}
+
+/* ==================== NAVIGATION ==================== */
+function showScreen(id){
+  playSound('tap');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if(target){ target.classList.add('active'); }
+}
+function navTo(id){
+  showScreen(id);
+  document.querySelectorAll('.navitem').forEach(n=>n.classList.toggle('active', n.dataset.nav===id));
+  if(id==='screen-map') renderMap();
+  if(id==='screen-profile') renderProfile();
+}
+function openModal(id){
+  playSound('tap');
+  document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el){
+    el.classList.add('active');
+    if(id==='modal-collection') renderCollection();
+    if(id==='modal-mindmap') renderMindmap();
+    if(id==='modal-story') renderStory();
+    if(id==='modal-achievements') renderAchievements();
+    if(id==='modal-today') renderTodayModal();
+  }
+}
+function closeModal(id){ const el = document.getElementById(id); if(el) el.classList.remove('active'); }
+function toast(msg){ const t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2000); }
+
+/* ==================== ONBOARDING FLOW ==================== */
+function advanceFromStudioCover(){
+  getAudioCtx();
+  playSound('tap');
+  showScreen('screen-intro');
+}
+
+function advanceFromStoneCover(){
+  getAudioCtx();
+  playSound('tap');
+  if(state.onboarded){ navTo('screen-map'); }
+  else { renderSpiritSelect(); showScreen('screen-spirit'); }
+}
+
+function selectStonebreakerGender(gender){
+  playSound('tap');
+  state.character = gender;
+  document.getElementById('tab-sb-erkek').classList.toggle('active', gender==='erkek');
+  document.getElementById('tab-sb-kadin').classList.toggle('active', gender==='kadin');
+}
+
+function renderSpiritSelect(){
+  const grid = document.getElementById('spirit-grid');
+  grid.innerHTML = ELEMENTS.map(e=>`
+    <div class="spirit-card ${state.spiritAvatar===e.id?'chosen':''}" style="--card-color:${e.color};" onclick="pickSpirit('${e.id}')">
+      <img src="${IMG_B64[e.img]}" alt="${e.spirit}">
+      <div class="name">${e.spirit}</div>
+      <div class="elem">${e.name} · ${e.companion.split(' · ')[1]}</div>
+    </div>
+  `).join('');
+}
+
+function pickSpirit(id){
+  playSound('tap');
+  state.spiritAvatar = id;
+  renderSpiritSelect();
+}
+
+function finishOnboarding(){
+  state.onboarded = true;
+  saveState();
+  navTo('screen-map');
+}
+
+/* ==================== WORLD MAP & 2x2 CHAPTERS ==================== */
+function renderMap(){
+  document.getElementById('map-stat-iq').textContent = state.highestIQ;
+  document.getElementById('map-stat-seals').textContent = `${state.chaptersCompleted.length}/16`;
+  document.getElementById('map-stat-combo').textContent = state.longestCombo;
+
+  // Render 2x2 chapter groups
+  const groups = document.getElementById('map-groups');
+  groups.innerHTML = STAGES.map(st=>`
+    <div class="element-group" style="--el-color:${st.color}; --el-color-dim:${st.dim};">
+      <div class="element-head">
+        <span class="dot"></span>
+        <span class="name">${st.glyph} ${st.name}</span>
+        <span class="sub">Zihin Yolu Bölüm ${st.chapters[0]}-${st.chapters[st.chapters.length-1]}</span>
+      </div>
+      <div class="chapter-grid-2x2">
+        ${st.chapters.map(ch=>{
+          const done = state.chaptersCompleted.includes(ch);
+          const unlocked = ch===1 || state.chaptersCompleted.includes(ch-1);
+          let cls = 'chapter-node';
+          if(done) cls += ' done';
+          else if(unlocked) cls += ' current';
+          else cls += ' locked';
+          return `
+            <div class="${cls}" onclick="${unlocked?`startChapter(${ch})`:''}">
+              ${unlocked ? `<div class="num">${ch}</div><div class="ch-title">Zihin Mührü ${ch}</div>` : `<div style="font-size:18px;">🔒</div>`}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFeedList(){
+  const wrap = document.getElementById('feed-list');
+  if(!wrap) return;
+  wrap.innerHTML = (state.feedPosts || []).map((p, idx)=>`
+    <div class="feed-item">
+      <div class="feed-header"><span>${p.nick}</span><span>${p.time}</span></div>
+      <div class="feed-text">"${p.text}"</div>
+      <div class="feed-actions">
+        <span class="feed-act-btn" onclick="likeFeedPost(${idx})">❤️ ${p.likes||0}</span>
+        <span class="feed-act-btn" onclick="openCommentPrompt(${idx})">💬 Yorum (${(p.comments||[]).length})</span>
+        <span class="feed-act-btn" onclick="quoteToCard('${escapeAphorism(p.text)}')">📜 Bu Sözü Kartıma Ekle</span>
+      </div>
+      ${(p.comments && p.comments.length>0) ? `<div class="feed-comments">${p.comments.map(c=>`<div class="feed-comment-item">↳ ${c}</div>`).join('')}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function openCommentPrompt(idx){
+  const reply = prompt('Bu fısıltıya yanıtın:');
+  if(!reply || !reply.trim()) return;
+  state.feedPosts[idx].comments = state.feedPosts[idx].comments || [];
+  state.feedPosts[idx].comments.push(`${state.nickname || 'Gezgin'}: ${reply.trim()}`);
+  saveState();
+  renderFeedList();
+  toast('Yorumun eklendi! ✨');
+}
+
+function escapeAphorism(str){
+  return String(str||'').replace(/'/g, "\\'");
+}
+
+function likeFeedPost(idx){
+  if(!state.feedPosts || !state.feedPosts[idx]) return;
+  state.feedPosts[idx].likes = (state.feedPosts[idx].likes || 0) + 1;
+  saveState();
+  renderFeedList();
+  toast('Beğenildi! ❤️');
+}
+
+function quoteToCard(aphorism){
+  state.customAphorism = aphorism;
+  saveState();
+  toast('Söz başarıyla kartına ve profiline mühürlendi! 📜');
+  renderProfile();
+}
+
+function postToFeed(){
+  const input = document.getElementById('feed-post-input');
+  const txt = input.value.trim();
+  if(!txt) return;
+  state.feedPosts = state.feedPosts || [];
+  state.feedPosts.unshift({
+    id: Date.now(),
+    nick: state.nickname || 'Gezgin',
+    text: txt,
+    time: 'Az önce',
+    likes: 1,
+    comments: []
+  });
+  input.value = '';
+  saveState();
+  renderFeedList();
+  toast('Fısıltın evrene yayıldı!');
+}
+
+/* ==================== PROGRESSIVE GAMEPLAY ENGINE ==================== */
+let game = null;
+
+function getChapterPairCount(ch){
+  if(ch <= 2) return 6;       // 12 tiles
+  if(ch <= 6) return 8;       // 16 tiles
+  if(ch <= 10) return 10;     // 20 tiles
+  if(ch <= 14) return 12;     // 24 tiles
+  return 14;                  // 28 tiles
+}
+
+function startChapter(ch){
+  playSound('tap');
+  const stage = STAGES.find(s=>s.chapters.includes(ch)) || STAGES[0];
+  const totalPairs = getChapterPairCount(ch);
+  const pool = stage.symbols.slice(0, 4);
+  const deck = [];
+  for(let i=0; i<totalPairs; i++){
+    const sym = pool[i % pool.length];
+    deck.push(sym, sym);
+  }
+  // Shuffle
+  for(let i=deck.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+
+  // Generate layered Mahjong positions
+  const numLayers = ch <= 4 ? 2 : (ch <= 12 ? 3 : 4);
+  const tiles = deck.map((sym, id)=>{
+    const layer = id % numLayers;
+    const row = Math.floor((id/numLayers) / 3);
+    const col = Math.floor((id/numLayers) % 3);
+    return { id, sym, layer, row, col, removed: false, inTray: false };
+  });
+
+  game = {
+    chapter: ch, stage, tiles, totalPairs, matchedPairs: 0,
+    tray: [], trayCapacity: 4, combo: 0, longestCombo: 0,
+    startTime: Date.now(), hintsUsed: 0, undosUsed: 0, timerHandle: null
+  };
+
+  document.getElementById('game-chapter-num').textContent = ch;
+  document.getElementById('game-remaining').textContent = totalPairs;
+  document.getElementById('game-combo').textContent = '0';
+  document.getElementById('hint-count').textContent = '(1)';
+  document.getElementById('undo-count').textContent = '(1)';
+
+  renderChapterTraySlots();
+  renderBoard();
+
+  clearInterval(game.timerHandle);
+  game.timerHandle = setInterval(()=>{
+    const secs = Math.floor((Date.now()-game.startTime)/1000);
+    document.getElementById('game-timer').textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+  }, 500);
+
+  showScreen('screen-game');
+}
+
+function renderChapterTraySlots(){
+  const wrap = document.getElementById('chapter-tray-slots');
+  if(!wrap || !game) return;
+  const isDanger = game.tray.length >= game.trayCapacity - 1;
+  wrap.classList.toggle('tray-danger', isDanger);
+  let html = '';
+  for(let i=0; i<game.trayCapacity; i++){
+    const t = game.tray[i];
+    html += `<div class="tray-slot ${t?'filled':''} ${(!t && isDanger)?'warning':''}">${t?t.sym:''}</div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function isTileBlocked(tile){
+  if(!game) return false;
+  const isCovered = game.tiles.some(other=>!other.removed && !other.inTray && other.layer > tile.layer && Math.abs(other.row - tile.row) <= 0.5 && Math.abs(other.col - tile.col) <= 0.5);
+  if(isCovered) return true;
+
+  const hasLeft = game.tiles.some(o=>!o.removed && !o.inTray && o.layer === tile.layer && o.row === tile.row && o.col === tile.col - 1);
+  const hasRight = game.tiles.some(o=>!o.removed && !o.inTray && o.layer === tile.layer && o.row === tile.row && o.col === tile.col + 1);
+  return hasLeft && hasRight;
+}
+
+function renderBoard(){
+  const board = document.getElementById('mj-board');
+  if(!board || !game) return;
+  const CELL_W = 50, CELL_H = 64, LAYER_OFFSET = 5;
+  board.style.width = '230px';
+  board.style.height = '270px';
+
+  board.innerHTML = game.tiles.filter(t=>!t.removed && !t.inTray).map(t=>{
+    const blocked = isTileBlocked(t);
+    const left = t.col * 58 + t.layer * LAYER_OFFSET;
+    const top = t.row * 68 + t.layer * LAYER_OFFSET;
+    const zIndex = 10 + t.layer;
+    return `
+      <div class="mj-tile ${blocked?'blocked':''}" data-id="${t.id}" style="width:${CELL_W}px; height:${CELL_H}px; left:${left}px; top:${top}px; z-index:${zIndex};" onclick="onTileClick(${t.id})">
+        ${t.sym}
+      </div>
+    `;
+  }).join('');
+}
+
+function onTileClick(id){
+  if(!game) return;
+  const tile = game.tiles.find(t=>t.id===id);
+  if(!tile || tile.removed || tile.inTray) return;
+  if(isTileBlocked(tile)){
+    toast('Bu taş serbest değil — önce yanını veya üstünü aç!');
+    return;
+  }
+
+  // Move to tray
+  tile.inTray = true;
+  game.tray.push({ id: tile.id, sym: tile.sym });
+
+  // Check if matches with an existing stone in tray
+  let matchIdx = -1;
+  for(let i=0; i<game.tray.length-1; i++){
+    if(game.tray[i].sym === tile.sym){ matchIdx = i; break; }
+  }
+
+  if(matchIdx >= 0){
+    playSound('match');
+    const matchedId = game.tray[matchIdx].id;
+    const otherTile = game.tiles.find(t=>t.id===matchedId);
+    if(otherTile) otherTile.removed = true;
+    tile.removed = true;
+    const lastIdx = game.tray.length - 1;
+    game.tray = game.tray.filter((_, idx)=> idx!==matchIdx && idx!==lastIdx);
+    game.matchedPairs++;
+    game.combo++;
+    game.longestCombo = Math.max(game.longestCombo, game.combo);
+    document.getElementById('game-combo').textContent = game.combo;
+    document.getElementById('game-remaining').textContent = game.totalPairs - game.matchedPairs;
+    renderChapterTraySlots();
+    renderBoard();
+
+    if(game.matchedPairs >= game.totalPairs){
+      clearInterval(game.timerHandle);
+      setTimeout(completeVictory, 350);
+    }
+  } else {
+    playSound('tap');
+    game.combo = 0;
+    document.getElementById('game-combo').textContent = '0';
+    renderChapterTraySlots();
+    renderBoard();
+
+    if(game.tray.length >= game.trayCapacity){
+      clearInterval(game.timerHandle);
+      setTimeout(()=>openModal('modal-chapter-gameover'), 400);
+    }
+  }
+}
+
+function restartChapter(){
+  if(game) startChapter(game.chapter);
+}
+function exitGame(){
+  if(game) clearInterval(game.timerHandle);
+  navTo('screen-map');
+}
+
+function useHint(){
+  if(!game) return;
+  if(game.hintsUsed >= 1 && !state.zenMode){
+    toast('Bu bölümde ipucu hakkın kalmadı.');
+    return;
+  }
+  const open = game.tiles.filter(t=>!t.removed && !t.inTray && !isTileBlocked(t));
+  let found = null;
+  for(const t of game.tray){
+    const pair = open.find(o=>o.sym===t.sym);
+    if(pair){ found = pair; break; }
+  }
+  if(!found && open.length >= 2){
+    for(let i=0; i<open.length; i++){
+      for(let j=i+1; j<open.length; j++){
+        if(open[i].sym === open[j].sym){ found = open[i]; break; }
+      }
+      if(found) break;
+    }
+  }
+  if(found){
+    game.hintsUsed++;
+    document.getElementById('hint-count').textContent = `(${Math.max(0, 1-game.hintsUsed)})`;
+    const el = document.querySelector(`.mj-tile[data-id="${found.id}"]`);
+    if(el){ el.style.outline = '3px solid var(--gold)'; setTimeout(()=>el.style.outline='', 2000); }
+    toast('İpucu: Taş işaretlendi!');
+  } else { toast('Şu an açık eşleşme yok.'); }
+}
+
+function useUndo(){
+  if(!game) return;
+  if(game.tray.length === 0){ toast('Tepside geri alınacak taş yok.'); return; }
+  if(game.undosUsed >= 1 && !state.zenMode){ toast('Bu bölümde geri alma hakkın kalmadı.'); return; }
+  const last = game.tray.pop();
+  if(last){
+    const t = game.tiles.find(x=>x.id===last.id);
+    if(t) t.inTray = false;
+    game.undosUsed++;
+    document.getElementById('undo-count').textContent = `(${Math.max(0, 1-game.undosUsed)})`;
+    renderChapterTraySlots();
+    renderBoard();
+    toast('Son taş tahtaya geri döndü.');
+  }
+}
+
+/* ==================== VICTORY & CANVASES ==================== */
+function completeVictory(){
+  playSound('victory');
+  const secs = Math.floor((Date.now()-game.startTime)/1000);
+  const iq = Math.min(180, Math.max(70, Math.round(100 + game.longestCombo*5 - secs*0.35)));
+  state.highestIQ = Math.max(state.highestIQ, iq);
+  state.longestCombo = Math.max(state.longestCombo, game.longestCombo);
+
+  if(!state.chaptersCompleted.includes(game.chapter)){
+    state.chaptersCompleted.push(game.chapter);
+  }
+
+  // Update dimension history: Ateş -> Mantık, Su -> Hafıza, Hava -> Hız, Toprak -> Reflex
+  state.dimensionHistory.mantik.push(Math.min(100, Math.max(65, 100 - Math.floor(secs/3))));
+  state.dimensionHistory.hafiza.push(Math.min(100, Math.max(70, game.longestCombo*12 + 60)));
+  state.dimensionHistory.hiz.push(Math.min(100, Math.max(60, 100 - Math.floor(secs/2))));
+  state.dimensionHistory.refleks.push(Math.min(100, Math.max(75, 100 - game.tray.length*10)));
+
+  saveState();
+
+  document.getElementById('result-time').textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+  document.getElementById('result-iq').textContent = iq;
+  document.getElementById('result-combo').textContent = game.longestCombo;
+  document.getElementById('result-quote').textContent = `"${game.stage.quote}"`;
+
+  const nextBtn = document.getElementById('btn-next-chapter');
+  if(game.chapter >= 16){
+    nextBtn.textContent = '◆ Efsanevi Birleşim ➜';
+    nextBtn.onclick = ()=>{ closeModal('modal-result'); showScreen('screen-birlesim'); };
+  } else {
+    nextBtn.textContent = 'Sonraki Bölüm ➜';
+    nextBtn.onclick = ()=>{ closeModal('modal-result'); startChapter(game.chapter + 1); };
+  }
+
+  openModal('modal-result');
+}
+
+function startEndless(){
+  state.endlessLevel = (state.endlessLevel || 0) + 1;
+  startChapter(state.endlessLevel);
+}
+
+function startDaily(){
+  startChapter(1);
+}
+
+function showEndlessGate(){
+  showScreen('screen-endless-gate');
+}
+function closeEndlessGateAndGo(toEndless){
+  navTo('screen-profile');
+  if(toEndless) setTimeout(startEndless, 250);
+}
+
+/* ==================== COLLECTION & DYNAMIC NICK ENGRAVING ==================== */
+const SHOWCASE_CARDS = [
+  { id: 'kor', title: 'Ateş Mührü (Kor)', rarity: 'ELEMENTAL', color: '#ff4422', imgKey: 'CARD_ATES', req: 'Bölüm 1-4', isUnlocked: s=>[1,2,3,4].every(c=>s.chaptersCompleted.includes(c)), type: 'element', arg: 'kor' },
+  { id: 'baam', title: 'Su Mührü (Baam)', rarity: 'ELEMENTAL', color: '#00a8ff', imgKey: 'CARD_SU', req: 'Bölüm 5-8', isUnlocked: s=>[5,6,7,8].every(c=>s.chaptersCompleted.includes(c)), type: 'element', arg: 'baam' },
+  { id: 'mand', title: 'Toprak Mührü (Mand)', rarity: 'ELEMENTAL', color: '#2ed573', imgKey: 'CARD_TOPRAK', req: 'Bölüm 9-12', isUnlocked: s=>[9,10,11,12].every(c=>s.chaptersCompleted.includes(c)), type: 'element', arg: 'mand' },
+  { id: 'zepy', title: 'Hava Mührü (Zepy)', rarity: 'ELEMENTAL', color: '#e0f7fa', imgKey: 'CARD_HAVA', req: 'Bölüm 13-16', isUnlocked: s=>[13,14,15,16].every(c=>s.chaptersCompleted.includes(c)), type: 'element', arg: 'zepy' },
+  { id: 'legendary', title: 'Birleşim Infinity', rarity: 'LEGENDARY', color: '#d4a86a', imgKey: 'CARD_BIRLESIM_LEGENDARY', req: '16 Bölüm Tamamı', isUnlocked: s=>s.chaptersCompleted.length>=16, type: 'legendary', arg: null },
+  { id: 'lvl20', title: 'Sonsuzluk Çırağı', rarity: 'EPIC', color: '#b388ff', imgKey: 'CARD_SEVIYE_20', req: 'Sonsuz Mod Seviye 20', isUnlocked: s=>(s.endlessLevel||0)>=20, type: 'level', arg: 20 },
+  { id: 'lvl50', title: 'Element Üstadı', rarity: 'MYTHIC', color: '#40c4ff', imgKey: 'CARD_SEVIYE_50', req: 'Sonsuz Mod Seviye 50', isUnlocked: s=>(s.endlessLevel||0)>=50, type: 'level', arg: 50 },
+  { id: 'lvl100', title: 'Mutlak Mühür Tanrısı', rarity: 'GODLIKE', color: '#ffd54f', imgKey: 'CARD_SEVIYE_100', req: 'Sonsuz Mod Seviye 100', isUnlocked: s=>(s.endlessLevel||0)>=100, type: 'level', arg: 100 }
+];
+
+function renderCollection(){
+  const wrap = document.getElementById('collection-content');
+  wrap.innerHTML = `
+    <div class="gallery-grid">
+      ${SHOWCASE_CARDS.map(c=>{
+        const unlocked = c.isUnlocked(state);
+        const src = IMG_B64[c.imgKey];
+        return `
+          <div class="gallery-card ${unlocked?'unlocked':''}" style="--card-color:${c.color};" onclick="${unlocked?`downloadCustomCard('${c.imgKey}', '${c.title}', '${c.rarity}', '${c.color}')`:`toast('${c.req} şartını tamamla')`}">
+            <img src="${src}" alt="${c.title}">
+            ${!unlocked ? `<div class="lock-overlay"><div style="font-size:24px; margin-bottom:4px;">🔒</div><div style="font-size:10px; font-weight:800; color:var(--ink);">${c.req}</div></div>` : ''}
+            <div class="card-badge">
+              <div class="card-title">${c.title}</div>
+              <div class="card-sub">${c.rarity} ${unlocked?'✓':''}</div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function loadImageAsync(src){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+let activeCardBlob = null;
+let activeCardFileName = 'stonebreaking-card.png';
+
+async function downloadCustomCard(imgKey, title, rarity, color){
+  const canvas = document.getElementById('share-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1080, H = 1920;
+  canvas.width = W; canvas.height = H;
+  ctx.clearRect(0,0,W,H);
+
+  try{
+    const img = await loadImageAsync(IMG_B64[imgKey]);
+    const scale = Math.max(W/img.width, H/img.height);
+    const dw = img.width*scale, dh = img.height*scale;
+    ctx.drawImage(img, (W-dw)/2, (H-dh)/2, dw, dh);
+  }catch(e){
+    ctx.fillStyle = '#07070f'; ctx.fillRect(0,0,W,H);
+  }
+
+  // Laser engraved bottom plate
+  const plateH = 240;
+  const plateGrad = ctx.createLinearGradient(0, H-plateH, 0, H);
+  plateGrad.addColorStop(0, 'rgba(7,7,15,0)');
+  plateGrad.addColorStop(0.25, 'rgba(7,7,15,.95)');
+  plateGrad.addColorStop(1, 'rgba(7,7,15,.99)');
+  ctx.fillStyle = plateGrad; ctx.fillRect(0, H-plateH, W, plateH);
+
+  ctx.textAlign = 'center';
+  const nick = state.nickname || 'Gezgin';
+  ctx.fillStyle = color || '#d4a86a'; ctx.font = '900 52px Georgia, serif';
+  ctx.fillText(nick, W/2, H-150);
+
+  ctx.fillStyle = '#f2efe6'; ctx.font = '600 28px Arial';
+  ctx.fillText(`${title} · ${rarity}`, W/2, H-100);
+
+  if(state.customAphorism){
+    ctx.fillStyle = '#ffe6b0'; ctx.font = 'italic 22px Georgia, serif';
+    ctx.fillText(`"${state.customAphorism.slice(0,48)}"`, W/2, H-60);
+  }
+
+  const hash = 'M-' + Math.abs((nick.split('').reduce((a,b)=>a+b.charCodeAt(0),0)*137 + 73)%99999).toString(16).toUpperCase();
+  ctx.fillStyle = '#d4a86a'; ctx.font = '700 20px Arial';
+  ctx.fillText(`STONEBREAKING UNIVERSE · MÜHÜR ID: ${hash}`, W/2, H-24);
+
+  const dataUrl = canvas.toDataURL('image/png');
+  activeCardFileName = `stonebreaking-${title.toLowerCase().replace(/\s+/g,'-')}.png`;
+
+  // Native share / Gallery save prompt for mobile
+  canvas.toBlob(async (blob)=>{
+    if(!blob) return;
+    activeCardBlob = blob;
+    const file = new File([blob], activeCardFileName, {type:'image/png'});
+    
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      try{
+        await navigator.share({
+          files: [file],
+          title: `STONEBREAKING — ${title}`,
+          text: `STONEBREAKING UNIVERSE: ${title} mühür kartım!`
+        });
+        toast('Galeriye / Paylaşıma gönderildi! ✨');
+        return;
+      }catch(err){
+        if(err && err.name === 'AbortError') return;
+      }
+    }
+
+    document.getElementById('modal-card-preview-img').src = dataUrl;
+    document.getElementById('preview-card-title').textContent = `${title} · ${rarity}`;
+    openModal('modal-card-preview');
+    triggerDirectDownload();
+  }, 'image/png');
+}
+
+function triggerDirectDownload(){
+  if(!activeCardBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(activeCardBlob);
+  a.download = activeCardFileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('Kart indirilenlere kaydedildi! 📱');
+}
+
+async function downloadShareCard(){
+  if(!game) return;
+  await downloadCustomCard('CARD_ATES', `Bölüm ${game.chapter}`, 'MÜHÜR', '#d4a86a');
+}
+
+/* ==================== MIND MAP & KADİM KİTABE ==================== */
+function renderMindmap(){
+  const wrap = document.getElementById('mindmap-content');
+  const dims = state.dimensionHistory;
+  const avg = arr => arr && arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 80;
+
+  const items = [
+    { label:'Mantık (Ateş · Kor)', desc:'Net görüş, cesur strateji', val:avg(dims.mantik), col:'#ff4422' },
+    { label:'Hafıza (Su · Baam)', desc:'Taş hatırlama, derin akış', val:avg(dims.hafiza), col:'#00a8ff' },
+    { label:'Hız (Hava · Zepy)', desc:'Çevik karar, tepki süresi', val:avg(dims.hiz), col:'#e0f7fa' },
+    { label:'Reflex (Toprak · Mand - Evren Pandası)', desc:'Baskı altında direnç ve sabır', val:avg(dims.refleks), col:'#2ed573' }
+  ];
+
+  wrap.innerHTML = `
+    <div class="card" style="margin-bottom:12px;">
+      ${items.map(it=>`
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:800; margin-bottom:3px;">
+            <span>${it.label}</span>
+            <span style="color:${it.col}; font-family:var(--font-display);">${it.val}/100</span>
+          </div>
+          <div style="font-size:9px; color:var(--ink-faint); margin-bottom:3px;">${it.desc}</div>
+          <div style="height:7px; border-radius:4px; background:var(--stone-light); overflow:hidden;">
+            <div style="height:100%; width:${it.val}%; background:${it.col}; border-radius:4px;"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="card" style="text-align:center; padding:12px;">
+      <div style="font-size:10.5px; color:var(--gold); font-weight:800; letter-spacing:.1em; text-transform:uppercase;">Zihin Tavsiyesi</div>
+      <div style="font-size:12px; color:var(--ink-dim); margin-top:3px; line-height:1.6;">
+        "Dünün sen'ini geçtin. Kor'un ateşi ve Mand'ın (Evren Pandası) sabrı seninle rezonansta."
+      </div>
+    </div>
+  `;
+
+  // Render Kadim Kitabe inside Zihin Haritası modal
+  const storyWrap = document.getElementById('mindmap-story-list');
+  if(storyWrap){
+    storyWrap.innerHTML = STORY.map(s=>`
+      <div class="card" style="margin-bottom:8px; background:rgba(15,15,28,.6);">
+        <div style="font-size:11px; font-weight:800; color:var(--gold); margin-bottom:2px;">${s.roman}</div>
+        <div style="font-size:11.5px; color:var(--ink-dim); line-height:1.5;">${s.text}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function getZodiacInfo(birthDateStr){
+  if(!birthDateStr) return null;
+  const parts = birthDateStr.split('-');
+  if(parts.length < 3) return null;
+  const month = parseInt(parts[1], 10);
+  const day = parseInt(parts[2], 10);
+
+  let sign='Koç', elem='ates', spirit='Kor';
+  if((month===3 && day>=21) || (month===4 && day<=19)){ sign='Koç'; elem='ates'; spirit='Kor'; }
+  else if((month===4 && day>=20) || (month===5 && day<=20)){ sign='Boğa'; elem='toprak'; spirit='Mand'; }
+  else if((month===5 && day>=21) || (month===6 && day<=20)){ sign='İkizler'; elem='hava'; spirit='Zepy'; }
+  else if((month===6 && day>=21) || (month===7 && day<=22)){ sign='Yengeç'; elem='su'; spirit='Baam'; }
+  else if((month===7 && day>=23) || (month===8 && day<=22)){ sign='Aslan'; elem='ates'; spirit='Kor'; }
+  else if((month===8 && day>=23) || (month===9 && day<=22)){ sign='Başak'; elem='toprak'; spirit='Mand'; }
+  else if((month===9 && day>=23) || (month===10 && day<=22)){ sign='Terazi'; elem='hava'; spirit='Zepy'; }
+  else if((month===10 && day>=23) || (month===11 && day<=21)){ sign='Akrep'; elem='su'; spirit='Baam'; }
+  else if((month===11 && day>=22) || (month===12 && day<=21)){ sign='Yay'; elem='ates'; spirit='Kor'; }
+  else if((month===12 && day>=22) || (month===1 && day<=19)){ sign='Oğlak'; elem='toprak'; spirit='Mand'; }
+  else if((month===1 && day>=20) || (month===2 && day<=18)){ sign='Kova'; elem='hava'; spirit='Zepy'; }
+  else { sign='Balık'; elem='su'; spirit='Baam'; }
+
+  return { sign, elem, spirit };
+}
+
+function renderProfile(){
+  const el = ELEMENTS.find(e=>e.id===state.spiritAvatar) || ELEMENTS[0];
+  document.getElementById('profile-avatar').innerHTML = `<img src="${IMG_B64[el.img]}">`;
+  document.getElementById('profile-nick').value = state.nickname || '';
+  const ch = state.character === 'kadin' ? 'Kadın Stonebreaking' : 'Erkek Stonebreaking';
+  document.getElementById('profile-role').textContent = ch;
+  
+  const zod = getZodiacInfo(state.birthDate);
+  const zodText = zod ? ` · Burç: ${zod.sign}` : '';
+  document.getElementById('profile-companion').textContent = `Rehber: ${el.spirit} (${el.companion})${zodText}`;
+  
+  const aphorismEl = document.getElementById('profile-custom-aphorism');
+  if(aphorismEl){
+    aphorismEl.textContent = state.customAphorism ? `"${state.customAphorism}"` : '';
+  }
+
+  const endlessBtn = document.getElementById('btn-profile-endless');
+  const endlessSub = document.getElementById('profile-endless-sub');
+  if(state.chaptersCompleted.length >= 16){
+    if(endlessBtn) endlessBtn.disabled = false;
+    if(endlessSub) endlessSub.textContent = `Açık · Seviye ${state.endlessLevel || 1}`;
+  } else {
+    if(endlessBtn) endlessBtn.disabled = true;
+    if(endlessSub) endlessSub.textContent = `${state.chaptersCompleted.length}/16 Bölüm Tamamlandı`;
+  }
+
+  renderFeedList();
+}
+
+function renderStory(){
+  const wrap = document.getElementById('story-list');
+  wrap.innerHTML = STORY.map(s=>`
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:11px; font-weight:800; color:var(--gold); margin-bottom:3px;">${s.roman}</div>
+      <div style="font-size:11.5px; color:var(--ink-dim); line-height:1.6;">${s.text}</div>
+    </div>
+  `).join('');
+}
+
+function renderAchievements(){
+  const wrap = document.getElementById('ach-list');
+  wrap.innerHTML = ACHIEVEMENTS.map(a=>{
+    const done = a.check(state);
+    return `
+      <div class="card" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; opacity:${done?'1':'.5'};">
+        <div style="font-size:22px;">${done?'🏆':'🔒'}</div>
+        <div style="flex:1;">
+          <div style="font-weight:800; font-size:12.5px;">${a.name}</div>
+          <div style="font-size:10.5px; color:var(--ink-faint);">${a.desc}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTodayModal(){
+  const zod = getZodiacInfo(state.birthDate);
+  const elId = zod ? zod.elem : (state.spiritAvatar || 'ates');
+  const el = ELEMENTS.find(e=>e.id===elId) || ELEMENTS[0];
+  const list = HOROSCOPES[el.id] || HOROSCOPES.ates;
+  const msg = list[Math.floor(Date.now() / 86400000) % list.length];
+  const signLabel = zod ? `${zod.sign} · ` : '';
+  document.getElementById('horoscope-title').textContent = `${signLabel}${el.spirit} (${el.name})`;
+  document.getElementById('horoscope-icon').src = IMG_B64[el.img];
+  document.getElementById('horoscope-text').textContent = `"${msg}"`;
+}
+
+function sendAuthCode(){
+  const email = document.getElementById('acc-email-input').value.trim();
+  if(!email || !email.includes('@')){ toast('Geçerli bir e-posta adresi girin.'); return; }
+  document.getElementById('auth-code-box').style.display = 'block';
+  toast(`Doğrulama kodu gönderildi: ${email} (Demo: 123456)`);
+}
+
+function verifyAuthCode(){
+  const code = document.getElementById('acc-code-input').value.trim();
+  if(code === '123456' || code.length === 6){
+    const email = document.getElementById('acc-email-input').value.trim();
+    state.email = email;
+    saveState();
+    toast('Hesabınız başarıyla doğrulandı ve bağlandı! ✨');
+    closeModal('modal-account');
+  } else {
+    toast('Geçersiz doğrulama kodu. Lütfen tekrar deneyin.');
+  }
+}
+
+function toggleSound(){
+  state.sound = state.sound === false ? true : false;
+  saveState();
+  const btn = document.getElementById('btn-toggle-sound');
+  if(btn) btn.textContent = state.sound ? '🔊 Açık' : '🔇 Kapalı';
+  toast(state.sound ? 'Sesler açıldı' : 'Sesler kapatıldı');
+}
+
+function toggleZen(){
+  state.zenMode = !state.zenMode;
+  saveState();
+  const btn = document.getElementById('btn-toggle-zen');
+  if(btn) btn.textContent = state.zenMode ? '🧘 Açık' : 'Kapalı';
+  toast(state.zenMode ? 'Zen Modu aktif: cezasız ve rahat' : 'Zen Modu kapatıldı');
+}
+
+function exportSaveJSON(){
+  const jsonStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([jsonStr], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `stonebreaking-save-${Date.now()}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  toast('Yedek dosyanız indirildi!');
+}
+
+function resetAllProgress(){
+  if(confirm('Tüm ilerlemenizi, mühürlerinizi ve kartlarınızı sıfırlamak istediğinize emin misiniz?')){
+    localStorage.removeItem('stonebreaking_save_v9');
+    state = Object.assign({}, DEFAULT_STATE);
+    saveState();
+    toast('İlerleme sıfırlandı.');
+    setTimeout(()=>location.reload(), 600);
+  }
+}
+
+// Initial setup
+if(state.spiritAvatar) renderSpiritSelect();
+</script>
+</body>
+</html>

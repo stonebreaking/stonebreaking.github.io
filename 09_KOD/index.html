@@ -1,0 +1,3921 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#07070f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>STONEBREAKING — Universe</title>
+  <link rel="stylesheet" href="css/animasyon.css?v=89" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    /* ========== KRİTİK: .screen kuralları INLINE — CSS dosyası cache sorununu önler ========== */
+    .screen { position: fixed !important; inset: 0 !important; width: 100% !important; height: 100% !important; overflow: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: 0 !important; visibility: visible !important; display: flex !important; transition: none !important; }
+    .screen.active { opacity: 1 !important; pointer-events: auto !important; z-index: 20 !important; visibility: visible !important; display: flex !important; }
+    .screen.exit { opacity: 0 !important; pointer-events: none !important; z-index: 10 !important; visibility: visible !important; display: flex !important; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      background: #0a0a14;
+      color: #f4f4f8;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      touch-action: manipulation;
+      overscroll-behavior: none;
+    }
+
+    /* ========== SAHNE -1: BATUPIA STUDIOS INTRO ========== */
+    #screen-studio-intro {
+      position: relative;
+      background: #07070f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #screen-studio-intro .studio-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgba(255,107,53,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 45%, rgba(255,209,148,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 30%, rgba(255,107,53,0.08) 0%, transparent 40%),
+        linear-gradient(180deg, #050510 0%, #07070f 40%, #0a0a14 100%);
+      z-index: 0;
+    }
+    /* SAHNE 0 ile aynı doku — bütünlük */
+    #screen-studio-intro .studio-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 42%, transparent 26%, rgba(5,5,12,0.72) 84%);
+    }
+    #screen-studio-intro .studio-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    /* İnce altın çizgiler — SAHNE 0 orbit ile aynı renk */
+    .studio-line-top,
+    .studio-line-bottom {
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,107,53,0.35), rgba(255,209,148,0.45), rgba(255,107,53,0.35), transparent);
+    }
+    .studio-line-top {
+      animation: lineExpand 1s ease-out 0.3s forwards;
+      margin-bottom: 16px;
+    }
+    .studio-line-bottom {
+      animation: lineExpand 1s ease-out 0.5s forwards;
+      margin-top: 16px;
+    }
+    /* Logo — CSS ◆ MÜHÜR + element çatlakları */
+    .studio-logo-wrap {
+      /* v9.12.1 · M-019: mühürlü seal için büyük ORTALI kutu — 180px taşma/kaçış yok */
+      width: min(340px, 86vw);
+      height: min(340px, 86vw);
+      position: relative;
+      opacity: 0;
+      animation: studioFadeScale 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+      display: grid;
+      place-items: center;
+      justify-self: center;
+      margin: 0 auto;
+    }
+    .studio-muhur {
+      /* v9.12.1 · M-019: CSS mühür+crack KALDIRILDI — seal görselinin içinde zaten var (yineleme yok) */
+      display: none !important;
+      font-size: clamp(3rem, 10vw, 5rem);
+      color: #ffd194;
+      text-shadow: 0 0 40px rgba(255,209,148,0.6), 0 0 80px rgba(255,107,53,0.3);
+      animation: muhurPulse 3s ease-in-out infinite;
+      z-index: 2;
+    }
+    .studio-muhur-crack {
+      /* v9.12.1 · M-019: CSS crack KALDIRILDI — seal görseli kendi ışığını taşıyor */
+      display: none !important;
+      position: absolute;
+      width: 2px;
+      height: 30%;
+      border-radius: 1px;
+      z-index: 1;
+    }
+    .studio-muhur-crack.ates { top: 5%; left: 50%; transform: translateX(-50%); background: linear-gradient(0deg, #ff6b35, transparent); }
+    .studio-muhur-crack.su { right: 5%; top: 50%; transform: translateY(-50%); background: linear-gradient(90deg, #4ecdc4, transparent); }
+    .studio-muhur-crack.toprak { bottom: 5%; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #c4a35a, transparent); }
+    .studio-muhur-crack.hava { left: 5%; top: 50%; transform: translateY(-50%); background: linear-gradient(270deg, #a8d8ea, transparent); }
+    @keyframes muhurPulse {
+      0%, 100% { text-shadow: 0 0 40px rgba(255,209,148,0.6), 0 0 80px rgba(255,107,53,0.3); }
+      50% { text-shadow: 0 0 60px rgba(255,209,148,0.8), 0 0 120px rgba(255,107,53,0.5); }
+    }
+    /* Studio adı — sinema büyüklüğünde */
+    .studio-name {
+      font-size: clamp(1.5rem, 7vw, 2.4rem);
+      font-weight: 900;
+      letter-spacing: 14px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffd194, #ffb347, #ffd194);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      animation: studioTextReveal 1s ease-out 0.8s forwards, shimmer 4s linear 1.8s infinite;
+      filter: drop-shadow(0 0 10px rgba(255,179,71,0.3));
+      margin-top: 6px;
+    }
+    .studio-sub {
+      font-size: clamp(0.6rem, 2.2vw, 0.78rem);
+      letter-spacing: 8px;
+      color: rgba(255,209,148,0.4);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: studioFadeUp 0.8s ease-out 1.2s forwards;
+    }
+    /* Parçacıklar */
+    #screen-studio-intro .studio-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    /* Çıkış: tüm ekran kararır */
+    #screen-studio-intro.exit {
+      animation: studioExit 0.8s ease-in forwards;
+    }
+
+    @keyframes studioFadeScale {
+      0% { opacity: 0; transform: scale(0.7); filter: blur(8px); }
+      100% { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+    @keyframes studioTextReveal {
+      0% { opacity: 0; letter-spacing: 28px; }
+      100% { opacity: 1; letter-spacing: 14px; }
+    }
+    @keyframes studioFadeUp {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes lineExpand {
+      0% { width: 0; }
+      100% { width: min(200px, 50vw); }
+    }
+    @keyframes studioExit {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* ========== SPLASH v6.3 — sahne canlı, logo işlenmiş ========== */
+    #screen-splash {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 36%, rgba(36,16,2,0.42) 0%, rgba(7,7,15,0.50) 52%, rgba(7,7,15,0.94) 100%),
+        linear-gradient(180deg, #0a0a14 0%, #07070f 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 8vh;
+      gap: 8px;
+    }
+    /* Sahne ARKASI: ken-burns ile yavaşça hareket eder (sahne oynar) */
+    #screen-splash::before {
+      content: '';
+      position: absolute;
+      inset: -12%;
+      background: url('06_GRAFIK/splash_evren_sinematik.png') center/cover no-repeat;
+      animation: kenBurns 30s ease-in-out infinite alternate;
+      z-index: 0;
+      will-change: transform;
+    }
+    /* Vinyet: ortaya odak, kenarları karanlığa yumuşatır */
+    #screen-splash::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 42%, transparent 26%, rgba(5,5,12,0.72) 84%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    #screen-splash > .particles { z-index: 2; }
+    #screen-splash .splash-stage,
+    #screen-splash .splash-actions,
+    #screen-splash .byline-mini { position: relative; z-index: 3; }
+
+    #screen-splash .splash-stage {
+      position: relative;
+      width: min(400px, 86vw);
+      height: min(400px, 86vw);
+      display: grid;
+      place-items: center;
+      margin-top: 2vh;
+      flex-shrink: 0;
+    }
+    /* v9.11.1 Patron 03.08: logo sahneyle bütünleşik — nebula katmanı tüm açılışı sarar */
+    #screen-splash .seal-backdrop {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: url('06_GRAFIK/sahne_kozmos_stonebreaking.jpg') center 42%/cover no-repeat;
+      filter: blur(26px) brightness(.55); opacity: .5;
+    }
+
+    /* ---- TEK PARÇA SİNEMATİK SAHNE: logo + orbit + elementler BİRLEŞİK ---- */
+    .seal-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+    }
+    .seal-aura {
+      position: absolute;
+      inset: -25%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,107,53,0.12), rgba(255,179,71,0.04) 50%, transparent 72%);
+      animation: auraBreath 4.6s ease-in-out infinite;
+      filter: blur(10px);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    /* Orbit: logonun İÇİNDE döner — tek parça kompozisyon */
+    .seal-orbit {
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px solid rgba(255,179,71,0.15);
+      animation: orbitSpin 30s linear infinite;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    .seal-orbit::before {
+      content: '';
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,179,71,0.06);
+    }
+    .seal-orbit i {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255,179,71,0.6);
+    }
+    .seal-orbit i.ates   { left: 50%; top: 0%;   transform: translate(-50%, -50%); background: #ff6b35; }
+    .seal-orbit i.su     { left: 100%; top: 50%; transform: translate(-50%, -50%); background: #4ecdc4; }
+    .seal-orbit i.toprak { left: 50%; top: 100%; transform: translate(-50%, -50%); background: #c4a35a; }
+    .seal-orbit i.hava   { left: 0%;  top: 50%;  transform: translate(-50%, -50%); background: #a8d8ea; }
+    .seal-ring {
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px solid rgba(255,179,71,0.08);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    /* ---- STONEBREAKING CSS LOGO — yazı + ◆ mühür ---- */
+    .splash-logo-text {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      -webkit-mask-image: radial-gradient(circle, #000 82%, transparent 98%);
+      mask-image: radial-gradient(circle, #000 82%, transparent 98%);
+      opacity: 0;
+      transition: opacity 1.8s ease;
+      animation: floatY 6s ease-in-out infinite;
+    }
+    .splash-logo-text.show { opacity: 1; }
+    .splash-logo-muhur {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      color: #ffd194;
+      text-shadow: 0 0 30px rgba(255,209,148,0.6), 0 0 60px rgba(255,107,53,0.3);
+      animation: muhurPulse 3s ease-in-out infinite;
+      z-index: 2;
+      margin-bottom: 8px;
+    }
+    .splash-logo-crack {
+      position: absolute;
+      width: 2px;
+      height: 25%;
+      border-radius: 1px;
+      z-index: 1;
+    }
+    .splash-logo-crack.ates { top: 8%; left: 50%; transform: translateX(-50%); background: linear-gradient(0deg, #ff6b35, transparent); }
+    .splash-logo-crack.su { right: 8%; top: 50%; transform: translateY(-50%); background: linear-gradient(90deg, #4ecdc4, transparent); }
+    .splash-logo-crack.toprak { bottom: 8%; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #c4a35a, transparent); }
+    .splash-logo-crack.hava { left: 8%; top: 50%; transform: translateY(-50%); background: linear-gradient(270deg, #a8d8ea, transparent); }
+    .splash-logo-title {
+      font-size: clamp(0.8rem, 3.5vw, 1.2rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #ffd194;
+      text-shadow: 0 0 20px rgba(255,209,148,0.4), 0 0 40px rgba(255,107,53,0.2);
+      z-index: 2;
+    }
+    .splash-logo-sub {
+      font-size: clamp(0.45rem, 1.8vw, 0.6rem);
+      letter-spacing: 3px;
+      color: rgba(255,209,148,0.4);
+      text-transform: uppercase;
+      margin-top: 4px;
+      z-index: 2;
+    }
+
+    /* Evren başlığı — KALDIRILDI: logo görselinde zaten STONEBREAKING yazıyor,
+       floating redundant yazı butonu kapatıyordu. Artık sadece logo görseli + buton var. */
+    .splash-brand {
+      display: none !important;
+    }
+
+    /* ---- Taş mühür buton (evren dili) — logodan doğar ---- */
+    .splash-actions {
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 16px;
+      position: relative;
+    }
+    /* Logo → buton organik bağ (ışık huzmesi) */
+    .splash-actions::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 20px;
+      background: linear-gradient(180deg, rgba(255,209,148,0.4), rgba(255,107,53,0.15), transparent);
+      pointer-events: none;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 2s forwards;
+    }
+    .btn-seal {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 26px;
+      border-radius: 6px;
+      border: 2px solid rgba(255,107,53,0.5);
+      background: linear-gradient(180deg, rgba(30,20,15,0.95) 0%, rgba(18,10,6,0.98) 100%);
+      box-shadow:
+        0 4px 16px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,209,148,0.12),
+        inset 0 -2px 8px rgba(255,107,53,0.08);
+      color: #ffd194;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(255,107,53,0.4);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: btnSealPulse 2.6s ease-in-out infinite;
+    }
+    .btn-seal .bs-rune {
+      color: #ff6b35;
+      font-size: 0.65rem;
+      text-shadow: 0 0 6px rgba(255,107,53,0.7);
+      animation: runePulse 2.1s ease-in-out infinite;
+    }
+    .btn-seal.primary { 
+      border-color: rgba(255,107,53,0.6);
+      background: linear-gradient(180deg, rgba(35,22,16,0.95) 0%, rgba(20,12,8,0.98) 100%);
+    }
+    .btn-seal:active { transform: translateY(1px) scale(0.97); filter: brightness(1.1); }
+    .btn-seal:hover { 
+      transform: translateY(-1px); 
+      border-color: rgba(255,209,148,0.6);
+      box-shadow:
+        0 6px 20px rgba(255,107,53,0.25),
+        inset 0 1px 0 rgba(255,209,148,0.15),
+        inset 0 -2px 10px rgba(255,107,53,0.1);
+    }
+
+    #screen-splash .byline-mini {
+      position: absolute;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      font-size: 0.58rem;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.18);
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 3;
+    }
+    @media (max-height: 680px) {
+      #screen-splash .splash-stage { width: min(320px, 80vw); height: min(320px, 80vw); }
+      .btn-seal { padding: 10px 22px; font-size: 0.78rem; letter-spacing: 3px; }
+    }
+
+    /* ========== CHARACTER PICK v9.0 — STONEBREAKING EVRENİ SİNEMATİK KARAKTER SEÇİMİ ========== */
+    #screen-character {
+      background: #050510;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+      height: 100dvh;
+    }
+    #screen-character::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #screen-character > * { position: relative; z-index: 1; }
+
+    /* — BAŞLIK — Kadim taş plaket */
+    .char-header {
+      text-align: center;
+      padding: max(14px, env(safe-area-inset-top)) 16px 6px;
+      z-index: 10;
+      position: relative;
+    }
+    .char-header h1 {
+      font-size: clamp(1.02rem, 4.3vw, 1.5rem);
+      letter-spacing: clamp(2px, 1.6vw, 7px);
+      white-space: nowrap;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffd194;
+      text-shadow: 0 0 30px rgba(255,107,53,0.4), 0 0 60px rgba(78,205,196,0.3), 0 2px 8px rgba(0,0,0,0.9);
+      animation: charTitleReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+      position: relative;
+    }
+    .char-header h1::after {
+      content: '◆';
+      display: block;
+      font-size: 0.6rem;
+      color: #c4a35a;
+      margin-top: 4px;
+      letter-spacing: 4px;
+      text-shadow: 0 0 12px rgba(196,163,90,0.5);
+    }
+    .char-header .char-subtitle {
+      color: rgba(255,209,148,0.4);
+      font-size: 0.6rem;
+      margin-top: 2px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      animation: fadeUp 0.6s ease-out 0.3s both;
+    }
+    @keyframes charTitleReveal {
+      0% { opacity: 0; transform: translateY(-20px) scale(0.9); letter-spacing: 16px; }
+      100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: clamp(2px, 1.6vw, 7px); }
+    }
+
+    /* — SİNEMATİK SAHNE — */
+    .char-cinema {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .char-cinema-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: brightness(0.85);
+      transition: opacity 0.6s ease, filter 0.5s ease;
+    }
+    /* 3 SAHNE SİSTEMİ: default (ikili) + erkek + kadın */
+    .bg-default-img { opacity: 1; z-index: 1; animation: charBgReveal 1.5s ease-out both; }
+    .bg-erkek-img { opacity: 0; z-index: 2; }
+    .bg-kadin-img { opacity: 0; z-index: 2; }
+
+    /* Hover erkek */
+    .char-cinema.hover-erkek .bg-default-img { opacity: 0; }
+    .char-cinema.hover-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.9); }
+    .char-cinema.hover-erkek .bg-kadin-img { opacity: 0; }
+    /* Hover kadın */
+    .char-cinema.hover-kadin .bg-default-img { opacity: 0; }
+    .char-cinema.hover-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.9); }
+    .char-cinema.hover-kadin .bg-erkek-img { opacity: 0; }
+    /* Seçilmiş erkek */
+    .char-cinema.bg-erkek .bg-default-img { opacity: 0; }
+    .char-cinema.bg-erkek .bg-erkek-img { opacity: 1; filter: brightness(0.95); }
+    .char-cinema.bg-erkek .bg-kadin-img { opacity: 0; }
+    /* Seçilmiş kadın */
+    .char-cinema.bg-kadin .bg-default-img { opacity: 0; }
+    .char-cinema.bg-kadin .bg-kadin-img { opacity: 1; filter: brightness(0.95); }
+    .char-cinema.bg-kadin .bg-erkek-img { opacity: 0; }
+    @keyframes charBgReveal {
+      0% { opacity: 0; transform: scale(1.08); filter: brightness(0.3); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(0.85); }
+    }
+
+    /* — ORTA ÇİZGİ — Element ayrımı */
+    .char-divider {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      z-index: 6;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(255,209,148,0.1) 15%,
+        rgba(255,107,53,0.5) 35%,
+        rgba(255,209,148,0.8) 50%,
+        rgba(78,205,196,0.5) 65%,
+        rgba(255,209,148,0.1) 85%,
+        transparent 100%
+      );
+      box-shadow: 0 0 20px rgba(255,209,148,0.3), 0 0 40px rgba(255,107,53,0.15), 0 0 40px rgba(78,205,196,0.15);
+      animation: dividerReveal 1s ease-out 0.8s both;
+    }
+    .char-divider::before {
+      content: '◆';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      color: #ffd194;
+      text-shadow: 0 0 15px rgba(255,209,148,0.6), 0 0 30px rgba(255,107,53,0.3), 0 0 30px rgba(78,205,196,0.3);
+      background: #050510;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,209,148,0.3);
+      animation: dividerPulse 3s ease-in-out infinite;
+    }
+    @keyframes dividerReveal {
+      0% { opacity: 0; transform: translateX(-50%) scaleY(0); }
+      100% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+    }
+    @keyframes dividerPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,209,148,0.3); border-color: rgba(255,209,148,0.3); }
+      50% { box-shadow: 0 0 25px rgba(255,209,148,0.5); border-color: rgba(255,209,148,0.5); }
+    }
+
+    /* — SEÇİM BÖLGESİ — Sol ve sağ yarı */
+    .char-pick-zone {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      z-index: 5;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .char-pick-zone:hover {
+      background: rgba(255,209,148,0.04);
+    }
+    .char-pick-zone.zone-erkek {
+      left: 0;
+    }
+    .char-pick-zone.zone-kadin {
+      right: 0;
+    }
+
+    /* Seçilince — element kenarlık glow */
+    .char-pick-zone.selected {
+      background: transparent;
+    }
+    .char-pick-zone.selected::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      animation: charSelectionPulse 2.5s ease-in-out infinite;
+    }
+    .char-pick-zone.zone-erkek.selected::after {
+      border: 2px solid #ff6b35;
+      box-shadow: inset 0 0 80px rgba(255,107,53,0.15), inset 0 0 30px rgba(255,107,53,0.1), 0 0 40px rgba(255,107,53,0.2);
+    }
+    .char-pick-zone.zone-kadin.selected::after {
+      border: 2px solid #4ecdc4;
+      box-shadow: inset 0 0 80px rgba(78,205,196,0.15), inset 0 0 30px rgba(78,205,196,0.1), 0 0 40px rgba(78,205,196,0.2);
+    }
+    @keyframes charSelectionPulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* Karartma — seçilmeyen taraf */
+    .char-pick-zone.dimmed {
+      background: rgba(5,5,16,0.6);
+    }
+
+    /* — MÜHÜR ROZETLERİ — Üstte */
+    .char-badge {
+      position: absolute;
+      top: max(45px, env(safe-area-inset-top));
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+      backdrop-filter: blur(12px);
+      z-index: 7;
+      animation: badgeReveal 0.8s ease-out 0.6s both;
+    }
+    .char-badge.badge-erkek {
+      left: 20%;
+      background: radial-gradient(circle, rgba(255,107,53,0.25), rgba(255,107,53,0.05));
+      border: 2px solid rgba(255,107,53,0.6);
+      box-shadow: 0 0 18px rgba(255,107,53,0.4), inset 0 0 8px rgba(255,107,53,0.15);
+      color: #ff6b35;
+    }
+    .char-badge.badge-kadin {
+      right: 20%;
+      background: radial-gradient(circle, rgba(78,205,196,0.25), rgba(78,205,196,0.05));
+      border: 2px solid rgba(78,205,196,0.6);
+      box-shadow: 0 0 18px rgba(78,205,196,0.4), inset 0 0 8px rgba(78,205,196,0.15);
+      color: #4ecdc4;
+    }
+    @keyframes badgeReveal {
+      0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    /* — TAŞ TOZU PARÇACIKLARI — */
+    .char-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .char-particles span {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: charParticle 4s ease-in-out infinite;
+      background: radial-gradient(circle, #ffd194, #c4a35a);
+      box-shadow: 0 0 6px rgba(255,209,148,0.5);
+    }
+    @keyframes charParticle {
+      0% { opacity: 0; transform: translateY(0) scale(0.5); }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.15; }
+      100% { opacity: 0; transform: translateY(-120px) scale(0); }
+    }
+
+    /* — İSİM ETİKETLERİ — Kadim taş plaket */
+    .char-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 60px 16px 16px;
+      background: linear-gradient(0deg, rgba(5,5,16,0.95) 0%, rgba(5,5,16,0.6) 50%, transparent 100%);
+      z-index: 8;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      gap: 8px;
+      animation: fadeUp 0.6s ease-out 0.4s both;
+    }
+    .char-label-item {
+      text-align: center;
+      flex: 1;
+      padding: 0 8px;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .char-label-item .label-name {
+      font-size: clamp(1.2rem, 5.5vw, 1.7rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      transition: text-shadow 0.5s ease;
+      animation: fadeUp 0.5s ease-out 0.5s both;
+    }
+    .char-label-item.label-erkek .label-name {
+      color: #ff6b35;
+      text-shadow: 0 0 20px rgba(255,107,53,0.3);
+    }
+    .char-label-item.label-kadin .label-name {
+      color: #4ecdc4;
+      text-shadow: 0 0 20px rgba(78,205,196,0.3);
+    }
+    .char-label-item .label-role {
+      font-size: clamp(0.5rem, 1.9vw, 0.6rem);
+      color: rgba(255,209,148,0.5);
+      margin-top: 3px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .char-label-item .label-title {
+      font-size: 0.55rem;
+      color: #c4a35a;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+    .char-label-item .label-quote {
+      font-size: 0.52rem;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+      margin-top: 5px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease 0.3s, opacity 0.5s ease 0.3s;
+    }
+
+    /* Seçili etiket — element glow */
+    .char-label-item.selected .label-name {
+      text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+    }
+    .char-label-item.selected .label-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .char-label-item.selected .label-quote {
+      opacity: 1;
+      max-height: 60px;
+    }
+    .char-label-item.dimmed {
+      opacity: 0.3;
+      transform: scale(0.95);
+    }
+
+    /* — SEÇİM DALGASI — */
+    .selection-wave {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .selection-wave.active {
+      animation: charSelectionWave 1s ease-out forwards;
+    }
+    @keyframes charSelectionWave {
+      0% { opacity: 0; transform: scale(0.3); }
+      40% { opacity: 0.5; }
+      100% { opacity: 0; transform: scale(2.5); }
+    }
+
+    /* — ALT BUTONLAR — Kadim taş plaket */
+    .char-footer {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 16px max(14px, env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, rgba(5,5,16,0.98) 0%, rgba(5,5,16,0.7) 70%, transparent 100%);
+      z-index: 10;
+      animation: fadeUp 0.6s ease-out 0.6s both;
+    }
+    .char-sig {
+      /* v9.12: akış içi — buton plakasıyla çakışma yok (Patron: kayık imza düzeltmesi) */
+      text-align: center;
+      padding: 0 0 max(6px, env(safe-area-inset-bottom));
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.12);
+      position: relative;
+      z-index: 3;
+      flex-shrink: 0;
+    }
+
+    .pick-erkek { --accent: #ffd194; }
+    .pick-kadin { --accent: #ffd194; }
+    .footer-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding-bottom: 10px;
+    }
+
+        /* ========== SPIRIT PICK v9.2 — STONEBREAKING EVRENİ SİNEMATİK RUH SEÇİMİ ========== */
+    #screen-spirit {
+      background: #050510;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+      height: 100dvh;
+    }
+    #screen-spirit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #screen-spirit > * { position: relative; z-index: 1; }
+
+    /* M-018: ruh ekranı başlığı karakter ekranı bileşeniyle birleşti — .char-header ortak oldu */
+    #screen-spirit .char-header { flex-shrink: 0; }
+
+    /* — SİNEMATİK SAHNE — */
+    .spirit-cinema {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spirit-cinema-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: brightness(0.85);
+      transition: opacity 0.6s ease, filter 0.5s ease;
+    }
+    /* 5 SAHNE: default (4lü) + 4 ruh */
+    .bg-default-img { opacity: 1; z-index: 1; animation: spiritBgReveal 1.5s ease-out both; }
+    .bg-kor-img { opacity: 0; z-index: 2; }
+    .bg-baam-img { opacity: 0; z-index: 2; }
+    .bg-mand-img { opacity: 0; z-index: 2; }
+    .bg-zepy-img { opacity: 0; z-index: 2; }
+    @keyframes spiritBgReveal {
+      0% { opacity: 0; transform: scale(1.08); filter: brightness(0.3); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(0.85); }
+    }
+
+    /* Hover/Seçim sahne geçişleri */
+    .spirit-cinema.hover-kor .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-kor .bg-kor-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.hover-baam .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-baam .bg-baam-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.hover-mand .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-mand .bg-mand-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.hover-zepy .bg-default-img { opacity: 0; }
+    .spirit-cinema.hover-zepy .bg-zepy-img { opacity: 1; filter: brightness(0.9); }
+    .spirit-cinema.bg-kor .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-kor .bg-kor-img { opacity: 1; filter: brightness(0.95); }
+    .spirit-cinema.bg-baam .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-baam .bg-baam-img { opacity: 1; filter: brightness(0.95); }
+    .spirit-cinema.bg-mand .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-mand .bg-mand-img { opacity: 1; filter: brightness(0.95); }
+    .spirit-cinema.bg-zepy .bg-default-img { opacity: 0; }
+    .spirit-cinema.bg-zepy .bg-zepy-img { opacity: 1; filter: brightness(0.95); }
+
+    /* — ELEMENT PARÇACIKLARI — */
+    .spirit-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .spirit-particles span {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: spiritParticle 4s ease-in-out infinite;
+      background: radial-gradient(circle, #ffd194, #c4a35a);
+      box-shadow: 0 0 6px rgba(255,209,148,0.5);
+    }
+    @keyframes spiritParticle {
+      0% { opacity: 0; transform: translateY(0) scale(0.5); }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.15; }
+      100% { opacity: 0; transform: translateY(-120px) scale(0); }
+    }
+
+    /* — RUH KARTLARI — Alt kısımda yatay sıralı, kadim taş plaket */
+    .spirit-cards-row {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 8px 10px;
+      background: linear-gradient(0deg, rgba(5,5,16,0.95) 0%, rgba(5,5,16,0.6) 60%, transparent 100%);
+      z-index: 8;
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .spirit-cards-row .spirit-card {
+      position: relative;
+      flex: 1;
+      max-width: 100px;
+      padding: 10px 4px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px solid rgba(255,209,148,0.12);
+      background: rgba(5,5,16,0.6);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+      overflow: visible;
+    }
+    .spirit-card .spirit-card-glow {
+      position: absolute;
+      inset: -2px;
+      border-radius: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .pick-kor .spirit-card-glow { box-shadow: 0 0 25px rgba(255,107,53,0.4); }
+    .pick-baam .spirit-card-glow { box-shadow: 0 0 25px rgba(78,205,196,0.4); }
+    .pick-mand .spirit-card-glow { box-shadow: 0 0 25px rgba(196,163,90,0.4); }
+    .pick-zepy .spirit-card-glow { box-shadow: 0 0 25px rgba(168,216,234,0.4); }
+    .spirit-card:hover .spirit-card-glow { opacity: 1; }
+
+    .spirit-card .spirit-info .name {
+      font-size: clamp(0.72rem, 3vw, 0.95rem);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 15px currentColor;
+    }
+    .spirit-card .spirit-info .role {
+      font-size: 0.45rem;
+      color: rgba(255,209,148,0.45);
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+    }
+    .spirit-card .spirit-info .spirit-quote-inline {
+      font-size: 0.42rem;
+      color: rgba(255,255,255,0.25);
+      font-style: italic;
+      margin-top: 3px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.5s ease;
+    }
+    .spirit-card.selected .spirit-quote-inline {
+      opacity: 1;
+      max-height: 40px;
+    }
+
+    /* Mühür rozeti — ◆ element renkli */
+    .spirit-card .spirit-badge {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 0.65rem;
+      backdrop-filter: blur(10px);
+      z-index: 3;
+    }
+    .pick-kor .spirit-badge {
+      background: radial-gradient(circle, rgba(255,107,53,0.35), rgba(255,107,53,0.05));
+      border: 1.5px solid rgba(255,107,53,0.7);
+      box-shadow: 0 0 10px rgba(255,107,53,0.4);
+      color: #ff6b35;
+    }
+    .pick-baam .spirit-badge {
+      background: radial-gradient(circle, rgba(78,205,196,0.35), rgba(78,205,196,0.05));
+      border: 1.5px solid rgba(78,205,196,0.7);
+      box-shadow: 0 0 10px rgba(78,205,196,0.4);
+      color: #4ecdc4;
+    }
+    .pick-mand .spirit-badge {
+      background: radial-gradient(circle, rgba(196,163,90,0.35), rgba(196,163,90,0.05));
+      border: 1.5px solid rgba(196,163,90,0.7);
+      box-shadow: 0 0 10px rgba(196,163,90,0.4);
+      color: #c4a35a;
+    }
+    .pick-zepy .spirit-badge {
+      background: radial-gradient(circle, rgba(168,216,234,0.35), rgba(168,216,234,0.05));
+      border: 1.5px solid rgba(168,216,234,0.7);
+      box-shadow: 0 0 10px rgba(168,216,234,0.4);
+      color: #a8d8ea;
+    }
+    .pick-kor { --accent: #ff6b35; }
+    .pick-baam { --accent: #4ecdc4; }
+    .pick-mand { --accent: #c4a35a; }
+    .pick-zepy { --accent: #a8d8ea; }
+
+    /* Seçim — element kenarlık + glow */
+    .spirit-card.selected {
+      transform: scale(1.08);
+      border-color: var(--accent);
+      background: rgba(5,5,16,0.8);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent), inset 0 0 15px color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+    .spirit-card.selected .spirit-card-glow { opacity: 1; }
+    .spirit-card.dimmed {
+      transform: scale(0.92);
+      opacity: 0.35;
+      filter: brightness(0.5);
+    }
+
+    /* — KİLİTLİ RUH — görsel önizleme var ama seçilemez */
+    .spirit-card.locked {
+      position: relative;
+    }
+    .spirit-card.locked::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: rgba(5,5,16,0.45);
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .spirit-card.locked:hover::before {
+      background: rgba(5,5,16,0.2);
+    }
+    .spirit-card.locked .spirit-lock {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      z-index: 5;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
+      pointer-events: none;
+    }
+    .spirit-card.locked:hover .spirit-lock {
+      opacity: 0.3;
+    }
+    .spirit-card.locked .spirit-info .name {
+      opacity: 0.5;
+    }
+    .spirit-card.locked .spirit-info .role {
+      opacity: 0.4;
+    }
+    .spirit-card.locked .spirit-badge {
+      opacity: 0.3;
+    }
+    .spirit-card.locked .spirit-card-glow {
+      opacity: 0 !important;
+    }
+    /* Kilitli karta tıklayınca uyarı toast */
+    .spirit-lock-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 8px 14px;
+      background: rgba(5,5,16,0.9);
+      border: 1px solid rgba(255,209,148,0.3);
+      border-radius: 8px;
+      color: #ffd194;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+      animation: lockToastFade 2s ease-out forwards;
+      white-space: nowrap;
+    }
+    @keyframes lockToastFade {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      70% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+    }
+
+    .spirit-footer {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 6px 16px max(10px, env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, rgba(5,5,16,0.98) 0%, rgba(5,5,16,0.7) 70%, transparent 100%);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .spirit-sig {
+      /* v9.12: akış içi — buton plakasıyla çakışma yok */
+      text-align: center;
+      padding: 0 0 max(6px, env(safe-area-inset-bottom));
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.15);
+      position: relative;
+      z-index: 3;
+      flex-shrink: 0;
+    }
+
+    /* ========== GAME v5.2 — single film stage (tray ON canvas) ========== */
+    #screen-game {
+      background: #0a1f14;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: max(6px, env(safe-area-inset-top)) 10px 4px;
+      flex-shrink: 0;
+      z-index: 5;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), transparent);
+    }
+    .hud-left, .hud-right { display: flex; align-items: center; gap: 6px; }
+    .hud-right { gap: 4px; }
+    .btn-icon {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px; padding: 4px 10px; font-size: 1.1rem; cursor: pointer;
+      color: #ffd194; line-height: 1;
+    }
+    .energy-bar-wrap {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(0,0,0,0.3); border-radius: 6px; padding: 2px 6px;
+    }
+    .energy-bar {
+      width: 52px; height: 8px; background: rgba(255,255,255,0.08);
+      border-radius: 4px; overflow: hidden;
+    }
+    .energy-fill {
+      height: 100%; width: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, #ff6b35, #ffd194);
+      transition: width 0.3s ease;
+    }
+    .energy-text { font-size: 0.65rem; color: #ffd194; font-weight: 800; min-width: 20px; }
+    .iq-badge {
+      font-weight: 900;
+      font-size: clamp(1.05rem, 4.5vw, 1.25rem);
+      color: #ffd194;
+      text-shadow: 0 0 14px rgba(255, 209, 148, 0.6);
+      letter-spacing: 1px;
+    }
+    .iq-badge span { color: #ffb347; }
+    .spirit-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .spirit-chip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+    /* HTML tray removed — drawn inside canvas for fly-to-slot */
+    .match-tray { display: none !important; }
+
+    .hud-mini {
+      display: flex;
+      justify-content: center;
+      gap: clamp(14px, 6vw, 28px);
+      padding: 2px 8px 6px;
+      font-size: 0.8rem;
+      color: #9ab0a0;
+      flex-shrink: 0;
+    }
+    .hud-mini b { color: #ffd194; font-weight: 800; }
+
+    /* ONE stage fills rest of phone */
+    .canvas-wrap {
+      flex: 1 1 auto;
+      width: 100%;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      min-height: 0;
+      position: relative;
+      background: #0f241a;
+      /* Siyah ekran garantisi: canvas yüklene kadar gradient var */
+      background-image: radial-gradient(ellipse at 50% 40%, #1a3a2e, #0f241a);
+    }
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      background: #0f241a;
+      background-image: radial-gradient(ellipse at 50% 40%, #1a3a2e, #0f241a);
+    }
+    .controls {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: nowrap;
+      padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.35);
+      border-top: 1px solid rgba(255,209,148,0.08);
+    }
+    .power-btn {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,209,148,0.28);
+      background: radial-gradient(circle at 40% 30%, #3a2a18, #1a120a);
+      color: #ffd194;
+      font-size: 1.4rem;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .power-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .power-btn .badge {
+      position: absolute; top: -2px; right: -2px;
+      min-width: 22px; height: 22px; padding: 0 5px;
+      border-radius: 999px; background: #e74c3c; color: #fff;
+      font-size: 0.72rem; font-weight: 800;
+      display: grid; place-items: center;
+      border: 2px solid #1a120a;
+    }
+    .power-btn.locked .badge { background: #555; }
+    .power-btn.locked::after {
+      content: '🔒';
+      position: absolute; inset: 0;
+      display: grid; place-items: center;
+      font-size: 0.9rem; opacity: 0.85;
+      background: rgba(0,0,0,0.25); border-radius: 50%;
+    }
+    .lvl-tag {
+      display: none; /* declutter mobile; level already in hud-mini */
+    }
+
+    /* Profile screen */
+    #screen-profile {
+      background: radial-gradient(ellipse at 50% 0%, #1a1030 0%, #07070f 65%);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px 28px;
+      overflow-y: auto;
+    }
+    .profile-card {
+      max-width: 420px; width: 100%; margin: 0 auto 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,209,148,0.18);
+      border-radius: 20px; padding: 18px;
+    }
+    .profile-head {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+    }
+    .profile-head img {
+      width: 72px; height: 72px; border-radius: 50%;
+      object-fit: cover; border: 2px solid rgba(255,209,148,0.45);
+    }
+    .profile-head h2 { font-size: 1.2rem; letter-spacing: 1px; }
+    .profile-head p { color: #9a9ab0; font-size: 0.85rem; margin-top: 4px; }
+    .profile-stats {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+    }
+    .profile-stats .ps {
+      background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .profile-stats .ps .l { font-size: 0.65rem; color: #777; text-transform: uppercase; letter-spacing: 1px; }
+    .profile-stats .ps .v { font-size: 1.15rem; font-weight: 800; color: #ffd194; margin-top: 2px; }
+    .profile-field { margin-top: 14px; }
+    .profile-field label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 6px; letter-spacing: 1px; }
+    .profile-field input {
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.35); color: #fff; font-size: 1rem;
+    }
+    .seal-track {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px;
+    }
+    .seal-track i {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid; place-items: center; font-style: normal; font-size: 0.85rem;
+    }
+    .seal-track i.on {
+      background: rgba(255,107,53,0.25);
+      border-color: rgba(255,209,148,0.45);
+      box-shadow: 0 0 12px rgba(255,107,53,0.35);
+    }
+
+    /* Victory overlay */
+    /* v9.9: AYARLAR OVERLAY */
+    #settings-overlay, #achievements-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 10px;
+    }
+    #settings-overlay.show, #achievements-overlay.show {
+      display: flex; animation: fadeIn 0.3s ease-out;
+    }
+    .settings-panel, .achievements-panel {
+      background: linear-gradient(180deg, #1a2a22, #0f1a14);
+      border: 1px solid rgba(255,209,148,0.2);
+      border-radius: 20px; padding: 24px 20px;
+      width: min(380px, 92%); max-height: 85vh; overflow-y: auto;
+    }
+    .settings-title, .achievements-title {
+      font-size: 1.3rem; font-weight: 900; color: #ffd194;
+      text-align: center; margin-bottom: 18px;
+    }
+    .settings-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #ccc; font-size: 0.9rem;
+    }
+    .btn-toggle {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px; padding: 8px 16px; font-size: 1.2rem; cursor: pointer;
+    }
+    .lang-switch { display: flex; gap: 4px; }
+    .btn-lang {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 6px 14px; font-size: 0.8rem; font-weight: 700;
+      color: #888; cursor: pointer;
+    }
+    .btn-lang.active { background: #ff6b35; color: #fff; border-color: #ff6b35; }
+    .btn-link {
+      color: #4ecdc4; text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    }
+    .settings-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 14px 0; }
+    .achievements-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .ach-item {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.04); border-radius: 12px; padding: 10px 12px;
+      border: 1px solid rgba(255,209,148,0.1);
+    }
+    .ach-item.unlocked { border-color: rgba(255,209,148,0.3); background: rgba(255,209,148,0.06); }
+    .ach-icon { font-size: 1.4rem; }
+    .ach-info { flex: 1; }
+    .ach-name { font-size: 0.85rem; font-weight: 700; color: #ffd194; }
+    .ach-desc { font-size: 0.7rem; color: #888; }
+
+    /* v9.9: AVATAR SEÇİMİ */
+    .avatar-pick-section {
+      margin-top: 14px;
+    }
+    .avatar-pick-section label {
+      font-size: 0.75rem; color: #888; letter-spacing: 1px; text-transform: uppercase;
+      display: block; margin-bottom: 8px;
+    }
+    .avatar-grid {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .avatar-option {
+      flex: 1; min-width: 60px; cursor: pointer;
+      background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,209,148,0.15);
+      border-radius: 12px; padding: 8px 4px; text-align: center;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .avatar-option:hover { border-color: rgba(255,209,148,0.4); transform: scale(1.05); }
+    .avatar-option.selected { border-color: #ffd194; background: rgba(255,209,148,0.1); }
+    .avatar-option img {
+      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+      display: block; margin: 0 auto 4px;
+    }
+    .avatar-option span { font-size: 0.6rem; color: #bbb; letter-spacing: 0.5px; }
+    .avatar-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .avatar-main { position: relative; }
+    .avatar-main img {
+      width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(255,209,148,0.3);
+    }
+
+    /* v9.9: SİNEMATİK KART OVERLAY */
+    #card-overlay {
+      position: fixed; inset: 0; z-index: 55;
+      background: rgba(0,0,0,0.92);
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+    }
+    #card-overlay.show { display: flex; animation: fadeIn 0.5s ease-out; }
+    .card-wrapper {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .card-frame {
+      position: relative; width: min(340px, 85vw); aspect-ratio: 9/16;
+      border-radius: 18px; overflow: hidden;
+      border: 3px solid rgba(255,209,148,0.5);
+      box-shadow: 0 0 50px rgba(255,107,53,0.4), 0 0 100px rgba(78,205,196,0.2), 0 0 150px rgba(196,163,90,0.15), inset 0 0 30px rgba(0,0,0,0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.4s ease;
+    }
+    .card-frame:hover { transform: scale(1.03) rotateY(5deg); }
+    .card-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .card-holo {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, 
+        rgba(255,107,53,0.18), rgba(78,205,196,0.18), 
+        rgba(196,163,90,0.18), rgba(168,216,234,0.18),
+        rgba(255,107,53,0.18));
+      background-size: 400% 400%;
+      animation: holoShift 2.5s ease infinite;
+      pointer-events: none; z-index: 2;
+      mix-blend-mode: screen;
+    }
+    @keyframes holoShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .card-shine {
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.12) 42%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.12) 58%, transparent 65%);
+      animation: shineMove 3.5s ease-in-out infinite;
+      pointer-events: none; z-index: 3;
+    }
+    @keyframes shineMove {
+      0% { transform: translateX(-120%); }
+      50%, 100% { transform: translateX(120%); }
+    }
+    .card-info { text-align: center; }
+    .card-badge {
+      font-size: 0.8rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;
+      background: linear-gradient(90deg, #ff6b35, #ffd194, #4ecdc4, #a8d8ea, #ff6b35);
+      background-size: 200% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 4px;
+      animation: badgeShift 2s linear infinite;
+    }
+    @keyframes badgeShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .card-desc { font-size: 0.85rem; color: #ddd; max-width: 300px; text-shadow: 0 0 8px rgba(255,107,53,0.3); }
+    .card-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+
+    #victory-overlay {
+      position: fixed; inset: 0; z-index: 1100;
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column;
+      background: radial-gradient(ellipse at 50% 40%, rgba(40,20,0,0.92), rgba(0,0,0,0.96));
+      text-align: center; padding: 24px;
+      color: #fff;
+    }
+    #victory-overlay.show { display: flex; animation: fadeIn 0.4s ease-out; }
+    #victory-overlay .v-title {
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ffd194, #ff6b35, #ffd194);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 10px 0 6px;
+      animation: sealExplode 0.8s ease-out both;
+    }
+    #victory-overlay .v-sub { color: #ffd194; font-size: 1.4rem; font-weight: 800; margin-bottom: 18px; }
+    .v-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      width: min(360px, 92%); margin: 0 auto 18px;
+    }
+    .v-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,209,148,0.2);
+      border-radius: 14px; padding: 12px 8px;
+    }
+    .v-stat .l { font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    .v-stat .v { font-size: 1.25rem; font-weight: 900; color: #ffd194; margin-top: 4px; }
+    .v-msg { color: #b0b0c0; max-width: 320px; line-height: 1.45; margin: 0 auto 20px; font-size: 0.92rem; }
+    .rank-pill {
+      display: inline-block; padding: 4px 12px; border-radius: 999px;
+      background: linear-gradient(90deg, #ff6b35, #ffd194); color: #1a0a00;
+      font-weight: 900; margin-left: 6px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, #1b120f 0%, #0d0705 100%);
+      color: #ffd194;
+      padding: 14px 28px;
+      border-radius: 3px;
+      border: 2px solid #a84e1b;
+      box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.8),
+        inset 0 0 10px rgba(255, 107, 53, 0.25);
+      font-weight: 800;
+      font-size: 0.88rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 8px rgba(255,107,53,0.5);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+        .skin-chip {
+      transition: all 0.25s ease;
+    }
+    .skin-chip.selected {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 10px rgba(255,107,53,0.35);
+      background: rgba(255,107,53,0.08) !important;
+    }
+
+    /* ========== ZİHİN HARİTASI v6.9 — Element Denge Görselleştirme ========== */
+    #mind-map-section {
+      margin-top: 14px;
+    }
+    #mind-map-label {
+      font-size: 0.75rem;
+      color: #888;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    #mind-map-canvas {
+      width: 100%;
+      height: 160px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,209,148,0.12);
+      display: block;
+    }
+    #mind-map-legend {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .mind-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.6rem;
+      color: #9a9ab0;
+    }
+    .mind-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    #mind-map-tip {
+      font-size: 0.58rem;
+      color: #666;
+      text-align: center;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    .sig {
+      text-align: center;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.22);
+      padding: 8px;
+    }
+  
+    /* ═══════ M-009: METİNSİZ SİNEMATİK SPLASH ═══════ */
+    /* FAZ 1 — BATUPIA STUDIOS: tam ekran mühür, dokunma hissi */
+    #screen-splash .studios-phase {
+      position: absolute; inset: 0; z-index: 20;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 42%, #17121f 0%, #060609 78%);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: opacity .5s ease, visibility 0s .55s;
+    }
+    #screen-splash .studios-phase.gone { opacity: 0; pointer-events: none; visibility: hidden; }
+    #screen-splash .studios-phase::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: url('06_GRAFIK/sahne_kozmos_batupia.jpg') center/cover no-repeat;
+      filter: blur(30px) brightness(.55); opacity: .4;
+    }
+    #screen-splash .studios-seal {
+      position: relative; z-index: 1;
+      width: min(86vw, 540px); height: auto; object-fit: contain;
+      /* v9.11.1r2: şeffaf PNG (oyulmuş) — blend/maske hilesi kaldırıldı */
+      filter: drop-shadow(0 0 44px rgba(255,150,64,0.55));
+      animation: studiosBreathe 3.2s ease-in-out infinite;
+      user-select: none; -webkit-user-drag: none; pointer-events: none;
+    }
+    #screen-splash .studios-phase.sealed .studios-seal { animation: studiosStamp .5s ease-out forwards; }
+    #screen-splash .studios-stamp {
+      position: absolute; width: 44vmin; height: 44vmin; border-radius: 50%;
+      border: 2px solid rgba(255,209,148,0.0); pointer-events: none;
+    }
+    #screen-splash .studios-phase.sealed .studios-stamp { animation: stampRing .55s ease-out forwards; }
+    #screen-splash .studios-touch {
+      position: absolute; bottom: 16vh; width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.28);
+      animation: touchRipple 1.8s ease-out infinite; pointer-events: none;
+    }
+    #screen-splash .studios-phase .byline-mini { position: absolute; bottom: 6vh; opacity: .55; }
+    @keyframes studiosBreathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+    @keyframes studiosStamp { 0% { transform: scale(1); } 35% { transform: scale(0.9); } 100% { transform: scale(1.06); filter: drop-shadow(0 0 60px rgba(255,209,148,0.9)); } }
+    @keyframes stampRing { 0% { box-shadow: 0 0 0 0 rgba(255,209,148,0.55); opacity: 1; } 100% { box-shadow: 0 0 60px 44px rgba(255,209,148,0); opacity: 0; } }
+    @keyframes touchRipple { 0% { transform: scale(0.6); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
+
+    /* M-012 kademe-1: Sonsuz Zihin Haritası */
+    #zihin-overlay { position: fixed; inset: 0; z-index: 1200; display: none; align-items: flex-end; justify-content: center; background: rgba(3,3,10,0.88); backdrop-filter: blur(6px); }
+    #zihin-overlay.show { display: flex; animation: fadeIn .3s ease-out; }
+    .zh-card { width: min(420px, 100%); max-height: 92vh; display: flex; flex-direction: column; background: linear-gradient(165deg, rgba(22,17,30,0.98), rgba(10,8,18,0.99)); border: 1.5px solid rgba(255,209,148,0.35); border-radius: 24px 24px 0 0; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 60px rgba(0,0,0,0.7); animation: fadeUp .35s ease both; }
+    .zh-head { display: flex; align-items: center; gap: 10px; }
+    .zh-title { font-weight: 900; letter-spacing: 1.5px; color: #ffd194; font-size: 1.05rem; text-shadow: 0 0 14px rgba(255,209,148,0.35); }
+    .zh-tas { margin-left: auto; display: flex; align-items: center; gap: 6px; color: #ffd194; font-weight: 800; font-size: 1.05rem; text-shadow: 0 0 10px rgba(255,209,148,0.5); }
+    .zh-kapa { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,209,148,0.3); color: #ffd194; width: 34px; height: 34px; border-radius: 50%; font-size: 1rem; cursor: pointer; }
+    .zh-stage { position: relative; width: 100%; aspect-ratio: 1/1.05; margin-top: 6px; }
+    .zh-line { position: absolute; height: 2px; transform-origin: 0 50%; background: linear-gradient(90deg, rgba(255,209,148,0.35), rgba(255,209,148,0.06)); }
+    .zh-line.on { background: linear-gradient(90deg, rgba(255,209,148,0.9), rgba(255,209,148,0.4)); filter: drop-shadow(0 0 4px rgba(255,209,148,0.5)); }
+    .zh-node { position: absolute; transform: translate(-50%, -50%); width: 58px; height: 58px; border-radius: 26%;
+      background: linear-gradient(145deg, #3a2f28, #191410 62%); border: 2px solid rgba(255,209,148,0.35);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.08), inset 0 -4px 8px rgba(0,0,0,0.5);
+      display: grid; place-items: center; transition: transform .18s ease, box-shadow .25s ease; cursor: pointer; }
+    .zh-node .zn-rune { font-size: 1.5rem; }
+    .zh-node .zn-ad { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); font-size: .55rem; letter-spacing: .5px; color: rgba(245,237,217,0.75); white-space: nowrap; }
+    .zh-node .zn-cost { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffe3b3, #c98f3d); color: #241505; font-size: .68rem; font-weight: 900; display: grid; place-items: center; box-shadow: 0 0 10px rgba(255,209,148,0.55); }
+    .zh-node.acik { border-color: #ffd194; box-shadow: 0 0 18px rgba(255,209,148,0.45), 0 6px 14px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(0,0,0,0.5); }
+    .zh-node.acik .zn-rune { filter: drop-shadow(0 0 8px rgba(255,209,148,0.8)); }
+    .zh-node.uygun { border-color: rgba(255,209,148,0.75); animation: muhurPulse 2.4s ease-in-out infinite; }
+    .zh-node.uygun:active { transform: translate(-50%,-50%) scale(0.94); }
+    .zh-node.kilit { opacity: .45; filter: grayscale(0.65); }
+    .zh-foot { margin-top: 8px; text-align: center; font-size: .62rem; letter-spacing: 1px; color: rgba(255,209,148,0.55); }
+    @media (prefers-reduced-motion: reduce) { .zh-node.uygun { animation: none; } }
+
+    /* M-013 kademe-1: ruh geri-dönüş mesajı (toast) */
+    #ruh-toast {
+      position: fixed; left: 50%; bottom: 6vh; transform: translateX(-50%) translateY(24px);
+      z-index: 90; min-width: 240px; max-width: 86vw;
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; border-radius: 16px;
+      background: linear-gradient(160deg, rgba(20,16,26,0.94), rgba(8,8,16,0.96));
+      border: 1.5px solid var(--rc, #ffd194);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.55), 0 0 24px var(--rc, rgba(255,209,148,0.25));
+      opacity: 0; pointer-events: none; cursor: pointer;
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    #ruh-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    #ruh-toast .rc-emoji { font-size: 1.8rem; filter: drop-shadow(0 0 10px var(--rc, #ffd194)); }
+    #ruh-toast .rc-text { font-size: .85rem; line-height: 1.45; color: #f5edd9; letter-spacing: .3px; }
+    #ruh-toast .rc-sub { display: block; margin-top: 4px; font-size: .68rem; color: var(--rc, #ffd194); opacity: .85; letter-spacing: 1px; }
+    @media (prefers-reduced-motion: reduce) { #ruh-toast { transition: none; } }
+
+    /* FAZ 2 — Macera kapısı: metinsiz rune taşları */
+    #screen-splash .rune-gate {
+      position: relative; z-index: 6; display: flex; gap: 22px;
+      align-items: center; justify-content: center; margin-top: 3.5vh;
+    }
+    .rune-stone {
+      position: relative; width: 84px; height: 84px; border-radius: 24%;
+      background: linear-gradient(145deg, #3a2f28, #191410 62%);
+      border: 2px solid rgba(255,209,148,0.55);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 2px 6px rgba(255,255,255,0.10), inset 0 -4px 8px rgba(0,0,0,0.55);
+      color: #ffd194; font-size: 30px; display: grid; place-items: center;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, box-shadow .18s ease;
+      animation: runeBreath 2.6s ease-in-out infinite;
+    }
+    .rune-stone:active { transform: scale(0.92); }
+    .rune-stone .rune-symbol { position: relative; z-index: 2; text-shadow: 0 0 14px rgba(255,209,148,0.9); }
+    .rune-stone .rune-pulse {
+      position: absolute; inset: -6px; border-radius: 26%;
+      border: 2px solid rgba(255,209,148,0.35); animation: runeRing 2.6s ease-out infinite;
+    }
+    .rune-stone.endless { border-color: rgba(199,125,255,0.6); color: #c77dff; font-size: 32px; }
+    .rune-stone.endless .rune-pulse { border-color: rgba(199,125,255,0.35); }
+    .rune-stone.cracking { animation: stoneCrack .56s ease-in forwards; pointer-events: none; }
+    @keyframes runeBreath { 0%,100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+    @keyframes runeRing { 0% { transform: scale(0.9); opacity: .9; } 100% { transform: scale(1.35); opacity: 0; } }
+    @keyframes stoneCrack {
+      0% { transform: scale(1); filter: brightness(1); }
+      30% { transform: scale(0.94) rotate(-2deg); filter: brightness(1.5); }
+      55% { transform: scale(1.03) rotate(2deg); filter: brightness(2.2); }
+      100% { transform: scale(1.12); filter: brightness(3); opacity: 0.65; }
+    }
+    /* Mühür kırılma parlaması — tam ekran beyaz-altın flaş */
+    #screen-splash .crack-flash {
+      position: absolute; inset: 0; z-index: 15; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at 50% 62%, rgba(255,236,190,0.95) 0%, rgba(255,209,148,0.5) 34%, rgba(0,0,0,0) 68%);
+    }
+    #screen-splash .crack-flash.show { animation: crackFlash .56s ease-out forwards; }
+    @keyframes crackFlash { 0% { opacity: 0; } 30% { opacity: .9; } 100% { opacity: 0; } }
+
+    /* M-009: eski yazılı buton kuşağı kaldırıldı — yazı yok, taş var */
+    #screen-splash .splash-actions { display: none !important; }
+
+
+    /* ═══════ M-010: "BU DAHA BAŞLANGIÇ…" SEKANSI ═══════ */
+    #baslangic-overlay {
+      position: fixed; inset: 0; z-index: 90; display: grid; place-items: center;
+      background: radial-gradient(ellipse at 50% 45%, #141020 0%, #050508 70%);
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .5s ease, visibility 0s .55s;
+    }
+    #baslangic-overlay.show { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity .5s ease; }
+    #baslangic-overlay .bs-stage {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      opacity: 0; transform: scale(.96); pointer-events: none;
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    #baslangic-overlay .bs-stage.on { opacity: 1; transform: scale(1); }
+    /* FAZ 1 — 4 mühür kartı yan yana, mühür titreşimi */
+    #baslangic-overlay .bs-cards { display: flex; gap: clamp(6px, 2vw, 14px); align-items: center; justify-content: center; }
+    #baslangic-overlay .bs-card {
+      width: clamp(64px, 19vw, 128px); border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.65), 0 0 18px rgba(255,209,148,.25);
+      opacity: 0; transform: translateY(26px) scale(.9);
+      animation: bsCardIn .7s ease-out forwards, bsCardTremble 1.1s ease-in-out .75s infinite;
+    }
+    @keyframes bsCardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes bsCardTremble {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-2px) rotate(-.6deg); }
+      75% { transform: translateY(2px) rotate(.6deg); }
+    }
+    /* FAZ 2 — kararır, slogan yankılanır (telifli slogan ©) */
+    #baslangic-overlay .bs-slogan {
+      font-size: clamp(1.25rem, 5.4vw, 2.1rem); color: #ffd194; letter-spacing: .14em;
+      text-shadow: 0 0 18px rgba(255,209,148,.65), 0 2px 8px rgba(0,0,0,.8);
+      min-height: 1.4em; text-align: center; padding: 0 6vw;
+    }
+    #baslangic-overlay .bs-slogan::after { content: '▌'; animation: bsCaret .8s steps(1) infinite; color: rgba(255,209,148,.7); }
+    @keyframes bsCaret { 50% { opacity: 0; } }
+    /* FAZ 3 — Sonsuzluk Kapısı ışıkla açılır */
+    #baslangic-overlay .bs-gate {
+      width: min(74vw, 340px); border-radius: 18px;
+      box-shadow: 0 0 60px rgba(199,125,255,.45), 0 12px 40px rgba(0,0,0,.7);
+      animation: bsGateOpen 1.6s ease-out both;
+    }
+    #baslangic-overlay .bs-inf {
+      position: absolute; bottom: 16vh; font-size: 3rem; color: #c77dff;
+      text-shadow: 0 0 24px rgba(199,125,255,.95); animation: runeBreath 2.2s ease-in-out infinite;
+    }
+    @keyframes bsGateOpen {
+      0% { opacity: 0; transform: scale(.82); filter: brightness(.4); }
+      55% { opacity: 1; transform: scale(1.04); filter: brightness(1.7); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    }
+    /* Sonsuzluğa giriş taşı (metinsiz ∞ rune) */
+    #baslangic-overlay .bs-continue {
+      position: absolute; bottom: 6vh; left: 50%; transform: translateX(-50%) scale(.6);
+      opacity: 0; pointer-events: none; transition: opacity .5s ease .2s, transform .5s ease .2s;
+      z-index: 5;
+    }
+    #baslangic-overlay .bs-continue.on { opacity: 1; transform: translateX(-50%) scale(1); pointer-events: auto; }
+    #baslangic-overlay .bs-skip { position: absolute; top: 3vh; right: 4vw; opacity: .25; font-size: .9rem; color: #ffd194; }
+
+
+    /* ═══════ M-011: IQ TESTİ ═══════ */
+    #iqtest-overlay {
+      position: fixed; inset: 0; z-index: 92; display: grid; place-items: center;
+      background: radial-gradient(ellipse at 50% 40%, rgba(20,16,32,0.94) 0%, rgba(5,5,8,0.98) 75%);
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .45s ease, visibility 0s .5s;
+    }
+    #iqtest-overlay.show { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity .45s ease; }
+    #iqtest-overlay .iq-card { width: min(92vw, 420px); display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+    #iqtest-overlay .iq-head { display: flex; align-items: center; gap: 14px; width: 100%; justify-content: center; position: relative; }
+    #iqtest-overlay .iq-name { font-size: .72rem; letter-spacing: .3em; color: #c77dff; opacity: .85; text-shadow: 0 0 12px rgba(199,125,255,.6); }
+    #iqtest-overlay .iq-dots { display: flex; gap: 8px; }
+    #iqtest-overlay .iq-dot { width: 10px; height: 10px; border-radius: 50%; background: #3a3138; transition: all .3s; }
+    #iqtest-overlay .iq-dot.on { background: #ffd194; box-shadow: 0 0 10px rgba(255,209,148,.9); }
+    #iqtest-overlay .iq-skip { position: absolute; right: 0; font-size: 1rem; color: #8a8090; cursor: pointer; padding: 6px; }
+    #iqtest-overlay .iq-stage-title { font-size: 1.05rem; color: #ffd194; letter-spacing: .08em; text-shadow: 0 0 14px rgba(255,209,148,.5); }
+    #iqtest-overlay .iq-hint { font-size: .8rem; color: #b9aec4; text-align: center; min-height: 1.2em; }
+    #iqtest-overlay .iq-target-wrap { display: none; margin-top: 2px; }
+    #iqtest-overlay .iq-target-wrap img { width: 64px; height: 64px; border-radius: 14px; box-shadow: 0 0 18px rgba(255,209,148,.65), 0 6px 16px rgba(0,0,0,.6); animation: runeBreath 1.8s ease-in-out infinite; }
+    #iqtest-overlay .iq-arena { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; min-height: 190px; width: 100%; padding: 8px 0; }
+    #iqtest-overlay .iq-arena.seqmode { flex-direction: column; }
+    #iqtest-overlay .iq-pad {
+      width: 76px; height: 76px; border-radius: 20%; border: 2px solid rgba(255,209,148,0.4);
+      box-shadow: 0 5px 14px rgba(0,0,0,.55), inset 0 2px 5px rgba(255,255,255,.08), inset 0 -4px 7px rgba(0,0,0,.5);
+      display: grid; place-items: center; cursor: pointer; padding: 5px;
+      -webkit-tap-highlight-color: transparent; transition: transform .15s ease, box-shadow .2s ease;
+    }
+    #iqtest-overlay .iq-pad.small { width: 62px; height: 62px; }
+    #iqtest-overlay .iq-pad img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; border-radius: 14%; }
+    #iqtest-overlay .iq-pad:active { transform: scale(.92); }
+    #iqtest-overlay .iq-pad.lit { box-shadow: 0 0 26px rgba(255,209,148,1), 0 0 44px rgba(255,209,148,.5); border-color: #ffd194; transform: scale(1.07); }
+    #iqtest-overlay .iq-pad.hit { box-shadow: 0 0 26px rgba(124,255,178,.95); border-color: #7CFFB2; opacity: .55; }
+    #iqtest-overlay .iq-pad.shake { animation: iqShake .38s ease; }
+    @keyframes iqShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    #iqtest-overlay .iq-seqrow { display: flex; gap: 8px; justify-content: center; }
+    #iqtest-overlay .iq-cell { width: 54px; height: 54px; border-radius: 14%; background: #17131e; border: 1px solid rgba(255,209,148,.25); display: grid; place-items: center; overflow: hidden; }
+    #iqtest-overlay .iq-cell img { width: 100%; height: 100%; object-fit: contain; }
+    #iqtest-overlay .iq-cell.mystery { border: 2px dashed rgba(199,125,255,.75); color: #c77dff; font-size: 1.3rem; text-shadow: 0 0 12px rgba(199,125,255,.8); animation: runeBreath 2s infinite; }
+    #iqtest-overlay .iq-optrow { display: flex; gap: 14px; justify-content: center; margin-top: 14px; }
+    #iqtest-overlay .iq-barwrap { width: 100%; height: 4px; background: #221a2b; border-radius: 2px; overflow: hidden; }
+    #iqtest-overlay .iq-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #ffd194, #c77dff); border-radius: 2px; }
+    #iqtest-overlay .iq-result { display: none; flex-direction: column; align-items: center; gap: 8px; padding: 18px 0 4px; text-align: center; }
+    #iqtest-overlay .iq-result.on { display: flex; animation: bsCardIn .6s ease-out; }
+    #iqtest-overlay .iq-bonus-eye { font-size: .7rem; letter-spacing: .34em; color: #b9aec4; }
+    #iqtest-overlay .iq-bonus { font-size: 3rem; color: #ffd194; text-shadow: 0 0 26px rgba(255,209,148,.85); }
+    #iqtest-overlay .iq-tier { font-size: 1rem; letter-spacing: .22em; color: #c77dff; text-shadow: 0 0 14px rgba(199,125,255,.7); }
+    #iqtest-overlay .iq-avg { font-size: .85rem; color: #8fd8c9; }
+    #iqtest-overlay .iq-result .btn-ui { margin-top: 10px; }
+
+</style>
+</head>
+<body>
+
+  <!-- ========== 0. BATUPIA STUDIOS INTRO (SAHNE -1) — STONEBREAKING EVRENİ ========== -->
+  <section id="screen-studio-intro" class="screen active" aria-label="BATUPIA Studios">
+    <div class="studio-bg"></div>
+    <div class="studio-content">
+      <div class="studio-line-top"></div>
+      <!-- v9.9: BATUPIA logo görseli + CSS ◆ mühür -->
+      <div class="studio-logo-wrap" id="studio-logo">
+        <!-- v9.12.1 · M-019: elmas logo KALDIRILDI — kompozisyon sağa kayıktı (Patron 04.08); mühürlü seal tek BATUPIA görseli, wrap içinde tam ortalı -->
+        <img src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 0 40px rgba(255,150,64,0.5))" />
+        <div class="studio-muhur">◆</div>
+        <div class="studio-muhur-crack ates"></div>
+        <div class="studio-muhur-crack su"></div>
+        <div class="studio-muhur-crack toprak"></div>
+        <div class="studio-muhur-crack hava"></div>
+      </div>
+      <!-- v9.11.1 Patron 03.08: isim yazıları KALDIRILDI — logo görselinde zaten BATUPIA STUDIOS yazıyor (yineleme yok) -->
+      <div class="studio-line-bottom"></div>
+    </div>
+    <div class="studio-particles" id="studio-particles"></div>
+  </section>
+
+  <!-- ========== 1. AÇILIŞ — STONEBREAKING EVRENİ SİNEMATİK ========== -->
+  <section id="screen-splash" class="screen" aria-label="Açılış">
+    <div class="seal-backdrop" aria-hidden="true"></div>
+    <div class="particles" id="splash-particles"></div>
+
+    <!-- M-009 FAZ 2: STONEBREAKING SAHNE — mühürlü logo + metinsiz macera kapısı -->
+    <div class="splash-stage" id="splash-stage">
+      <div class="seal-aura" aria-hidden="true"></div>
+      <div class="seal-orbit" aria-hidden="true">
+        <i class="r ates"></i><i class="r su"></i><i class="r toprak"></i><i class="r hava"></i>
+      </div>
+      <div class="seal-frame">
+        <div class="seal-ring" aria-hidden="true"></div>
+        <div class="cin-stone" id="cin-stone" aria-hidden="true"></div>
+        <div class="cin-orb ates" id="orb-ates"></div>
+        <div class="cin-orb su" id="orb-su"></div>
+        <div class="cin-orb toprak" id="orb-toprak"></div>
+        <div class="cin-orb hava" id="orb-hava"></div>
+        <img src="06_GRAFIK/logo_stonebreaking_muhur_new.png" alt="STONEBREAKING" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 34px rgba(255,209,148,0.5))" /><!-- v9.12: büyütme hilesi kalktı — kalıp v2 görseli tuvalde gerçek ortalı -->
+        <div class="splash-logo-text" id="muhur-logo">
+          <div class="splash-logo-muhur">◆</div>
+          <div class="splash-logo-crack ates"></div>
+          <div class="splash-logo-crack su"></div>
+          <div class="splash-logo-crack toprak"></div>
+          <div class="splash-logo-crack hava"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M-009: Macera kapısı — metinsiz rune taşları (dokun → mühür kırılır) -->
+    <div class="rune-gate" id="rune-gate">
+      <button class="rune-stone primary" id="btn-start" type="button" aria-label="Maceraya başla" title="◆">
+        <span class="rune-symbol">◆</span>
+        <span class="rune-pulse" aria-hidden="true"></span>
+      </button>
+      <button class="rune-stone endless" id="btn-endless" style="display:none" type="button" aria-label="Sonsuz mod" title="∞">
+        <span class="rune-symbol">∞</span>
+        <span class="rune-pulse" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="crack-flash" id="crack-flash" aria-hidden="true"></div>
+
+    <!-- M-009 FAZ 1: BATUPIA STUDIOS — metinsiz, dokunma hissi; dokun → mühürlenir -->
+    <div class="studios-phase" id="studios-phase" role="button" tabindex="0" aria-label="BATUPIA Studios — dokun">
+      <div class="studios-stamp" aria-hidden="true"></div>
+      <img class="studios-seal" src="06_GRAFIK/logo_batupia_muhurlu_2_new_v2.png" alt="BATUPIA Studios" />
+      <div class="studios-touch" aria-hidden="true"></div>
+      <!-- v9.11.1 Patron 03.08: byline KALDIRILDI — mühürlü logoda isim yazıyor -->
+    </div>
+  </section>
+
+  <!-- ========== 2. KARAKTER SEÇİMİ v6.7 — YAN YANA Anime Portre ========== -->
+  <section id="screen-character" class="screen" aria-label="Karakter Seçimi">
+    <div class="char-header">
+      <h1>Stonebreaker'ını Seç</h1>
+      <div class="char-subtitle">Aynı Kader · İki Yol</div>
+    </div>
+
+    <!-- SİNEMATİK 3 SAHNE SİSTEMİ — İkili / Erkek / Kadın -->
+    <div class="char-cinema" id="char-cinema">
+      <img class="char-cinema-bg bg-default-img" src="06_GRAFIK/sinematik_01_ikili_tapinak.png" alt="Stonebreaker Kardeşler — Kadim Tapınak" />
+      <img class="char-cinema-bg bg-erkek-img" src="06_GRAFIK/sinematik_02_erkek_volkanik.png" alt="Erkek Stonebreaker — Volkanik Zirve" />
+      <img class="char-cinema-bg bg-kadin-img" src="06_GRAFIK/sinematik_03_kadin_okyanus.png" alt="Kadın Stonebreaker — Okyanus Derinlikler" />
+      
+      <!-- Taş tozu parçacıkları -->
+      <div class="char-particles" aria-hidden="true">
+        <span style="left:10%;bottom:20%;width:4px;height:4px;animation-delay:0s;animation-duration:3.5s"></span>
+        <span style="left:30%;bottom:15%;width:3px;height:3px;animation-delay:0.8s;animation-duration:4s"></span>
+        <span style="left:50%;bottom:25%;width:5px;height:5px;animation-delay:1.6s;animation-duration:3s"></span>
+        <span style="left:70%;bottom:10%;width:3px;height:3px;animation-delay:2.4s;animation-duration:4.5s"></span>
+        <span style="left:85%;bottom:30%;width:4px;height:4px;animation-delay:1.2s;animation-duration:3.8s"></span>
+        <span style="left:20%;bottom:40%;width:3px;height:3px;animation-delay:0.4s;animation-duration:4.2s"></span>
+        <span style="left:60%;bottom:35%;width:4px;height:4px;animation-delay:1.8s;animation-duration:3.5s"></span>
+        <span style="left:45%;bottom:45%;width:3px;height:3px;animation-delay:2.8s;animation-duration:4.8s"></span>
+      </div>
+
+      <!-- Element ayrım çizgisi — Ateş / Su -->
+      <div class="char-divider" aria-hidden="true"></div>
+
+      <!-- Sol seçim bölgesi — Erkek -->
+      <div class="char-pick-zone zone-erkek" data-mascot="erkek" data-ref="erkek" role="button" tabindex="0" aria-label="Erkek Stonebreaker'ı seç"></div>
+      <!-- Sağ seçim bölgesi — Kadın -->
+      <div class="char-pick-zone zone-kadin" data-mascot="kadin" data-ref="kadin" role="button" tabindex="0" aria-label="Kadın Stonebreaker'ı seç"></div>
+
+      <!-- Mühür rozetleri -->
+      <div class="char-badge badge-erkek">◆</div>
+      <div class="char-badge badge-kadin">◆</div>
+
+      <!-- İsim etiketleri -->
+      <div class="char-label">
+        <div class="char-label-item label-erkek">
+          <div class="label-name">ERKEK</div>
+          <div class="label-role">Stonebreaker</div>
+          <div class="label-title">◈ Taşın Oğlu · Mühür Kırıcı ◈</div>
+          <div class="label-quote">"Dört elementi kırarım, taşın sesini duyarım."</div>
+        </div>
+        <div class="char-label-item label-kadin">
+          <div class="label-name">KADIN</div>
+          <div class="label-role">Stonebreaker</div>
+          <div class="label-title">◈ Taşın Kızı · Mühür Kırıcı ◈</div>
+          <div class="label-quote">"Taş bana konuşur, elementler bana boyun eğer."</div>
+        </div>
+      </div>
+
+      <!-- Seçim dalgası efekti -->
+      <div class="selection-wave" id="selection-wave"></div>
+    </div>
+
+    <div class="char-footer">
+      <button class="btn-seal" type="button" id="btn-char-back"><span class="bs-rune">◆</span><span class="bs-label">Geri</span><span class="bs-rune">◆</span></button>
+      <button class="btn-seal primary" type="button" id="btn-char-next" disabled><span class="bs-rune">◈</span><span class="bs-label">Ruhunu Seç</span><span class="bs-rune">◈</span></button>
+    </div>
+    <div class="char-sig">by BATUPIA Studios</div>
+  </section>
+
+  <!-- ========== 3. RUH SEÇİMİ v9.2 — STONEBREAKING EVRENİ SİNEMATİK RUH SEÇİMİ ========== -->
+   <section id="screen-spirit" class="screen" aria-label="Ruh Seçimi">
+     <!-- M-018: karakter ekranıyla aynı başlık bileşeni — ortak sahne mantığı -->
+     <div class="char-header">
+       <h1>Element Ruhunu Seç</h1>
+       <div class="char-subtitle">4 Ruh · 12 Bölüm · Sonsuz Mühür</div>
+     </div>
+
+    <!-- SİNEMATİK 5 SAHNE SİSTEMİ — 4lü varsayılan + 4 ruh -->
+    <div class="spirit-cinema" id="spirit-cinema">
+      <img class="spirit-cinema-bg bg-default-img" src="06_GRAFIK/ruh_4lu_sinematik.png" alt="4 Element Ruhu — Kadim Tapınak" />
+      <img class="spirit-cinema-bg bg-kor-img" src="06_GRAFIK/ruh_kor_ates_sinematik.png" alt="Kor — Ateş Ruhu" />
+      <img class="spirit-cinema-bg bg-baam-img" src="06_GRAFIK/ruh_baam_su_sinematik.png" alt="Baam — Su Ruhu" />
+      <img class="spirit-cinema-bg bg-mand-img" src="06_GRAFIK/ruh_mand_toprak_sinematik.png" alt="Mand — Toprak Ruhu" />
+      <img class="spirit-cinema-bg bg-zepy-img" src="06_GRAFIK/ruh_zepy_hava_sinematik.png" alt="Zepy — Hava Ruhu" />
+
+      <!-- Element parçacıkları -->
+      <div class="spirit-particles" aria-hidden="true">
+        <span style="left:15%;bottom:25%;width:4px;height:4px;animation-delay:0s;animation-duration:3.5s"></span>
+        <span style="left:35%;bottom:15%;width:3px;height:3px;animation-delay:0.8s;animation-duration:4s"></span>
+        <span style="left:55%;bottom:30%;width:5px;height:5px;animation-delay:1.6s;animation-duration:3s"></span>
+        <span style="left:75%;bottom:10%;width:3px;height:3px;animation-delay:2.4s;animation-duration:4.5s"></span>
+        <span style="left:85%;bottom:35%;width:4px;height:4px;animation-delay:1.2s;animation-duration:3.8s"></span>
+        <span style="left:25%;bottom:45%;width:3px;height:3px;animation-delay:0.4s;animation-duration:4.2s"></span>
+        <span style="left:65%;bottom:40%;width:4px;height:4px;animation-delay:1.8s;animation-duration:3.5s"></span>
+        <span style="left:45%;bottom:50%;width:3px;height:3px;animation-delay:2.8s;animation-duration:4.8s"></span>
+      </div>
+
+      <!-- 4 Ruh kartı — üstte sıralı -->
+      <div class="spirit-cards-row" id="spirit-grid">
+        <div class="spirit-card pick-kor" data-spirit="kor" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#ff6b35">KOR</div>
+            <div class="role">Ateş · Erkek · Bölüm 1-3</div>
+            <div class="spirit-quote-inline">"Ateşten doğarım, küllerden dirilirim."</div>
+          </div>
+        </div>
+        <div class="spirit-card pick-baam locked" data-spirit="baam" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <span class="spirit-lock">🔒</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#4ecdc4">BAAM</div>
+            <div class="role">Su · Kadın · Bölüm 4-6</div>
+            <div class="spirit-quote-inline">"Derinliklerin sesi, dalgaların gücü."</div>
+          </div>
+        </div>
+        <div class="spirit-card pick-mand locked" data-spirit="mand" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <span class="spirit-lock">🔒</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#c4a35a">MAND</div>
+            <div class="role">Toprak · Erkek · Bölüm 7-9</div>
+            <div class="spirit-quote-inline">"Taşın kalbi, toprağın hafızası."</div>
+          </div>
+        </div>
+        <div class="spirit-card pick-zepy locked" data-spirit="zepy" role="button" tabindex="0">
+          <span class="spirit-badge">◆</span>
+          <span class="spirit-lock">🔒</span>
+          <div class="spirit-card-glow"></div>
+          <div class="spirit-info">
+            <div class="name" style="color:#a8d8ea">ZEPY</div>
+            <div class="role">Hava · Kadın · Bölüm 10-12</div>
+            <div class="spirit-quote-inline">"Rüzgarın nefesi, gökyüzünün özgürlüğü."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spirit-footer">
+      <button class="btn-seal" type="button" id="btn-spirit-back"><span class="bs-rune">◆</span><span class="bs-label">Geri</span><span class="bs-rune">◆</span></button>
+      <button class="btn-seal primary" type="button" id="btn-spirit-next" disabled><span class="bs-rune">◈</span><span class="bs-label">Maceraya Gir</span><span class="bs-rune">◈</span></button>
+    </div>
+    <div class="spirit-sig">by BATUPIA Studios</div>
+  </section>
+
+  <!-- ========== 4. OYUN ========== -->
+  <section id="screen-game" class="screen" aria-label="Oyun">
+    <div class="game-top">
+      <!-- SOL: Profil + Enerji Barı -->
+      <div class="hud-left">
+        <div class="spirit-chip" id="spirit-chip" role="button" tabindex="0" title="Profil">
+          <img id="chip-img" src="06_GRAFIK/kor_ates_ruhu.png" alt="" />
+          <span id="chip-text">Kor</span>
+        </div>
+        <div class="energy-bar-wrap">
+          <div class="energy-bar" id="energy-bar"><div class="energy-fill" id="energy-fill"></div></div>
+          <span class="energy-text" id="energy-text">100</span>
+        </div>
+      </div>
+      <!-- ORTA: IQ -->
+      <div class="iq-badge">IQ: <span id="hud-iq">40</span></div>
+      <!-- SAĞ: Başarılar + Ayarlar -->
+      <div class="hud-right">
+        <button class="btn-icon" type="button" id="btn-achievements" aria-label="Başarılar">🏆</button>
+        <button class="btn-icon" type="button" id="btn-settings" aria-label="Ayarlar">⚙️</button>
+      </div>
+    </div>
+
+    <div class="hud-mini">
+      <div id="hud-element">🔥 Ateş</div>
+      <div>Bölüm <b id="hud-level">1</b></div>
+      <div>Mühür <b id="hud-seals">0</b></div>
+      <div>Nefes <b id="hud-combo">0</b></div>
+    </div>
+
+    <!-- Tepsi + tahta AYNI canvas (taşlar tepsiye uçar) -->
+    <div class="canvas-wrap" id="canvas-wrap">
+      <canvas id="gameCanvas" width="390" height="640"></canvas>
+    </div>
+    <!-- gizli mirror (API uyumu) -->
+    <div class="match-tray" id="match-tray" aria-hidden="true"></div>
+
+    <div class="controls">
+      <button class="power-btn locked" type="button" id="btn-shuffle" title="Karıştır" aria-label="Karıştır">
+        🔀<span class="badge" id="badge-shuffle">0</span>
+      </button>
+      <button class="power-btn" type="button" id="btn-hint" title="İpucu" aria-label="İpucu">
+        💡<span class="badge" id="badge-hint">1</span>
+      </button>
+      <button class="power-btn" type="button" id="btn-undo" title="Geri al" aria-label="Geri al">
+        ↩<span class="badge" id="badge-undo">1</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========== 5. PROFİL ========== -->
+  <section id="screen-profile" class="screen" aria-label="Profil">
+    <div class="screen-header">
+      <div class="brand-logo sm">STONEBREAKING</div>
+      <h1>Mühür Profili</h1>
+      <p>Yolculuğun · ruhun · nefesin</p>
+    </div>
+    <div class="profile-card">
+      <div class="profile-head">
+        <div class="avatar-main" id="avatar-main">
+          <img id="prof-avatar" src="06_GRAFIK/kor_ates_ruhu.png" alt="Avatar" />
+        </div>
+        <div>
+          <h2 id="prof-name">Gezgin</h2>
+          <p id="prof-spirit">Ruh seçilmedi</p>
+        </div>
+      </div>
+      <!-- v9.9: AVATAR SEÇİMİ — 4 element anime + foto yükle -->
+      <div class="avatar-pick-section">
+        <label>Avatar Seç</label>
+        <div class="avatar-grid">
+          <div class="avatar-option" data-avatar="06_GRAFIK/kor_ates_ruhu.png" data-element="ates">
+            <img src="06_GRAFIK/kor_ates_ruhu.png" alt="Kor" />
+            <span>🔥 Kor</span>
+          </div>
+          <div class="avatar-option" data-avatar="06_GRAFIK/baam_su_ruhu.png" data-element="su">
+            <img src="06_GRAFIK/baam_su_ruhu.png" alt="Baam" />
+            <span>💧 Baam</span>
+          </div>
+          <div class="avatar-option" data-avatar="06_GRAFIK/mand_toprak_ruhu_erkek.png" data-element="toprak">
+            <img src="06_GRAFIK/mand_toprak_ruhu_erkek.png" alt="Mand" />
+            <span>🗿 Mand</span>
+          </div>
+          <div class="avatar-option" data-avatar="06_GRAFIK/zepy_hava_ruhu.png" data-element="hava">
+            <img src="06_GRAFIK/zepy_hava_ruhu.png" alt="Zepy" />
+            <span>💨 Zepy</span>
+          </div>
+          <label class="avatar-option avatar-upload" data-element="custom">
+            <img id="avatar-custom-preview" src="" alt="Yükle" style="display:none" />
+            <span id="avatar-upload-label">📷 Yükle</span>
+            <input type="file" id="avatar-file" accept="image/*" style="display:none" />
+          </label>
+        </div>
+      </div>
+      <div class="profile-field">
+        <label for="prof-name-input">Nick / Oyuncu adı</label>
+        <input id="prof-name-input" type="text" maxlength="18" placeholder="Nick oluştur…" autocomplete="nickname" />
+      </div>
+      <div class="profile-field">
+        <label>Hesap</label>
+        <button class="btn-ui" type="button" id="btn-google-login" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px">
+          <span style="font-weight:700">G</span> Google / Gmail ile giriş
+        </button>
+        <p id="google-login-status" style="font-size:0.72rem;color:#777;margin-top:8px;text-align:center">
+          Yerel nick aktif · Google OAuth Patron client id ile açılacak
+        </p>
+      </div>
+      <div class="profile-stats" style="margin-top:14px">
+        <div class="ps"><div class="l">En Yüksek IQ</div><div class="v" id="prof-best-iq">0</div></div>
+        <div class="ps"><div class="l">Toplam Mühür</div><div class="v" id="prof-seals">0</div></div>
+        <div class="ps"><div class="l">En Uzun Nefes</div><div class="v" id="prof-best-breath">0</div></div>
+        <div class="ps"><div class="l">Bölüm</div><div class="v" id="prof-chapter">1</div></div>
+        <div class="ps"><div class="l">Sonsuz Mod</div><div class="v" id="prof-endless">Kapalı</div></div>
+        <div class="ps"><div class="l">Sonsuz Rekor</div><div class="v" id="prof-endless-level">-</div></div>
+      </div>
+      <div style="margin-top:14px;font-size:0.75rem;color:#888;letter-spacing:1px">12 MÜHÜR YOLU</div>
+      <div class="seal-track" id="prof-seal-track"></div>
+      <!-- v6.8.3: Toprak Ruhu Görünüm (Skins) Seçimi -->
+      <div id="mand-skin-section" style="margin-top:14px;display:none">
+        <div style="font-size:0.75rem;color:#888;letter-spacing:1px;margin-bottom:8px">Toprak Ruhu Görünümü</div>
+        <div style="display:flex;gap:8px">
+          <div class="skin-chip" id="skin-default" data-skin="06_GRAFIK/mand_toprak_ruhu_erkek.png" style="flex:1;cursor:pointer;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,209,148,0.15);border-radius:10px;padding:6px;text-align:center">
+            <img src="06_GRAFIK/mand_toprak_ruhu_erkek.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px" />
+            <span style="font-size:0.6rem;letter-spacing:0.5px">Muhafız</span>
+          </div>
+          <div class="skin-chip" id="skin-shaman" data-skin="06_GRAFIK/toprak_ruhu_1.png" style="flex:1;cursor:pointer;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,209,148,0.15);border-radius:10px;padding:6px;text-align:center">
+            <img src="06_GRAFIK/toprak_ruhu_1.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px" />
+            <span style="font-size:0.6rem;letter-spacing:0.5px">Şaman</span>
+          </div>
+          <div class="skin-chip" id="skin-scout" data-skin="06_GRAFIK/toprak_ruhu_2.png" style="flex:1;cursor:pointer;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,209,148,0.15);border-radius:10px;padding:6px;text-align:center">
+            <img src="06_GRAFIK/toprak_ruhu_2.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px" />
+            <span style="font-size:0.6rem;letter-spacing:0.5px">İzci</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- v6.9: Zihin Haritası — Element Denge Görselleştirme -->
+      <div id="mind-map-section">
+        <div id="mind-map-label">ELEMENT DENGE HARİTASI</div>
+        <canvas id="mind-map-canvas" width="380" height="160"></canvas>
+        <div id="mind-map-legend">
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#ff6b35"></div><span>Kor · Ateş</span></div>
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#4ecdc4"></div><span>Baam · Su</span></div>
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#c4a35a"></div><span>Mand · Toprak</span></div>
+          <div class="mind-legend-item"><div class="mind-legend-dot" style="background:#a8d8ea"></div><span>Zepy · Hava</span></div>
+        </div>
+        <div id="mind-map-tip">Oyun stiline göre element dengesini keşfet</div>
+      </div>
+
+    </div>
+    <div class="footer-actions">
+      <button class="btn-ui" type="button" id="btn-prof-zihin">🧠 Zihin</button>
+      <button class="btn-ui" type="button" id="btn-prof-back">Geri</button>
+      <button class="btn-ui primary" type="button" id="btn-prof-save">Kaydet</button>
+    </div>
+    <div class="sig">by BATUPIA Studios</div>
+  </section>
+
+  <!-- Bölüm geçiş overlay (sinematik: portre + bölge + diyalog satırları) -->
+  <div id="chapter-overlay" aria-live="polite">
+    <img class="ch-portrait" id="ch-portrait" src="06_GRAFIK/kor_ates_ruhu.png" alt="" />
+    <div class="chapter-symbol" id="ch-symbol">🔥</div>
+    <h2 id="ch-title">Bölüm 1</h2>
+    <p id="ch-region">Ateş Vadisi</p>
+    <div id="ch-lines"></div>
+  </div>
+
+  <!-- Zafer -->
+  <!-- v9.9: AYARLAR OVERLAY -->
+  <div id="settings-overlay" aria-live="polite">
+    <div class="settings-panel">
+      <div class="settings-title">⚙️ Ayarlar</div>
+
+      <div class="settings-row">
+        <span>Ses</span>
+        <button class="btn-toggle" type="button" id="btn-set-sound">🔊</button>
+      </div>
+      <div class="settings-row">
+        <span>Dil</span>
+        <div class="lang-switch">
+          <button class="btn-lang active" type="button" data-lang="tr">TR</button>
+          <button class="btn-lang" type="button" data-lang="en">EN</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <span>Geri Bildirim</span>
+        <a class="btn-link" href="mailto:batupia.studios@gmail.com?subject=STONEBREAKING%20Geri%20Bildirim" target="_blank">✉️ Gönder</a>
+      </div>
+      <div class="settings-row">
+        <span>Bizi Takip Edin</span>
+        <a class="btn-link" href="https://www.instagram.com/batupia" target="_blank">📷 @batupia</a>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <button class="btn-ui primary" type="button" id="btn-set-save">💾 İlerlemeni Kaydet</button>
+      <button class="btn-ui" type="button" id="btn-set-share">📱 Arkadaşlarınla Paylaş</button>
+
+      <div class="settings-divider"></div>
+
+      <button class="btn-ui" type="button" id="btn-set-close">Kapat</button>
+    </div>
+  </div>
+
+  <!-- v9.9: BAŞARILAR OVERLAY -->
+  <div id="achievements-overlay" aria-live="polite">
+    <div class="achievements-panel">
+      <div class="achievements-title">🏆 Başarılar</div>
+      <div class="achievements-list" id="achievements-list"></div>
+      <button class="btn-ui" type="button" id="btn-ach-close">Kapat</button>
+    </div>
+  </div>
+
+  <div id="victory-overlay" aria-live="polite">
+    <div style="font-size:2.6rem;animation:spiritGlow 1.5s ease-in-out infinite">◆</div>
+    <div class="v-title" id="v-title">EFSANE MÜHÜR</div>
+    <div class="v-sub">
+      <span id="v-sub-text">Mühür Açıldı!</span>
+      <span class="rank-pill" id="v-rank">S</span>
+      <span class="endless-badge" id="v-sub-endless" style="display:none">SONSUZ AÇILDI</span>
+    </div>
+    <div class="v-stats">
+      <div class="v-stat"><div class="l">Zaman</div><div class="v" id="v-time">00:00</div></div>
+      <div class="v-stat"><div class="l">IQ</div><div class="v" id="v-iq">0</div></div>
+      <div class="v-stat"><div class="l">En Uzun Nefes</div><div class="v" id="v-combo">0</div></div>
+    </div>
+    <p class="v-msg" id="v-msg">Taşları doğru okudun. Evren mühürü titreşti.</p>
+    <button class="btn-ui primary" type="button" id="btn-next-level">Sonraki Bölüm</button>
+    <button class="btn-ui" type="button" id="btn-zihin" style="margin-top:10px">🧠 Zihin Haritası <span id="v-zihin-tas" style="opacity:.85"></span></button>
+    <button class="btn-ui" type="button" id="btn-victory-menu" style="margin-top:10px">Ana Menü</button>
+  </div>
+
+  <!-- M-010: "BU DAHA BAŞLANGIÇ…" — 12. bölüm sonrası sinematik sekans -->
+  <div id="baslangic-overlay" aria-live="polite">
+    <div class="bs-stage bs-stage-1" id="bs-stage-1">
+      <div class="bs-cards">
+        <img src="06_GRAFIK/kart_ates_tamam.png"   alt="Ateş Mührü kartı"   class="bs-card" style="animation-delay:.05s" />
+        <img src="06_GRAFIK/kart_su_tamam.png"     alt="Su Mührü kartı"     class="bs-card" style="animation-delay:.2s" />
+        <img src="06_GRAFIK/kart_toprak_tamam.png" alt="Toprak Mührü kartı" class="bs-card" style="animation-delay:.35s" />
+        <img src="06_GRAFIK/kart_hava_tamam.png"   alt="Hava Mührü kartı"   class="bs-card" style="animation-delay:.5s" />
+      </div>
+      <div class="bs-tremble-hint" aria-hidden="true"></div>
+    </div>
+    <div class="bs-stage bs-stage-2" id="bs-stage-2">
+      <div class="bs-slogan" id="bs-slogan"></div>
+    </div>
+    <div class="bs-stage bs-stage-3" id="bs-stage-3">
+      <img src="sprite_sonsuz_mod_stonebreaking.png" alt="Sonsuzluk Kapısı" class="bs-gate" />
+      <div class="bs-inf" aria-hidden="true">∞</div>
+    </div>
+    <button class="rune-stone endless bs-continue" id="bs-continue" type="button" aria-label="Sonsuzluğa gir">
+      <span class="rune-symbol">∞</span>
+      <span class="rune-pulse" aria-hidden="true"></span>
+    </button>
+    <div class="bs-skip" id="bs-skip" aria-hidden="true">◆</div>
+  </div>
+
+  <!-- M-011: BÖLÜM SONU IQ TESTİ — B3/B6/B9/B12 -->
+  <div id="iqtest-overlay" aria-live="polite">
+    <div class="iq-card">
+      <div class="iq-head">
+        <div class="iq-name">ZİHİN SINAVI</div>
+        <div class="iq-dots"><i class="iq-dot" id="iq-dot-0"></i><i class="iq-dot" id="iq-dot-1"></i><i class="iq-dot" id="iq-dot-2"></i></div>
+        <div class="iq-skip" id="iq-skip" role="button" tabindex="0" aria-label="Sınavı atla">◆</div>
+      </div>
+      <div class="iq-stage-title" id="iq-title"></div>
+      <div class="iq-hint" id="iq-hint"></div>
+      <div class="iq-target-wrap" id="iq-target-wrap"><img id="iq-target" alt="Hedef taş" /></div>
+      <div class="iq-arena" id="iq-arena"></div>
+      <div class="iq-barwrap"><div class="iq-bar" id="iq-bar"></div></div>
+      <div class="iq-result" id="iq-result">
+        <div class="iq-bonus-eye">IQ BONUS</div>
+        <div class="iq-bonus" id="iq-bonus">+0</div>
+        <div class="iq-tier" id="iq-tier">KIVILCIM</div>
+        <div class="iq-avg" id="iq-avg">%0</div>
+        <button class="btn-ui primary" type="button" id="btn-iq-continue">Devam ➜</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- v9.9: SİNEMATİK ELEMENT KARTI — Pokemon tarzı nadir kart -->
+  <div id="card-overlay" aria-live="polite">
+    <div class="card-wrapper">
+      <div class="card-frame">
+        <div class="card-holo"></div>
+        <img id="card-img" src="" alt="Sinematik Kart" />
+        <div class="card-shine"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-badge" id="card-badge">★ ULTRA NADİR</div>
+        <div class="card-desc" id="card-desc"></div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn-ui primary" type="button" id="btn-card-share">📱 Paylaş / Story At</button>
+      <button class="btn-ui" type="button" id="btn-card-continue">Devam ➜</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/ses.js?v=72"></script>
+  <script src="js/game.js?v=72"></script>
+  <script src="js/ruh_cagri.js?v=72"></script>
+  <script src="js/zihin_haritasi.js?v=72"></script>
+  <script>
+    // =========================================================
+    // STONEBREAKING App Controller v6.3 — Sonsuz mod + 12 bölüm sinematik + ses
+    // =========================================================
+    const PROFILE_KEY = 'stonebreaking_profile_v1';
+
+    const state = {
+      mascot: null,
+      spirit: null,
+      chapter: 1,
+      lastStats: null,
+      returnScreen: 'screen-splash',
+      endlessRequested: false,
+      splashPlayed: false, // sinematik sadece bir kere oynar
+      profile: loadProfile(),
+    };
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => [...document.querySelectorAll(s)];
+
+    function loadProfile() {
+      try {
+        const raw = localStorage.getItem(PROFILE_KEY);
+        if (raw) return Object.assign(defaultProfile(), JSON.parse(raw));
+      } catch (_) {}
+      return defaultProfile();
+    }
+    function defaultProfile() {
+      return {
+        name: 'Gezgin',
+        mascot: null,
+        spirit: null,
+        chapter: 1,
+        bestIq: 0,
+        totalSeals: 0,
+        bestBreath: 0,
+        wins: 0,
+        sealsOpened: [], // chapter numbers
+        endlessUnlocked: false, // v6.1: 12. bölüm sonrası Sonsuz Mod
+        endlessLevel: 0,        // Sonsuz Mod rekoru (12 üstü seviye sayısı)
+      };
+    }
+    function saveProfile() {
+      try { localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile)); } catch (_) {}
+    }
+
+    function showToast(msg) {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    const STONE_REMINDERS = [
+      "Nefes al... sakinleş...",
+      "Su iç... ayakta kal...",
+      "Bir taş daha... nefes ver...",
+      "Taşları dinle... ritmi hisset...",
+      "Ruhun mühürlendi... derin nefes al...",
+      "Alevler yükseliyor... zihnini serbest bırak...",
+      "Dalgalar duruluyor... sakinlikle hamle yap...",
+      "Mühür kırıldı... yeni bölge seni çağırıyor..."
+    ];
+    let reminderInterval = null;
+    function startReminders() {
+      stopReminders();
+      reminderInterval = setInterval(() => {
+        const activeScreen = document.querySelector('.screen.active');
+        if (activeScreen && activeScreen.id === 'screen-game') {
+          const msg = STONE_REMINDERS[Math.floor(Math.random() * STONE_REMINDERS.length)];
+          showToast(msg);
+        }
+      }, 50000);
+    }
+    function stopReminders() {
+      if (reminderInterval) {
+        clearInterval(reminderInterval);
+        reminderInterval = null;
+      }
+    }
+
+    function goScreen(id) {
+      $$('.screen').forEach((el) => {
+        if (el.classList.contains('active')) {
+          el.classList.add('exit');
+          el.classList.remove('active');
+          setTimeout(() => el.classList.remove('exit'), 400);
+        }
+      });
+      if (id === 'screen-game') {
+        startReminders();
+      } else {
+        stopReminders();
+      }
+      const next = document.getElementById(id);
+      if (!next) return;
+      next.classList.add('active');
+      if (id === 'screen-game' && game) {
+        requestAnimationFrame(() => {
+          game.resize();
+          requestAnimationFrame(() => game.resize());
+        });
+      }
+    }
+
+    function spawnParticles(container, n = 18) {
+      if (!container) return;
+      const colors = ['#ff6b35', '#4ecdc4', '#c4a35a', '#a8d8ea', '#ffd194'];
+      for (let i = 0; i < n; i++) {
+        const s = document.createElement('span');
+        s.style.left = Math.random() * 100 + '%';
+        s.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px');
+        s.style.setProperty('--pcolor', colors[i % colors.length]);
+        s.style.animationDuration = (6 + Math.random() * 8) + 's';
+        s.style.animationDelay = (Math.random() * 5) + 's';
+        s.style.width = s.style.height = (2 + Math.random() * 4) + 'px';
+        container.appendChild(s);
+      }
+    }
+
+    async function playStudioIntro() {
+      const intro = $('#screen-studio-intro');
+      const container = $('#studio-particles');
+      // Hafif parçacıklar
+      if (container) {
+        const colors = ['#ffd194', '#ffb347', 'rgba(255,209,148,0.5)'];
+        for (let i = 0; i < 12; i++) {
+          const s = document.createElement('span');
+          s.style.cssText = `
+            position:absolute;
+            left:${Math.random()*100}%;
+            bottom:-4px;
+            width:${2+Math.random()*3}px;
+            height:${2+Math.random()*3}px;
+            border-radius:50%;
+            background:${colors[i%3]};
+            opacity:0;
+            animation: particleDrift ${8+Math.random()*6}s linear ${Math.random()*2}s infinite;
+          `;
+          container.appendChild(s);
+        }
+      }
+      // Bekle: logo + yazı animasyonları oynansın
+      await wait(3000);
+      // Çıkış — fade out
+      if (intro) {
+        intro.classList.add('exit');
+        intro.classList.remove('active');
+      }
+      await wait(500);
+      // SAHNE 0'a geç — goScreen kullan
+      goScreen('screen-splash');
+      playSplashCinematic();
+    }
+
+    async function playSplashCinematic() {
+      const stone = $('#cin-stone');
+      const muhur = $('#muhur-logo');
+      const actions = $('#splash-actions');
+      const btn = $('#btn-start');
+
+      // Sinematik zaten oynanmışsa → direkt göster (tekrar animasyon YOK)
+      if (state.splashPlayed) {
+        if (stone) stone.style.display = 'none';
+        if (muhur) muhur.classList.add('show');
+        if (actions) { actions.classList.add('show'); }
+        if (btn) { /* M-009: rune-stone kendi nefes animasyonunu taşır */ }
+        const ebtn = $('#btn-endless');
+        if (ebtn && state.profile.endlessUnlocked) ebtn.style.display = 'block';
+        return;
+      }
+      state.splashPlayed = true;
+
+      spawnParticles($('#splash-particles'));
+
+      // AŞAMA 1: Taş kırılır
+      await wait(1400);
+      if (stone) stone.classList.add('crack');
+      await wait(900);
+      if (stone) stone.style.display = 'none';
+
+      // AŞAMA 2: 4 element belirir
+      ['ates', 'su', 'toprak', 'hava'].forEach((k, i) => {
+        setTimeout(() => {
+          const o = $('#orb-' + k);
+          if (o) o.classList.add('show');
+        }, i * 120);
+      });
+      await wait(1200);
+
+      // AŞAMA 3: Elementler solar, LOGO belirir (tek parça sinematik)
+      ['ates', 'su', 'toprak', 'hava'].forEach((k) => {
+        const o = $('#orb-' + k);
+        if (!o) return;
+        o.style.transition = 'opacity 0.5s';
+        o.style.opacity = '0';
+      });
+      if (muhur) muhur.classList.add('show');
+
+      // AŞAMA 4: Logo göründükten sonra DOĞRUDAN BUTON
+      await wait(800);
+      if (actions) {
+        actions.classList.add('show');
+        actions.style.animation = 'fadeUp 0.8s ease-out both';
+      }
+      if (btn) {
+        // M-009: rune-stone kendi nefes animasyonunu taşır
+      }
+
+      // Sonsuz Mod butonu (kilit açıksa)
+      const ebtn = $('#btn-endless');
+      if (ebtn && state.profile.endlessUnlocked) {
+        await wait(350);
+        ebtn.style.display = 'block';
+      }
+    }
+
+    function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+    function fmtTime(sec) {
+      const s = Math.floor(sec);
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
+    }
+
+    async function playChapterTransition(chapterNum) {
+      const endless = chapterNum > 12;
+      // remote v6.1 API: STONE_getChapter (13+ → Sonsuz Dalga adlandırması)
+      const ch = (typeof window.STONE_getChapter === 'function')
+        ? window.STONE_getChapter(chapterNum)
+        : ((window.STONE_CHAPTERS || []).find((c) => c.n === chapterNum)
+          || { n: chapterNum, spirit: state.spirit || 'kor', title: 'Sonsuz Nefes', region: 'Sonsuz Mühür Yolu', lines: [] });
+      const sp = (window.STONE_SPIRITS || {})[ch.spirit] || {};
+      const el = (window.STONE_ELEMENTS || {})[sp.element] || { emoji: '◆', color: '#ff6b35' };
+      const ov = $('#chapter-overlay');
+      const portrait = $('#ch-portrait');
+      if (portrait) {
+        // spirit 'all' (sonsuz) → mühür logosu portre
+        portrait.src = (ch.spirit === 'all')
+          ? '06_GRAFIK/logo_stonebreaking_muhur.png'
+          : (sp.portrait || '06_GRAFIK/kor_ates_ruhu.png');
+        portrait.style.setProperty('--glow', ch.endless ? '#ffd194' : (el.color || '#ff6b35'));
+      }
+      $('#ch-symbol').textContent = ch.endless ? '♾️' : (el.emoji || '◆');
+      $('#ch-symbol').style.setProperty('--glow', ch.endless ? '#ffd194' : (el.color || '#ff6b35'));
+      $('#ch-title').textContent = ch.endless
+        ? `${ch.title}${chapterNum > 13 ? ' · ∞' + (chapterNum - 12) : ''}`
+        : `Bölüm ${ch.n} · ${ch.title}`;
+      $('#ch-region').textContent = ch.region || '';
+      const box = $('#ch-lines');
+      box.innerHTML = '';
+      let lines = (ch.lines && ch.lines.length) ? ch.lines.slice() : [];
+      if (endless) {
+        const EL = window.STONE_ENDLESS_LINES || [];
+        lines = [EL[(chapterNum - 13) % EL.length] || 'Sonsuz mühür yolu açık…'];
+      }
+      if (!lines.length) lines = [sp.quote || 'Mühürler seni bekliyor.'];
+      ov.classList.add('show');
+      StoneSound.chapterReveal(sp.element || 'ates');
+      await wait(620);
+      for (const line of lines) {
+        const p = document.createElement('p');
+        p.className = 'ch-line';
+        const ci = line.indexOf(':');
+        if (ci > 0) {
+          const b = document.createElement('b');
+          b.textContent = line.slice(0, ci + 1);
+          p.appendChild(b);
+          p.appendChild(document.createTextNode(' ' + line.slice(ci + 1).trim()));
+        } else {
+          p.textContent = line;
+        }
+        box.appendChild(p);
+        await wait(endless ? 1250 : 1080);
+      }
+      await wait(endless ? 250 : 450);
+      ov.classList.remove('show');
+    }
+
+    function renderTray(_slots) {
+      // Tray is drawn inside canvas (v5.2) — HTML mirror unused
+    }
+
+    function renderHUD(h) {
+      if (!h) return;
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      set('hud-iq', (Math.round(h.iq * 10) / 10).toFixed(1).replace(/\.0$/, ''));
+      set('hud-level', h.endless ? '∞' + (h.level - 12) : h.level);
+      set('hud-seals', h.seals);
+      set('hud-combo', h.combo);
+      set('badge-hint', h.hintsLeft);
+      set('badge-undo', h.undosLeft);
+      set('badge-shuffle', h.shufflesLeft);
+
+      // v9.9: Element bölüm adı
+      const EL_NAMES = { ates: '🔥 Ateş', su: '💧 Su', toprak: '🗿 Toprak', hava: '💨 Hava', karma: '◆ Tümü' }; // v9.12: sonsuz mod = tüm elementler
+      const elBadge = document.getElementById('hud-element');
+      if (elBadge) elBadge.textContent = EL_NAMES[h.element] || '';
+
+      // v9.9: Enerji barı — IQ bazlı (max 200)
+      const maxIQ = 200;
+      const pct = Math.min(100, Math.max(0, (h.iq / maxIQ) * 100));
+      const fill = document.getElementById('energy-fill');
+      const txt = document.getElementById('energy-text');
+      if (fill) fill.style.width = pct + '%';
+      if (txt) txt.textContent = Math.round(pct);
+
+      const sh = $('#btn-shuffle');
+      if (sh) {
+        const locked = h.shufflesLeft <= 0;
+        sh.classList.toggle('locked', locked);
+        sh.disabled = locked;
+      }
+      const hi = $('#btn-hint');
+      if (hi) hi.disabled = h.hintsLeft <= 0;
+      const un = $('#btn-undo');
+      if (un) un.disabled = h.undosLeft <= 0;
+    }
+
+    function renderAchievements() {
+      const p = state.profile || {};
+      const achList = [
+        { icon: '🔥', name: 'Ateş Uyanışı', desc: 'İlk bölümü tamamla', unlocked: (p.chapter || 1) >= 1 },
+        { icon: '💧', name: 'Su Çağrısı', desc: '4. bölüme ulaş', unlocked: (p.chapter || 1) >= 4 },
+        { icon: '🗿', name: 'Toprak Mührü', desc: '7. bölüme ulaş', unlocked: (p.chapter || 1) >= 7 },
+        { icon: '💨', name: 'Hava Rüzgarı', desc: '10. bölüme ulaş', unlocked: (p.chapter || 1) >= 10 },
+        { icon: '◆', name: 'Evren Mührü', desc: '12. bölümü tamamla', unlocked: (p.chapter || 1) >= 12 },
+        { icon: '∞', name: 'Sonsuz Mod', desc: 'Sonsuz moda gir', unlocked: !!p.endlessUnlocked },
+        { icon: '🧠', name: 'Zihin Ustası', desc: 'IQ 120+', unlocked: (p.bestIq || 0) >= 120 },
+        { icon: '⚡', name: 'Nefes Fırtınası', desc: '10+ combo', unlocked: (p.bestBreath || 0) >= 10 },
+      ];
+      const list = $('#achievements-list');
+      if (!list) return;
+      list.innerHTML = '';
+      achList.forEach((a) => {
+        const div = document.createElement('div');
+        div.className = 'ach-item' + (a.unlocked ? ' unlocked' : '');
+        div.innerHTML = '<div class="ach-icon">' + a.icon + '</div><div class="ach-info"><div class="ach-name">' + a.name + '</div><div class="ach-desc">' + a.desc + '</div></div>';
+        list.appendChild(div);
+      });
+    }
+
+    function applyProfileToWin(stats) {
+      const p = state.profile;
+      const lv = stats.level || 1;
+      p.bestIq = Math.max(p.bestIq || 0, stats.iq || 0);
+      p.bestBreath = Math.max(p.bestBreath || 0, stats.combo || 0);
+      p.totalSeals = (p.totalSeals || 0) + (stats.seals || 0);
+      p.wins = (p.wins || 0) + 1;
+      p.chapter = Math.max(p.chapter || 1, Math.min(12, lv + 1));
+      if (lv <= 12 && !p.sealsOpened.includes(lv)) p.sealsOpened.push(lv);
+      if (lv === 12) p.endlessUnlocked = true;          // v6.1: Evren Mührü → Sonsuz kilit açıldı
+      if (lv > 12) p.endlessLevel = Math.max(p.endlessLevel || 0, lv - 12);
+      p.spirit = state.spirit || p.spirit;
+      p.mascot = state.mascot || p.mascot;
+      saveProfile();
+    }
+
+    function showVictory(stats) {
+      state.lastStats = stats;
+      applyProfileToWin(stats);
+      const lv = stats.level || 1;
+      const endless = lv > 12;
+      $('#v-rank').textContent = stats.rank || 'A';
+      $('#v-time').textContent = fmtTime(stats.timeSec || 0);
+      $('#v-iq').textContent = (Math.round(stats.iq * 10) / 10).toFixed(1);
+      $('#v-combo').textContent = stats.combo || 0;
+
+      // v6.1: bölüm 12 = Evren Mührü + Sonsuz kilit açılışı; mühür adıyla zenginleştir
+      const sealName = (typeof window.STONE_getChapter === 'function')
+        ? (window.STONE_getChapter(lv).seal || '')
+        : '';
+      $('#v-title').textContent = lv === 12 ? 'EVREN MÜHRÜ' : (endless ? 'SONSUZ NEFES' : 'EFSANE MÜHÜR');
+      $('#v-sub-text').textContent = lv === 12
+        ? 'Evren Mührü Kırıldı!'
+        : (endless ? `Sonsuz Dalga ${lv - 12} · ${sealName}` : (sealName ? `Mühür Açıldı! · ${sealName}` : 'Mühür Açıldı!'));
+      const eb = $('#v-sub-endless');
+      if (eb) eb.style.display = (lv === 12) ? 'inline-block' : 'none';
+
+      const breaths = [
+        'Nefesin taşa değdi. Mühür uyandı.',
+        'Hiçbir mühür kaçmadı — evren seni duydu.',
+        'Sıkışmış taşlar doğru okundu. Ruhlar gülümsedi.',
+      ];
+      let msg;
+      if (lv === 12) {
+        msg = 'Dört ruh bir arada. Evren Mührü kırıldı — sonsuz mühür yolu açık. Kader senin elinde.';
+      } else if (endless) {
+        msg = breaths[1];
+      } else {
+        msg = stats.rank === 'S' ? breaths[1] : breaths[stats.rank === 'A' ? 2 : 0];
+      }
+      $('#v-msg').textContent = msg;
+      const nxt = $('#btn-next-level');
+      if (lv === 12) nxt.textContent = 'Sonsuz Moda Gir';
+      else if (endless) nxt.textContent = `Devam · Sonsuz ${lv + 1 - 12}`;
+      else nxt.textContent = `Bölüm ${lv + 1}`;
+      // M-012: zihin taşı ödülü (bölüm/sonsuz dedup kurallı)
+      try {
+        if (window.ZIHIN && stats && stats.level) {
+          const kazanc = ZIHIN.odul(stats.level > 12 ? 'sonsuz' : 'bolum', stats.level);
+          if (kazanc && $('#v-msg')) $('#v-msg').textContent += ' 🧠 +1 Zihin Taşı kazandın!';
+          const zt = $('#v-zihin-tas');
+          if (zt) zt.textContent = '· ' + ZIHIN.durum().tas + ' taş';
+        }
+      } catch (_) {}
+      $('#victory-overlay').classList.add('show');
+    }
+
+    function hideVictory() {
+      $('#victory-overlay').classList.remove('show');
+    }
+
+    // v9.9: SİNEMATİK KART — bölüm tamamlandıkça Pokemon tarzı nadir kart
+    const CARD_MAP = {
+      3: { img: '06_GRAFIK/kart_ates_tamam.png', badge: '★ ULTRA NADİR', desc: '🔥 Ateş bölümleri tamamlandı! Sulara geçiliyor… 💧' },
+      6: { img: '06_GRAFIK/kart_su_tamam.png', badge: '★ ULTRA NADİR', desc: '💧 Su bölümleri tamamlandı! Toprağa geçiliyor… 🗿' },
+      9: { img: '06_GRAFIK/kart_toprak_tamam.png', badge: '★ ULTRA NADİR', desc: '🗿 Toprak bölümleri tamamlandı! Rüzgara geçiliyor… 💨' },
+      12: { img: '06_GRAFIK/kart_hava_tamam.png', badge: '★★ LEGENDARY', desc: '💨 Hava tamamlandı! Sonsuz Mühür yolu açık… ∞' },
+    };
+    const VIRAL_CARD = { img: '06_GRAFIK/kart_viral_stonebreaking.png', badge: '★★★ MYTHIC', desc: '4 Ruh Uyanık · Evren Mührü Kırıldı · STONEBREAKING' };
+
+    function showCard(stats) {
+      const lv = stats?.level || state.lastStats?.level || 0;
+      const cardData = CARD_MAP[lv];
+      if (!cardData) { hideCard(); return; }
+
+      const img = $('#card-img');
+      const badge = $('#card-badge');
+      const desc = $('#card-desc');
+      if (img) img.src = cardData.img;
+      if (badge) badge.textContent = cardData.badge;
+      if (desc) desc.textContent = cardData.desc;
+
+      // Store for share
+      state._lastCardImg = cardData.img;
+      state._lastCardDesc = cardData.desc;
+
+      $('#card-overlay')?.classList.add('show');
+    }
+
+    function showViralCard(stats) {
+      const img = $('#card-img');
+      const badge = $('#card-badge');
+      const desc = $('#card-desc');
+      if (img) img.src = VIRAL_CARD.img;
+      if (badge) badge.textContent = VIRAL_CARD.badge;
+
+      const p = state.profile || {};
+      const iqText = stats?.iq ? `IQ: ${Math.round(stats.iq)}` : '';
+      const sealsText = p.sealsOpened?.length ? `Mühür: ${p.sealsOpened.length}` : '';
+      if (desc) desc.textContent = `${VIRAL_CARD.desc} · ${iqText} · ${sealsText}`;
+
+      state._lastCardImg = VIRAL_CARD.img;
+      state._lastCardDesc = VIRAL_CARD.desc;
+
+      $('#card-overlay')?.classList.add('show');
+    }
+
+
+
+    // ═══════ M-011: BÖLÜM SONU IQ TESTİ — MÜHÜR-008 §G ═══════
+    // 3 aşama (desen hafızası · refleks avcısı · sıra tahmini) · ~60-75 sn · taş görselleriyle
+    const IQ_PADS = [
+      { k: 'ates',   img: '06_GRAFIK/tas_ates_core.png',   bg: '#3a1408' },
+      { k: 'su',     img: '06_GRAFIK/tas_su_core.png',     bg: '#08283a' },
+      { k: 'toprak', img: '06_GRAFIK/tas_toprak_core.png', bg: '#1c2a12' },
+      { k: 'hava',   img: '06_GRAFIK/tas_hava_core.png',   bg: '#232a34' },
+    ];
+
+    function playIqTest(stats, done) {
+      const ov = $('#iqtest-overlay');
+      if (!ov) { done(); return; }
+      done = typeof done === 'function' ? done : () => {};
+      const arena = $('#iq-arena'), title = $('#iq-title'), hint = $('#iq-hint');
+      const dots = [$('#iq-dot-0'), $('#iq-dot-1'), $('#iq-dot-2')];
+      const result = $('#iq-result'), bar = $('#iq-bar');
+      const targetWrap = $('#iq-target-wrap'), targetImg = $('#iq-target');
+      const timers = []; let iv = null; let alive = true;
+      const later = (fn, ms) => { const t = setTimeout(() => { if (alive) fn(); }, ms); timers.push(t); };
+      const scores = [];
+      const rnd = (n) => Math.floor(Math.random() * n);
+
+      const cleanup = () => {
+        alive = false;
+        timers.forEach(clearTimeout);
+        if (iv) clearInterval(iv);
+        ov.classList.remove('show');
+      };
+      const tap = () => { StoneSound.tap && StoneSound.tap(); if (StoneSound.vibrate) StoneSound.vibrate(14); };
+
+      ov.classList.add('show');
+      arena.style.display = 'flex';
+      arena.innerHTML = '';
+      result.classList.remove('on');
+      dots.forEach((d) => d && d.classList.remove('on'));
+      targetWrap.style.display = 'none';
+      if (bar) bar.style.width = '0%';
+
+      const mkPad = (padIdx, onTap, small) => {
+        const p = IQ_PADS[padIdx];
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'iq-pad' + (small ? ' small' : '');
+        b.style.background = p.bg;
+        b.setAttribute('aria-label', p.k + ' taşı');
+        const im = document.createElement('img');
+        im.src = p.img; im.alt = p.k; im.draggable = false;
+        b.appendChild(im);
+        b.addEventListener('click', () => onTap(b, padIdx));
+        arena.appendChild(b);
+        return b;
+      };
+      const glow = (b, ms) => { b.classList.add('lit'); later(() => b.classList.remove('lit'), ms || 430); };
+      const shake = (b) => { b.classList.add('shake'); later(() => b.classList.remove('shake'), 380); };
+      const setDot = (i) => { if (dots[i]) dots[i].classList.add('on'); };
+      const barTo = (pct, ms) => {
+        if (!bar) return;
+        bar.style.transition = 'none'; bar.style.width = '0%';
+        requestAnimationFrame(() => { bar.style.transition = `width ${ms}ms linear`; bar.style.width = pct + '%'; });
+      };
+
+      // ── AŞAMA 1: DESEN HAFIZASI (Simon) ──
+      function stageMemory() {
+        setDot(0);
+        title.textContent = '1/3 · Desen Hafızası';
+        hint.textContent = 'Işıyan taşları izle, aynı sırayla vur';
+        arena.innerHTML = '';
+        arena.className = 'iq-arena grid4';
+        const seqs = [ [rnd(4), rnd(4), rnd(4)], [rnd(4), rnd(4), rnd(4), rnd(4)] ];
+        let locked = true, inputs = [], round = 0, completed = 0;
+        const pads = IQ_PADS.map((_, i) => mkPad(i, (b, pi) => {
+          if (locked) return; tap(); glow(b, 300);
+          const seq = seqs[round];
+          const step = inputs.length;
+          if (pi !== seq[step]) { shake(b); next(false); return; }
+          inputs.push(pi);
+          if (inputs.length === seq.length) { completed++; next(true); }
+        }));
+        function playSeq(seq, cb) {
+          seq.forEach((pi, i) => later(() => glow(pads[pi], 430), 500 + i * 800));
+          later(cb, 500 + seq.length * 800 + 200);
+        }
+        function next(ok) {
+          locked = true; inputs = [];
+          if (ok && round < seqs.length - 1) { round++; later(() => playSeq(seqs[round], () => { locked = false; }), 700); }
+          else { scores.push(completed === 2 ? 100 : completed === 1 ? 60 : 25); later(stageReflex, 650); }
+        }
+        later(() => playSeq(seqs[0], () => { locked = false; }), 900);
+      }
+
+      // ── AŞAMA 2: REFLEKS AVCISI (hedef yakala, 15 sn / 5 tur) ──
+      function stageReflex() {
+        setDot(1);
+        title.textContent = '2/3 · Refleks Avcısı';
+        hint.textContent = 'Üstteki hedef taşın eşlerini yakala!';
+        targetWrap.style.display = 'block';
+        let hits = 0, round = 0, need = 0, got = 0, over = false;
+        const TOTAL_T = 15000, MAXROUNDS = 5, PER = 2;
+        barTo(100, TOTAL_T);
+        later(() => endStage(), TOTAL_T);
+        function endStage() {
+          if (over) return; over = true;
+          targetWrap.style.display = 'none';
+          scores.push(Math.round((hits / (MAXROUNDS * PER)) * 100));
+          later(stageSequence, 500);
+        }
+        function renderRound() {
+          if (over) return;
+          arena.innerHTML = '';
+          const target = rnd(4);
+          targetImg.src = IQ_PADS[target].img;
+          // 6 pad: 2 hedef + 4 çeldirici
+          const pool = [target, target];
+          while (pool.length < 6) { const c = rnd(4); if (c !== target) pool.push(c); }
+          for (let i = pool.length - 1; i > 0; i--) { const j = rnd(i + 1); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+          need = PER; got = 0;
+          pool.forEach((pi) => mkPad(pi, (b) => {
+            if (over) return;
+            if (pi === target) { tap(); got++; hits++; b.classList.add('hit'); b.disabled = true;
+              if (got >= need) { round++; if (round >= MAXROUNDS) endStage(); else later(renderRound, 500); }
+            } else { shake(b); }
+          }));
+        }
+        renderRound();
+      }
+
+      // ── AŞAMA 3: SIRA TAHMİNİ (2 desen) ──
+      function stageSequence() {
+        setDot(2);
+        title.textContent = '3/3 · Sıra Tahmini';
+        hint.textContent = 'Desendeki eksik taşı mühürle';
+        const K = { ates: 0, su: 1, toprak: 2, hava: 3 };
+        const QUESTIONS = [
+          { row: ['ates', 'su', 'toprak', 'ates', '?'], opts: ['hava', 'su', 'ates'], ans: 'su' },
+          { row: ['hava', 'toprak', 'hava', '?'], opts: ['ates', 'su', 'toprak'], ans: 'toprak' },
+        ];
+        let q = 0, correct = 0;
+        function renderQ() {
+          if (q >= QUESTIONS.length) { scores.push(Math.round((correct / QUESTIONS.length) * 100)); later(finish, 450); return; }
+          const qu = QUESTIONS[q];
+          arena.innerHTML = '';
+          arena.className = 'iq-arena seqmode';
+          const rowWrap = document.createElement('div');
+          rowWrap.className = 'iq-seqrow';
+          qu.row.forEach((k) => {
+            const cell = document.createElement('div');
+            cell.className = 'iq-cell' + (k === '?' ? ' mystery' : '');
+            if (k === '?') { cell.textContent = '◆'; }
+            else { const im = document.createElement('img'); im.src = IQ_PADS[K[k]].img; im.alt = k; cell.appendChild(im); }
+            rowWrap.appendChild(cell);
+          });
+          arena.appendChild(rowWrap);
+          const optWrap = document.createElement('div');
+          optWrap.className = 'iq-optrow';
+          qu.opts.forEach((k) => {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'iq-pad small'; b.style.background = IQ_PADS[K[k]].bg;
+            const im = document.createElement('img'); im.src = IQ_PADS[K[k]].img; im.alt = k; im.draggable = false;
+            b.appendChild(im);
+            b.addEventListener('click', () => {
+              tap();
+              if (k === qu.ans) { correct++; b.classList.add('hit'); } else { shake(b); }
+              q++; later(renderQ, 550);
+            });
+            optWrap.appendChild(b);
+          });
+          arena.appendChild(optWrap);
+        }
+        renderQ();
+      }
+
+      // ── SONUÇ: IQ bonusu mühürle ──
+      function finish() {
+        if (!alive) return;
+        const avg = Math.round((scores[0] + scores[1] + scores[2]) / 3);
+        const bonus = 5 + Math.round((avg / 100) * 35); // 5-40 mühür bonusu
+        const tier = avg >= 85 ? 'EFSANE MÜHÜR' : avg >= 70 ? 'MÜHÜR' : avg >= 50 ? 'UYANIŞ' : avg >= 30 ? 'NEFES' : 'KIVILCIM';
+        try {
+          const p = state.profile;
+          const yeniIq = Math.round((stats?.iq || 0) + bonus);
+          p.bestIq = Math.max(p.bestIq || 0, yeniIq);
+          p.lastIqBonus = bonus;
+          saveProfile();
+        } catch (_) {}
+        try { if (window.ZIHIN && stats && stats.level) ZIHIN.odul('iq', stats.level); } catch (_) {} // M-012
+        $('#iq-bonus').textContent = '+' + bonus;
+        $('#iq-tier').textContent = tier;
+        $('#iq-avg').textContent = '%' + avg + ' senkron';
+        title.textContent = 'Sınav mühürlendi';
+        arena.style.display = 'none';
+        result.classList.add('on');
+        try { const el = (window.STONE_SPIRITS[state.spirit || 'kor'] || {}).element || 'ates'; StoneSound.win && StoneSound.win(el); } catch (_) {}
+        if (StoneSound.vibrate) StoneSound.vibrate([24, 40, 60]);
+      }
+
+      // Çıkış yolları
+      $('#btn-iq-continue')?.addEventListener('click', () => { cleanup(); done(); }, { once: true });
+      const skip = () => { cleanup(); done(); };
+      $('#iq-skip')?.addEventListener('click', skip);
+      $('#iq-skip')?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); skip(); } });
+
+      stageMemory();
+    }
+
+    // ═══════ M-010: "BU DAHA BAŞLANGIÇ…" SİNEMATİK SEKANSI ═══════
+    // 4 mühür kartı titreşir → kararır + slogan daktilo → Sonsuzluk Kapısı → ∞ taş
+    const BASLANGIC_SLOGAN = 'Bu daha başlangıç…';
+    function playBaslangicSequence(stats) {
+      const ov = $('#baslangic-overlay');
+      if (!ov) { showViralCard(stats); return; }
+      let dead = false; // atlama koruması
+      const timers = [];
+      const later = (fn, ms) => { const t = setTimeout(() => { if (!dead) fn(); }, ms); timers.push(t); };
+
+      ov.classList.add('show');
+      const stages = [ $('#bs-stage-1'), $('#bs-stage-2'), $('#bs-stage-3') ];
+      stages.forEach((s) => s && s.classList.remove('on'));
+      $('#bs-continue')?.classList.remove('on');
+      const sloganEl = $('#bs-slogan');
+      if (sloganEl) sloganEl.textContent = '';
+
+      // FAZ 1: 4 mühür kartı (CSS staggered) — evren titreşir
+      stages[0]?.classList.add('on');
+      StoneSound.tap && StoneSound.tap();
+      if (StoneSound.vibrate) StoneSound.vibrate([24, 40, 24, 40]);
+
+      later(() => {
+        // FAZ 2: kararır, slogan harf harf yankılanır
+        stages[0]?.classList.remove('on');
+        stages[1]?.classList.add('on');
+        let i = 0;
+        const type = () => {
+          if (dead || !sloganEl) return;
+          sloganEl.textContent = BASLANGIC_SLOGAN.slice(0, ++i);
+          if (i < BASLANGIC_SLOGAN.length) setTimeout(type, 85);
+        };
+        type();
+        if (StoneSound.vibrate) StoneSound.vibrate(20);
+      }, 2300);
+
+      later(() => {
+        // FAZ 3: Sonsuzluk Kapısı ışıkla açılır
+        stages[1]?.classList.remove('on');
+        stages[2]?.classList.add('on');
+        StoneSound.win && StoneSound.win('hava');
+        if (StoneSound.vibrate) StoneSound.vibrate([30, 50, 90]);
+        $('#bs-continue')?.classList.add('on');
+      }, 4700);
+
+      // Giriş taşı: sonsuzluğa adım
+      const gir = () => {
+        if (dead) return;
+        dead = true;
+        timers.forEach(clearTimeout);
+        const btn = $('#bs-continue');
+        if (btn) btn.classList.add('cracking');
+        StoneSound.tap && StoneSound.tap();
+        if (StoneSound.vibrate) StoneSound.vibrate([18, 26, 40]);
+        setTimeout(() => {
+          ov.classList.remove('show');
+          btn?.classList.remove('cracking');
+          showViralCard(stats); // mevcut viral kart kancası korunur
+        }, 480);
+      };
+      $('#bs-continue')?.addEventListener('click', gir, { once: true });
+    }
+
+    function hideCard() {
+      $('#card-overlay')?.classList.remove('show');
+    }
+
+    async function shareCard() {
+      const desc = state._lastCardDesc || 'STONEBREAKING — Element Taş Oyunu';
+      const text = `${desc}\n\n◆ stonebreaking.github.io\n#STONEBREAKING #BATUPIA #ElementOyunu`;
+      
+      // Try Web Share API first (mobile)
+      if (navigator.share && navigator.canShare) {
+        try {
+          await navigator.share({ title: 'STONEBREAKING', text, url: 'https://stonebreaking.github.io/' });
+          return;
+        } catch (e) { /* user cancelled */ }
+      }
+      
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('📱 Kopyalandı! Story at veya arkadaşına gönder');
+      } catch (e) {
+        showToast('Paylaşım başarısız — ekran görüntüsü al');
+      }
+    }
+
+    function openProfile(from) {
+      state.returnScreen = from || 'screen-splash';
+      const p = state.profile;
+      
+      // Load selected skin for Mand
+      if (p.mand_skin && window.STONE_SPIRITS && window.STONE_SPIRITS['mand']) {
+        window.STONE_SPIRITS['mand'].portrait = p.mand_skin;
+      }
+      
+      const sp = window.STONE_SPIRITS[state.spirit || p.spirit] || null;
+      $('#prof-name').textContent = p.name || 'Gezgin';
+      $('#prof-name-input').value = p.name || '';
+      $('#prof-avatar').src = sp ? sp.portrait : '06_GRAFIK/kor_ates_ruhu.png';
+      $('#prof-spirit').textContent = sp
+        ? `${sp.name} · ${window.STONE_ELEMENTS[sp.element]?.name || ''}`
+        : (state.mascot === 'kadin' ? 'Kadın maskot' : state.mascot === 'erkek' ? 'Erkek maskot' : 'Ruh seçilmedi');
+      $('#prof-best-iq').textContent = (Math.round((p.bestIq || 0) * 10) / 10).toFixed(1);
+      $('#prof-seals').textContent = p.totalSeals || 0;
+      $('#prof-best-breath').textContent = p.bestBreath || 0;
+      $('#prof-chapter').textContent = p.chapter || state.chapter || 1;
+      const pe = $('#prof-endless');
+      if (pe) {
+        pe.textContent = p.endlessUnlocked ? 'Açık ∞' : 'Kapalı';
+        pe.style.color = p.endlessUnlocked ? '#7CFFB2' : '';
+      }
+      const pel = $('#prof-endless-level');
+      if (pel) pel.textContent = p.endlessLevel ? '∞' + p.endlessLevel : '-';
+      const track = $('#prof-seal-track');
+      track.innerHTML = '';
+      for (let i = 1; i <= 12; i++) {
+        const el = document.createElement('i');
+        el.textContent = (p.sealsOpened || []).includes(i) ? '◆' : '·';
+        if ((p.sealsOpened || []).includes(i)) el.classList.add('on');
+        el.title = 'Bölüm ' + i;
+        track.appendChild(el);
+      }
+      
+      // Control alternative Mand skins section
+      const activeSpirit = state.spirit || p.spirit;
+      const skinSec = $('#mand-skin-section');
+      if (skinSec) {
+        if (activeSpirit === 'mand' || p.spirit === 'mand') {
+          skinSec.style.display = 'block';
+          // Highlight current skin
+          const currentSkin = p.mand_skin || '06_GRAFIK/mand_toprak_ruhu_erkek.png';
+          $$('.skin-chip').forEach((chip) => {
+            if (chip.getAttribute('data-skin') === currentSkin) {
+              chip.classList.add('selected');
+            } else {
+              chip.classList.remove('selected');
+            }
+          });
+        } else {
+          skinSec.style.display = 'none';
+        }
+      }
+      
+      goScreen('screen-profile');
+      
+      // Zihin Haritası render (gecikme ile canvas hazır olsun)
+      setTimeout(() => drawMindMap(), 120);
+    }
+
+    function saveProfileFromUI() {
+      const name = ($('#prof-name-input').value || '').trim().slice(0, 18);
+      state.profile.name = name || 'Gezgin';
+      state.profile.spirit = state.spirit || state.profile.spirit;
+      state.profile.mascot = state.mascot || state.profile.mascot;
+      saveProfile();
+      $('#prof-name').textContent = state.profile.name;
+      showToast('Profil mühürlendi');
+    }
+
+    // =========================================================
+    // ZİHİN HARİTASI — Element Denge Görselleştirme v6.9
+    // =========================================================
+    function drawMindMap() {
+      const canvas = $('#mind-map-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      // DPI ayarı
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayW = canvas.clientWidth || 320;
+      const displayH = canvas.clientHeight || 160;
+      canvas.width = Math.floor(displayW * dpr);
+      canvas.height = Math.floor(displayH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      
+      const W = displayW;
+      const H = displayH;
+      ctx.clearRect(0, 0, W, H);
+
+      // Arka plan gradyan
+      const bg = ctx.createRadialGradient(W/2, H/2, 10, W/2, H/2, H*0.7);
+      bg.addColorStop(0, 'rgba(255,209,148,0.04)');
+      bg.addColorStop(1, 'rgba(0,0,0,0.2)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Element konumları (4 köşe)
+      const elements = [
+        { id: 'ates',   name: 'Kor',   color: '#ff6b35', emoji: '🔥', x: W*0.5,  y: H*0.18 },
+        { id: 'su',     name: 'Baam',  color: '#4ecdc4', emoji: '💧', x: W*0.82, y: H*0.5   },
+        { id: 'toprak', name: 'Mand',  color: '#c4a35a', emoji: '🗿', x: W*0.5,  y: H*0.82  },
+        { id: 'hava',   name: 'Zepy',  color: '#a8d8ea', emoji: '💨', x: W*0.18, y: H*0.5   },
+      ];
+
+      // Merkez
+      const cx = W/2, cy = H/2;
+
+      // Element güçleri — oyun istatistiklerinden hesapla
+      const p = state.profile;
+      const totalSeals = p.totalSeals || 0;
+      const bestIq = p.bestIq || 0;
+      const bestBreath = p.bestBreath || 0;
+
+      // Denge hesapla (basit: bölüm ilerlemesine göre)
+      const chapterProgress = p.chapter || 1;
+      const weights = {
+        ates:   chapterProgress >= 1 ? Math.min(1, 0.3 + (chapterProgress / 12) * 0.7) : 0.2,
+        su:     chapterProgress >= 4 ? Math.min(1, 0.3 + ((chapterProgress - 3) / 9) * 0.7) : 0.2,
+        toprak: chapterProgress >= 7 ? Math.min(1, 0.3 + ((chapterProgress - 6) / 6) * 0.7) : 0.2,
+        hava:   chapterProgress >= 10 ? Math.min(1, 0.3 + ((chapterProgress - 9) / 3) * 0.7) : 0.2,
+      };
+
+      // Bağlantı çizgileri (elementler arası ilişkiler)
+      ctx.lineWidth = 1.5;
+
+      // Karşıt çiftler (kesikli)
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(255,209,148,0.15)';
+      // Ateş ↔ Su (zıt)
+      ctx.beginPath();
+      ctx.moveTo(elements[0].x, elements[0].y);
+      ctx.lineTo(elements[1].x, elements[1].y);
+      ctx.stroke();
+      // Toprak ↔ Hava (zıt)
+      ctx.beginPath();
+      ctx.moveTo(elements[2].x, elements[2].y);
+      ctx.lineTo(elements[3].x, elements[3].y);
+      ctx.stroke();
+
+      // Bitişik çiftler (düz)
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(255,209,148,0.12)';
+      for (let i = 0; i < 4; i++) {
+        const next = (i + 1) % 4;
+        ctx.beginPath();
+        ctx.moveTo(elements[i].x, elements[i].y);
+        ctx.lineTo(elements[next].x, elements[next].y);
+        ctx.stroke();
+      }
+
+      // Merkez daire (mühür)
+      const centerRadius = 18;
+      const centerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, centerRadius);
+      centerGrad.addColorStop(0, 'rgba(255,209,148,0.3)');
+      centerGrad.addColorStop(1, 'rgba(255,107,53,0.1)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, centerRadius, 0, Math.PI * 2);
+      ctx.fillStyle = centerGrad;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,209,148,0.4)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Merkez rün
+      ctx.font = 'bold 14px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffd194';
+      ctx.fillText('◆', cx, cy);
+
+      // Element noktaları
+      elements.forEach((el, i) => {
+        const weight = weights[el.id] || 0.3;
+        const radius = 14 + weight * 12;
+
+        // Glow efekti
+        ctx.shadowColor = el.color;
+        ctx.shadowBlur = 15 * weight;
+
+        // Element dairesi
+        const grad = ctx.createRadialGradient(el.x, el.y - 4, 0, el.x, el.y, radius);
+        grad.addColorStop(0, el.color);
+        grad.addColorStop(0.6, el.color + 'aa');
+        grad.addColorStop(1, el.color + '44');
+
+        ctx.beginPath();
+        ctx.arc(el.x, el.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Border
+        ctx.strokeStyle = el.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+
+        // Emoji
+        ctx.font = `${Math.floor(radius * 0.9)}px system-ui`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(el.emoji, el.x, el.y);
+
+        // İsim etiketi
+        ctx.font = '600 9px system-ui';
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.fillText(el.name, el.x, el.y + radius + 10);
+      });
+
+      // Yayılma çizgileri (merkezden elementlere)
+      ctx.setLineDash([2, 3]);
+      ctx.lineWidth = 1;
+      elements.forEach((el) => {
+        const weight = weights[el.id] || 0.3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(el.x, el.y);
+        ctx.strokeStyle = el.color + Math.floor(weight * 80).toString(16).padStart(2, '0');
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+    }
+
+    let game = null;
+
+    async function startGame(opts) {
+      const canvas = $('#gameCanvas');
+      opts = opts || {};
+      if (!game) {
+        game = new window.StonebreakingGame(canvas);
+        game.onToast = showToast;
+        game.onHUD = renderHUD;
+        game.onTray = renderTray;
+        game.onPick = () => { StoneSound.pick(); };
+        game.onBreath = (b) => {
+          const currentSpirit = state.spirit || 'kor';
+          const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
+          StoneSound.breath(b.combo, currentEl);
+          StoneSound.vibrate(18);
+        };
+        game.onFail = () => {
+          StoneSound.fail();
+          StoneSound.vibrate(60);
+        };
+        game.onWin = (stats) => {
+          const currentSpirit = state.spirit || 'kor';
+          const currentEl = (window.STONE_SPIRITS[currentSpirit] || window.STONE_SPIRITS.kor).element;
+          StoneSound.win(currentEl);
+          StoneSound.vibrate([30, 40, 70]);
+          showVictory(stats);
+        };
+        await game.preload();
+        game.bindInput();
+        window.addEventListener('resize', () => game && game.resize());
+        window.addEventListener('orientationchange', () => setTimeout(() => game && game.resize(), 200));
+      }
+      const sp = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
+      const el = window.STONE_ELEMENTS[sp.element];
+      $('#chip-img').src = sp.portrait;
+      $('#chip-text').textContent = (state.profile.name && state.profile.name !== 'Gezgin')
+        ? state.profile.name
+        : (sp.name + (el ? ' · ' + el.name : ''));
+      let startCh;
+      if (opts.endless && state.profile.endlessUnlocked) {
+        startCh = 12 + (state.profile.endlessLevel || 0) + 1;
+      } else {
+        startCh = state.profile.chapter && state.profile.spirit === state.spirit
+          ? state.profile.chapter
+          : ((sp.chapters && sp.chapters[0]) || 1);
+      }
+      state.chapter = startCh;
+      state.profile.spirit = state.spirit;
+      state.profile.mascot = state.mascot;
+      saveProfile();
+      if (sp.scene) game.setScene(sp.scene);
+
+      // Önce ekranı göster, sonra resize, sonra newGame — sıralama KRİTİK
+      goScreen('screen-game');
+      // DOM'un yerleşmesi için 2 frame bekle
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      game.resize();
+      game.newGame(startCh);
+      // M-012: Zihin Haritası perkleri — mühürlü düğümler güç verir
+      try {
+        const pk = window.ZIHIN && ZIHIN.perkleri();
+        if (pk) {
+          game.hintsLeft = (game.hintsLeft || 0) + (pk.ipucu || 0);
+          game.undosLeft = (game.undosLeft || 0) + (pk.geri || 0);
+          game.shufflesLeft = (game.shufflesLeft || 0) + (pk.karis || 0);
+        }
+        game.emitAll && game.emitAll();
+      } catch (_) {}
+      game.resize();
+      game.startLoop();
+      await playChapterTransition(startCh);
+    }
+
+    async function continueNextLevel() {
+      hideVictory();
+      if (!game || !state.lastStats) return;
+      const cur = state.lastStats.level || state.chapter;
+      const next = cur + 1;
+      if (cur === 12) state.profile.endlessUnlocked = true;
+      state.chapter = next;
+      state.profile.chapter = Math.min(12, next);
+      if (next > 12) state.profile.endlessLevel = Math.max(state.profile.endlessLevel || 0, next - 12);
+      saveProfile();
+
+      // Sıralama: resize → newGame → startLoop
+      game.resize();
+      game.newGame(next);
+      game.resize();
+      game.locked = false;
+      game.startLoop();
+
+      if (next > 12) {
+        const spCur = window.STONE_SPIRITS[state.spirit] || window.STONE_SPIRITS.kor;
+        if (spCur && spCur.scene) game.setScene(spCur.scene);
+        $('#chip-img').src = spCur.portrait;
+      } else {
+        const ch = (window.STONE_CHAPTERS || []).find((c) => c.n === next);
+        const sp = ch ? window.STONE_SPIRITS[ch.spirit] : null;
+        if (sp && sp.scene) game.setScene(sp.scene);
+        if (sp) $('#chip-img').src = sp.portrait;
+      }
+      await playChapterTransition(next);
+    }
+
+    function setupPick(containerSel, attr, onPick) {
+      const cards = $$(containerSel + ' .pick-card')
+        .concat($$(containerSel + ' .duo-portrait'))
+        .concat($$(containerSel + ' .char-pick-zone'))
+        .concat($$(containerSel + ' .spirit-card'));
+      cards.forEach((card) => {
+        const activate = () => {
+          $$(containerSel + ' .pick-card').forEach((c) => c.classList.remove('selected'));
+          $$(containerSel + ' .duo-portrait').forEach((c) => c.classList.remove('selected'));
+          $$(containerSel + ' .char-pick-zone').forEach((c) => c.classList.remove('selected'));
+          $$(containerSel + ' .spirit-card').forEach((c) => c.classList.remove('selected'));
+          card.classList.add('selected');
+          onPick(card.getAttribute(attr), card);
+        };
+        card.addEventListener('click', activate);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
+        });
+      });
+    }
+
+    function initUI() {
+      // Ses: kullanıcı etkileşimiyle AudioContext açılır (mobil kuralı)
+      StoneSound.unlock();
+      // M-013 kademe-1: ruh geri-dönüş mesajı hazırlığı (son görüş + seri)
+      try { window.RUH_CAGRI && RUH_CAGRI.init(Date.now(), () => state.spirit); } catch (_) {}
+      // M-012: Zihin Haritası hazırlık + açılış düğmeleri
+      try {
+        window.ZIHIN && ZIHIN.init({ taslama: showToast });
+        const zhAc = () => { try { StoneSound.tap && StoneSound.tap(); } catch (_) {} window.ZIHIN && ZIHIN.ac(); };
+        $('#btn-zihin')?.addEventListener('click', zhAc);
+        $('#btn-prof-zihin')?.addEventListener('click', zhAc);
+      } catch (_) {}
+      // M-009 FAZ 1: studios dokun → mühür vur → evren sahnesi açılır (metinsiz)
+      (function initStudiosPhase() {
+        const studios = $('#studios-phase');
+        if (!studios) return;
+        const seal = () => {
+          if (studios.classList.contains('sealed')) return;
+          studios.classList.add('sealed');
+          state.splashPlayed = true;
+          StoneSound.unlock();
+          StoneSound.tap && StoneSound.tap();
+          if (StoneSound.vibrate) StoneSound.vibrate(25);
+          setTimeout(() => studios.classList.add('gone'), 480);
+        };
+        studios.addEventListener('click', seal);
+        studios.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); seal(); } });
+      })();
+
+      // M-009: rune taşa dokun → mühür kırılma parlaması → karakter seçimi
+      function runeGateEnter(btnSel, endless) {
+        const btn = $(btnSel);
+        if (!btn || btn.classList.contains('cracking')) return;
+        state.endlessRequested = !!endless;
+        StoneSound.unlock();
+        StoneSound.tap && StoneSound.tap();
+        if (StoneSound.vibrate) StoneSound.vibrate([18, 26, 40]);
+        btn.classList.add('cracking');
+        $('#crack-flash')?.classList.add('show');
+        setTimeout(() => {
+          btn.classList.remove('cracking');
+          $('#crack-flash')?.classList.remove('show');
+          goScreen('screen-character');
+          try { window.RUH_CAGRI && RUH_CAGRI.maybeShow(); } catch (_) {}
+        }, 560);
+      }
+      $('#btn-start')?.addEventListener('click', () => runeGateEnter('#btn-start', false));
+      $('#btn-endless')?.addEventListener('click', () => runeGateEnter('#btn-endless', true));
+
+      // Ses aç/kapat düğmesi (tercih localStorage'da)
+      (function initSoundToggle() {
+        const btn = $('#btn-sound');
+        if (!btn) return;
+        let muted = false;
+        try { muted = localStorage.getItem('stonebreaking_muted') === '1'; } catch (_) {}
+        StoneSound.setMuted(muted);
+        btn.textContent = muted ? '🔇' : '🔊';
+        btn.addEventListener('click', () => {
+          muted = !muted;
+          StoneSound.setMuted(muted);
+          try { localStorage.setItem('stonebreaking_muted', muted ? '1' : '0'); } catch (_) {}
+          btn.textContent = muted ? '🔇' : '🔊';
+          if (!muted) { StoneSound.unlock(); StoneSound.tap(); }
+        });
+      })();
+
+      setupPick('#screen-character', 'data-mascot', (v, card) => {
+        state.mascot = v;
+        $('#btn-char-next').disabled = false;
+        // Seçim dalgası efekti
+        const wave = $('#selection-wave');
+        if (wave) {
+          wave.classList.remove('active');
+          void wave.offsetWidth; // force reflow
+          wave.classList.add('active');
+          setTimeout(() => wave.classList.remove('active'), 700);
+        }
+        // Dimmed efekt: seçilmeyen taraf solar
+        $$('#screen-character .char-pick-zone').forEach((p) => {
+          if (p === card) {
+            p.classList.remove('dimmed');
+            p.classList.add('selected');
+          } else {
+            p.classList.add('dimmed');
+            p.classList.remove('selected');
+          }
+        });
+        // Etiket efektleri
+        const isErkek = v === 'erkek';
+        $$('#screen-character .char-label-item').forEach((l) => {
+          if ((isErkek && l.classList.contains('label-erkek')) || (!isErkek && l.classList.contains('label-kadin'))) {
+            l.classList.remove('dimmed');
+            l.classList.add('selected');
+          } else {
+            l.classList.add('dimmed');
+            l.classList.remove('selected');
+          }
+        });
+        // Arka plan odak
+        const cinema = $('#char-cinema');
+        if (cinema) {
+          cinema.classList.remove('bg-erkek', 'bg-kadin', 'hover-erkek', 'hover-kadin');
+          cinema.classList.add(isErkek ? 'bg-erkek' : 'bg-kadin');
+        }
+      });
+
+      // Hover efektleri — sinematik sahne geçişi
+      $$('#screen-character .char-pick-zone').forEach((zone) => {
+        const cinema = $('#char-cinema');
+        if (!cinema) return;
+        zone.addEventListener('mouseenter', () => {
+          if (cinema.classList.contains('bg-erkek') || cinema.classList.contains('bg-kadin')) return; // seçim yapılmışsa hover override yok
+          if (zone.classList.contains('zone-erkek')) {
+            cinema.classList.add('hover-erkek');
+            cinema.classList.remove('hover-kadin');
+          } else {
+            cinema.classList.add('hover-kadin');
+            cinema.classList.remove('hover-erkek');
+          }
+        });
+        zone.addEventListener('mouseleave', () => {
+          if (cinema.classList.contains('bg-erkek') || cinema.classList.contains('bg-kadin')) return;
+          cinema.classList.remove('hover-erkek', 'hover-kadin');
+        });
+        // v9.12 Patron 04.08: MOBİL — parmak değer değmez sahne önizlemesi (tıklamayı beklemeden)
+        zone.addEventListener('touchstart', () => {
+          if (cinema.classList.contains('bg-erkek') || cinema.classList.contains('bg-kadin')) return;
+          if (zone.classList.contains('zone-erkek')) {
+            cinema.classList.add('hover-erkek');
+            cinema.classList.remove('hover-kadin');
+          } else {
+            cinema.classList.add('hover-kadin');
+            cinema.classList.remove('hover-erkek');
+          }
+        }, { passive: true });
+      });
+      $('#btn-char-back')?.addEventListener('click', () => goScreen('screen-splash'));
+      $('#btn-char-next')?.addEventListener('click', () => {
+        if (!state.mascot) return;
+        StoneSound.unlock();
+        StoneSound.tap();
+        goScreen('screen-spirit');
+      });
+
+      setupPick('#screen-spirit', 'data-spirit', (v, card) => {
+        // KİLİTLİ ruh kontrolü — sadece Kor açık, diğerleri tıklanabilir ama seçilemez
+        if (card.classList.contains('locked')) {
+          // Sinematik sahneyi göster (önizleme)
+          const cinema = $('#spirit-cinema');
+          if (cinema) {
+            cinema.classList.remove('bg-kor', 'bg-baam', 'bg-mand', 'bg-zepy', 'hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+            cinema.classList.add('hover-' + v);
+            // 2 saniye sonra varsayılana dön
+            setTimeout(() => {
+              cinema.classList.remove('hover-' + v);
+            }, 2000);
+          }
+          // Kilit uyarı toast göster
+          const existingToast = card.querySelector('.spirit-lock-toast');
+          if (existingToast) existingToast.remove();
+          const toast = document.createElement('div');
+          toast.className = 'spirit-lock-toast';
+          const spiritNames = { baam: 'Baam', mand: 'Mand', zepy: 'Zepy' };
+          toast.textContent = '◆ ' + (spiritNames[v] || v) + ' kilitli — Önce Kor\'u tamamla';
+          card.appendChild(toast);
+          setTimeout(() => toast.remove(), 2200);
+          return; // Seçim iptal
+        }
+        // Sadece Kor seçilebilir
+        state.spirit = v;
+        $('#btn-spirit-next').disabled = false;
+        // Dimming: seçilmeyen ruh kartları solar
+        $$('#screen-spirit .spirit-card').forEach((c) => {
+          if (c === card) {
+            c.classList.remove('dimmed');
+            c.classList.add('selected');
+          } else {
+            c.classList.add('dimmed');
+            c.classList.remove('selected');
+          }
+        });
+        // Sinematik sahne geçişi
+        const cinema = $('#spirit-cinema');
+        if (cinema) {
+          cinema.classList.remove('bg-kor', 'bg-baam', 'bg-mand', 'bg-zepy', 'hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+          cinema.classList.add('bg-' + v);
+        }
+      });
+
+      // Ruh kartları hover efektleri — sinematik sahne geçişi
+      $$('#screen-spirit .spirit-card').forEach((card) => {
+        const cinema = $('#spirit-cinema');
+        if (!cinema) return;
+        const spirit = card.dataset.spirit;
+        card.addEventListener('mouseenter', () => {
+          if (cinema.classList.contains('bg-kor') || cinema.classList.contains('bg-baam') || cinema.classList.contains('bg-mand') || cinema.classList.contains('bg-zepy')) return;
+          cinema.classList.remove('hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+          cinema.classList.add('hover-' + spirit);
+        });
+        card.addEventListener('mouseleave', () => {
+          if (cinema.classList.contains('bg-kor') || cinema.classList.contains('bg-baam') || cinema.classList.contains('bg-mand') || cinema.classList.contains('bg-zepy')) return;
+          cinema.classList.remove('hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+        });
+        // v9.12 Patron 04.08: MOBİL — parmağın değdiği ruha sahne anında döner
+        card.addEventListener('touchstart', () => {
+          if (cinema.classList.contains('bg-kor') || cinema.classList.contains('bg-baam') || cinema.classList.contains('bg-mand') || cinema.classList.contains('bg-zepy')) return;
+          cinema.classList.remove('hover-kor', 'hover-baam', 'hover-mand', 'hover-zepy');
+          cinema.classList.add('hover-' + spirit);
+        }, { passive: true });
+      });
+      $('#btn-spirit-back')?.addEventListener('click', () => goScreen('screen-character'));
+      $('#btn-spirit-next')?.addEventListener('click', () => {
+        if (!state.spirit) return;
+        StoneSound.unlock();
+        StoneSound.tap();
+        const endless = state.endlessRequested;
+        state.endlessRequested = false;
+        startGame(endless ? { endless: true } : {});
+      });
+
+      $('#btn-shuffle')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.shuffle(); game && game.shuffle(); });
+      $('#btn-hint')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.hint(); game && game.hint(); });
+      $('#btn-undo')?.addEventListener('click', () => { StoneSound.unlock(); StoneSound.undo(); game && game.undo(); });
+      // v9.9: Ayarlar butonu
+      $('#btn-settings')?.addEventListener('click', () => {
+        $('#settings-overlay')?.classList.add('show');
+      });
+      $('#btn-set-close')?.addEventListener('click', () => {
+        $('#settings-overlay')?.classList.remove('show');
+      });
+      // v9.9: Kart butonları
+      $('#btn-card-share')?.addEventListener('click', () => shareCard());
+      $('#btn-card-continue')?.addEventListener('click', () => {
+        hideCard();
+        const stats = state.lastStats;
+        if (stats?.level === 12) {
+          // Viral karttan → sonsuz mod
+          continueNextLevel();
+        } else {
+          continueNextLevel();
+        }
+      });
+      // Ses toggle
+      $('#btn-set-sound')?.addEventListener('click', () => {
+        let muted = false;
+        try { muted = localStorage.getItem('stonebreaking_muted') === '1'; } catch (_) {}
+        muted = !muted;
+        try { localStorage.setItem('stonebreaking_muted', muted ? '1' : '0'); } catch (_) {}
+        $('#btn-set-sound').textContent = muted ? '🔇' : '🔊';
+        if (typeof StoneSound !== 'undefined') StoneSound.mute(muted);
+      });
+      // Dil switch
+      $$('.btn-lang').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          $$('.btn-lang').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const lang = btn.getAttribute('data-lang');
+          try { localStorage.setItem('stonebreaking_lang', lang); } catch (_) {}
+          showToast(lang === 'tr' ? 'Dil: Türkçe' : 'Language: English');
+        });
+      });
+      // İlerleme kaydet
+      $('#btn-set-save')?.addEventListener('click', () => {
+        saveProfile();
+        showToast('💾 İlerlemen kaydedildi!');
+      });
+      // Paylaş
+      $('#btn-set-share')?.addEventListener('click', () => {
+        const text = `🔥 STONEBREAKING — Element Taş Oyunu!\n💧 4 ruh · 12 bölüm · Sonsuz mod\n◆ Ben de oynuyorum: stonebreaking.github.io`;
+        if (navigator.share) {
+          navigator.share({ title: 'STONEBREAKING', text, url: 'https://stonebreaking.github.io/' });
+        } else {
+          navigator.clipboard?.writeText(text);
+          showToast('📱 Kopyalandı! Arkadaşına gönder.');
+        }
+      });
+      // Eski ses butonu (game-top'dan kaldırıldı ama backward compat)
+      $('#btn-sound')?.addEventListener('click', () => {
+        let muted = false;
+        try { muted = localStorage.getItem('stonebreaking_muted') === '1'; } catch (_) {}
+        muted = !muted;
+        try { localStorage.setItem('stonebreaking_muted', muted ? '1' : '0'); } catch (_) {}
+        $('#btn-sound').textContent = muted ? '🔇' : '🔊';
+      });
+
+      // v9.9: Başarılar
+      $('#btn-achievements')?.addEventListener('click', () => {
+        renderAchievements();
+        $('#achievements-overlay')?.classList.add('show');
+      });
+      $('#btn-ach-close')?.addEventListener('click', () => {
+        $('#achievements-overlay')?.classList.remove('show');
+      });
+
+      // v9.9: Avatar seçimi
+      $$('.avatar-option').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          $$('.avatar-option').forEach((o) => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          const src = opt.getAttribute('data-avatar');
+          if (src) {
+            $('#prof-avatar').src = src;
+            const chipImg = $('#chip-img');
+            if (chipImg) chipImg.src = src;
+            state.profile.avatar = src;
+            saveProfile();
+          }
+        });
+      });
+      // Foto yükle
+      $('#avatar-file')?.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result;
+          $('#prof-avatar').src = dataUrl;
+          const chipImg = $('#chip-img');
+          if (chipImg) chipImg.src = dataUrl;
+          const preview = $('#avatar-custom-preview');
+          if (preview) { preview.src = dataUrl; preview.style.display = 'block'; }
+          const label = $('#avatar-upload-label');
+          if (label) label.textContent = '✅ Yüklendi';
+          state.profile.avatar = dataUrl;
+          saveProfile();
+          $$('.avatar-option').forEach((o) => o.classList.remove('selected'));
+          document.querySelector('.avatar-upload')?.classList.add('selected');
+        };
+        reader.readAsDataURL(file);
+      });
+
+      $('#btn-menu')?.addEventListener('click', () => {
+        hideVictory();
+        if (game) game.stopLoop();
+        goScreen('screen-splash');
+      });
+      // v9.9: Sonraki bölüm → kart göster (element tamamlandıysa)
+      $('#btn-next-level')?.addEventListener('click', () => {
+        hideVictory();
+        const stats = state.lastStats;
+        const lv = stats?.level || 0;
+        // M-011: IQ sınav noktaları (B3/B6/B9/B12) → sınav → kart/sekans akışı sürer
+        if ([3, 6, 9, 12].includes(lv)) {
+          playIqTest(stats, () => {
+            if (lv === 12) playBaslangicSequence(stats);
+            else showCard(stats);
+          });
+        } else if (CARD_MAP[lv]) {
+          showCard(stats);
+        } else {
+          continueNextLevel();
+        }
+      });
+      $('#btn-victory-menu')?.addEventListener('click', () => {
+        hideVictory();
+        if (game) game.stopLoop();
+        goScreen('screen-splash');
+      });
+
+      // v6.8.3: Skin-chips listener
+      $$('.skin-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          $$('.skin-chip').forEach((c) => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          const selectedSkin = chip.getAttribute('data-skin');
+          state.profile.mand_skin = selectedSkin;
+          if (window.STONE_SPIRITS && window.STONE_SPIRITS['mand']) {
+            window.STONE_SPIRITS['mand'].portrait = selectedSkin;
+          }
+          saveProfile();
+          // Update profile avatar immediately if we are viewing Mand
+          const activeSpirit = state.spirit || state.profile.spirit;
+          if (activeSpirit === 'mand') {
+            $('#prof-avatar').src = selectedSkin;
+            const chipImg = $('#chip-img');
+            if (chipImg) chipImg.src = selectedSkin;
+          }
+          showToast('Mühür görünümü güncellendi');
+        });
+      });
+
+      // Profile
+      const openProf = () => openProfile(document.querySelector('.screen.active')?.id || 'screen-game');
+      $('#spirit-chip')?.addEventListener('click', openProf);
+      $('#spirit-chip')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProf(); }
+      });
+      $('#btn-prof-back')?.addEventListener('click', () => {
+        goScreen(state.returnScreen || 'screen-splash');
+        if (state.returnScreen === 'screen-game' && game) {
+          game.startLoop();
+          requestAnimationFrame(() => game.resize());
+        }
+      });
+      $('#btn-prof-save')?.addEventListener('click', saveProfileFromUI);
+      $('#prof-name-input')?.addEventListener('change', saveProfileFromUI);
+      $('#btn-google-login')?.addEventListener('click', () => {
+        // PATRON BT: Google Identity Services (GIS) OAuth entegrasyonu
+        // NOT: Gerçek Client ID verilince aşağıdaki GIS kodu aktif olacak
+        // const GIS_CLIENT_ID = 'TUA_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+        // window.google.accounts.id.initialize({ client_id: GIS_CLIENT_ID, callback: handleGoogleResponse });
+        
+        const st = $('#google-login-status');
+        const btn = $('#btn-google-login');
+        state.profile.googleStub = true;
+        saveProfile();
+        if (st) {
+          // v6.9: Güçlendirilmiş stub mesajı
+          st.innerHTML = 'Google girişi hazırlanıyor<br><span style="font-size:0.62rem;color:#666">Patron Client ID mühürlenince aktif olur</span>';
+          st.style.color = '#ffd194';
+        }
+        if (btn) {
+          btn.innerHTML = '<span style="font-weight:700">G</span> Google Hazır (Stub)';
+          btn.style.opacity = '0.7';
+        }
+        showToast('Google giriş hazır — Client ID beklniyor');
+      });
+      
+      // Google OAuth callback stub (GIS gelince aktif)
+      window.handleGoogleResponse = function(response) {
+        // PATRON BT: Client ID verilince GIS'ten gelen token burada işlenecek
+        console.log('Google OAuth response:', response);
+        const credential = response.credential || response;
+        if (credential) {
+          // Token decode ve profil güncelle
+          try {
+            const payload = JSON.parse(atob(credential.split('.')[1]));
+            state.profile.name = payload.name || state.profile.name;
+            state.profile.googleEmail = payload.email;
+            state.profile.googlePicture = payload.picture;
+            state.profile.googleStub = false;
+            saveProfile();
+            showToast('Google hesabı bağlandı');
+            openProfile(state.returnScreen);
+          } catch(e) {
+            showToast('Google giriş hatası');
+          }
+        }
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initUI();
+      // restore light state
+      if (state.profile.spirit) state.spirit = state.profile.spirit;
+      if (state.profile.mascot) state.mascot = state.profile.mascot;
+      // SAHNE -1 → SAHNE 0 akışı
+      playStudioIntro();
+      const warm = new Image();
+      warm.src = '06_GRAFIK/tas_sembol_su_2.png';
+    });
+  </script>
+</body>
+</html>
